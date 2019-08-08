@@ -4,6 +4,9 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp3.0</TargetFramework>
         <RootNamespace>Recube.Api</RootNamespace>
+        <LangVersion>8.0</LangVersion>
+        <Nullable>enable</Nullable>
+        <!-- <WarningsAsErrors>CS8600;CS8602;CS8603;CS8625;CS8618</WarningsAsErrors>-->
     </PropertyGroup>
 
 </Project>
