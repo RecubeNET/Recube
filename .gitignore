@@ -262,9 +262,10 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 
+
 # Custom
 .idea/
 Recube.Api/bin/
 Recube.Api/obj/
 Recube.Core/bin/
-Recube.Api/bin/
+Recube.Core/obj/
