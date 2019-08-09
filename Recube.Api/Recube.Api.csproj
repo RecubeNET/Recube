@@ -1,10 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.0</TargetFramework>
+        <RootNamespace>Recube.Api</RootNamespace>
         <LangVersion>8.0</LangVersion>
         <Nullable>enable</Nullable>
         <!-- <WarningsAsErrors>CS8600;CS8602;CS8603;CS8625;CS8618</WarningsAsErrors>-->
     </PropertyGroup>
 
+    <ItemGroup>
+        <PackageReference Include="DotNetty.Buffers" Version="0.6.0"/>
+        <PackageReference Include="DotNetty.Transport" Version="0.6.0"/>
+        <PackageReference Include="Nett" Version="0.13.0"/>
+        <PackageReference Include="NLog" Version="4.6.6"/>
+    </ItemGroup>
 </Project>
