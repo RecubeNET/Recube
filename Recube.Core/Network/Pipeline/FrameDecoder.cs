@@ -10,17 +10,13 @@ namespace Recube.Core.Network.Pipeline
 	{
 		protected override void Decode(IChannelHandlerContext context, IByteBuffer input, List<object> output)
 		{
-			if (!VarInt.ReadVarInt(input.Array, out var length))
-			{
-				NetworkBootstrap.Logger.Warn("Received packet with invalid packet length!");
-				return;
-			}
+			input.MarkReaderIndex();
 
-			if (length == null) return;
+			VarInt.ReadVarInt(input, out var length);
 
-			if (input.ReadableBytes < length)
+			if (length == null || input.ReadableBytes < length)
 			{
-				NetworkBootstrap.Logger.Warn("Received packet with less bytes than expected!");
+				input.ResetReaderIndex();
 				return;
 			}
 

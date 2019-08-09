@@ -4,17 +4,17 @@ using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 using Recube.Api.Network.Packets.Handler;
 
-namespace Recube.Core.Network.Packets
+namespace Recube.Core.Network.Impl
 {
-	public class HandshakePacketHandler : PacketHandler
+	public class LoginPacketHandler : PacketHandler
 	{
-		public HandshakePacketHandler(INetworkPlayer networkPlayer) : base(networkPlayer)
+		public LoginPacketHandler(INetworkPlayer networkPlayer) : base(networkPlayer)
 		{
 		}
 
 		public override void OnActive()
 		{
-			throw new NotImplementedException();
+			((NetworkPlayer.NetworkPlayer) NetworkPlayer).SetState(NetworkPlayerState.Login);
 		}
 
 		public override void OnDisconnect()

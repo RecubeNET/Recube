@@ -20,14 +20,14 @@ namespace Recube.Api.Network.Extensions
 
 		public static int ReadVarInt(this IByteBuffer buffer)
 		{
-			VarInt.ReadVarInt(buffer.Array, out var varInt);
+			VarInt.ReadVarInt(buffer, out var varInt);
 			if (!varInt.HasValue) throw new InvalidOperationException("Could not parse VarInt");
 			return varInt.Value;
 		}
 
 		public static long ReadVarLong(this IByteBuffer buffer)
 		{
-			VarInt.ReadVarLong(buffer.Array, out var varLong);
+			VarInt.ReadVarLong(buffer, out var varLong);
 			if (!varLong.HasValue) throw new InvalidOperationException("Could not parse VarLong");
 			return varLong.Value;
 		}

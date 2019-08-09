@@ -4,7 +4,7 @@ using DotNetty.Transport.Channels;
 using Recube.Api.Network.Packets;
 using Recube.Core.Network.Packets.Handler;
 
-namespace Recube.Core.Network.Packets
+namespace Recube.Core.Network.Pipeline
 {
 	public class PacketInboundHandler : SimpleChannelInboundHandler<IPacket>
 	{
@@ -25,6 +25,7 @@ namespace Recube.Core.Network.Packets
 
 		public override void ChannelUnregistered(IChannelHandlerContext context)
 		{
+			_player.PacketHandler.OnDisconnect();
 			Recube.Instance.NetworkPlayerRegistry.Deregister(_player);
 		}
 
