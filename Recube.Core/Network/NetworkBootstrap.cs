@@ -6,7 +6,6 @@ using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using NLog;
-using Recube.Core.Network.Packets;
 using Recube.Core.Network.Pipeline;
 
 namespace Recube.Core.Network
@@ -22,6 +21,9 @@ namespace Recube.Core.Network
 
 		public async Task StartAsync(IPEndPoint address)
 		{
+			if (Active) return;
+			Active = true;
+			Logger.Info($"Starting network on {address.Address}:{address.Port}");
 			try
 			{
 				_bossGroup = new MultithreadEventLoopGroup(1);
@@ -52,6 +54,7 @@ namespace Recube.Core.Network
 
 				while (Active) await Task.Delay(1000).ConfigureAwait(false);
 				await boundChannel.CloseAsync().ConfigureAwait(false);
+				Logger.Info("Network closed");
 			}
 			catch (Exception exe)
 			{

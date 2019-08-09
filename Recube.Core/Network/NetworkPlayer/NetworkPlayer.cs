@@ -12,6 +12,7 @@ namespace Recube.Core.Network.NetworkPlayer
 		public NetworkPlayer(IChannel channel)
 		{
 			Channel = channel;
+			CurrentState = NetworkPlayerState.Handshake;
 		}
 
 		public IChannel Channel { get; }

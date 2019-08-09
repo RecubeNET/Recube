@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DotNetty.Buffers;
 
 namespace Recube.Api.Network
 {
@@ -7,23 +8,25 @@ namespace Recube.Api.Network
 		/// <summary>
 		/// Reads a VarInt defined by the Minecraft protocol
 		/// </summary>
-		/// <param name="bytesEnumerable">The bytes to read</param>
+		/// <param name="buffer">The buffer</param>
 		/// <param name="varInt">The parsed VarInt. If the bytes could not be successfully parsed, the VarInt is null</param>
 		/// <returns>True if the bytes have been parsed successfully. False otherwise</returns>
-		public static bool ReadVarInt(IEnumerable<byte> bytesEnumerable, out int? varInt)
+		public static bool ReadVarInt(IByteBuffer buffer, out int? varInt)
 		{
 			varInt = null;
 			var result = 0;
 			var bytesRead = 0;
-			foreach (var b in bytesEnumerable)
+			byte nextByte;
+
+			do
 			{
-				if ((b & 0b1000_0000) == 0) break;
-				var value = b & 0b0111_1111;
-				result |= value << (7 * bytesRead);
+				nextByte = buffer.ReadByte();
+				var value = nextByte & 0b0111_1111;
+				result |= (value << (7 * bytesRead));
 				bytesRead++;
 
 				if (bytesRead > 5) return false;
-			}
+			} while ((nextByte & 0b1000_0000) != 0);
 
 			varInt = result;
 			return true;
@@ -55,23 +58,25 @@ namespace Recube.Api.Network
 		/// <summary>
 		/// Reads a VarLong defined by the Minecraft protocol
 		/// </summary>
-		/// <param name="bytesEnumerable">The bytes to read</param>
+		/// <param name="buffer">The buffer</param>
 		/// <param name="varLong">The parsed VarLong. If the bytes could not be successfully parsed, the VarInt is null</param>
 		/// <returns>True if the bytes have been parsed successfully. False otherwise</returns>
-		public static bool ReadVarLong(IEnumerable<byte> bytesEnumerable, out long? varLong)
+		public static bool ReadVarLong(IByteBuffer buffer, out long? varLong)
 		{
 			varLong = null;
 			var result = 0;
 			var bytesRead = 0;
-			foreach (var b in bytesEnumerable)
+			byte nextByte;
+
+			do
 			{
-				if ((b & 0b1000_0000) == 0) break;
-				var value = b & 0b0111_1111;
+				nextByte = buffer.ReadByte();
+				var value = nextByte & 0b0111_1111;
 				result |= value << (7 * bytesRead);
 				bytesRead++;
 
 				if (bytesRead > 10) return false;
-			}
+			} while ((nextByte & 0b1000_0000) != 0);
 
 			varLong = result;
 			return true;
