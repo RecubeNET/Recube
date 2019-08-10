@@ -1,0 +1,6 @@
+language: chsarp
+solution: Recube.sln
+mono: none
+dotnet: 3.0.0-preview7
+script:
+ - dotnet build
