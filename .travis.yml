@@ -1,6 +1,13 @@
+dist: xenial
+addons:
+  snaps:
+  - name: dotnet-sdk
+    classic: true
+    channel: latest/beta
+sudo: required
 language: csharp
-solution: Recube.sln
 mono: none
-dotnet: 3.0.0-preview7
 script:
- - dotnet build
+  - sudo snap alias dotnet-sdk.dotnet dotnet
+  - dotnet --version
+  - dotnet build
