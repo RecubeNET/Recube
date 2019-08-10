@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using NLog;
@@ -24,20 +24,20 @@ namespace Recube.Core
 		public readonly Type StatusPacketHandler = typeof(StatusPacketHandler);
 
 		public string Motd = @"{
-    ""version"": {
-        ""name"": ""1.14.4"",
-        ""protocol"": 498
-    },
-    ""players"": {
-        ""max"": 100,
-        ""online"": 0,
-        ""sample"": [
-        ]
-    },	
-    ""description"": {
-        ""text"": ""Running on Recube""
-    },
-    ""favicon"": ""data:image/png;base64,<data>""
+	""version"": {
+		""name"": ""1.14.4"",
+		""protocol"": 498
+	},
+	""players"": {
+		""max"": 100,
+		""online"": 0,
+		""sample"": [
+		]
+	},	
+	""description"": {
+		""text"": ""Running on Recube""
+	},
+	""favicon"": ""data:image/png;base64,<data>""
 }";
 
 		public Recube()
