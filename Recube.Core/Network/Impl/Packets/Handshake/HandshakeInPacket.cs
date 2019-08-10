@@ -5,6 +5,7 @@ using Recube.Api.Network.Packets;
 
 namespace Recube.Core.Network.Impl.Packets.Handshake
 {
+	// https://wiki.vg/Protocol#Handshake
 	[Packet(0x0, NetworkPlayerState.Handshake)]
 	public class HandshakeInPacket : IInPacket
 	{
