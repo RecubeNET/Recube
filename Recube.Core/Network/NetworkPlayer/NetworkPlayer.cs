@@ -18,6 +18,7 @@ namespace Recube.Core.Network.NetworkPlayer
 		public IChannel Channel { get; }
 		public PacketHandler PacketHandler { get; private set; }
 		public NetworkPlayerState CurrentState { get; private set; }
+		public string Username { get; set; }
 
 		public async Task DisconnectAsync()
 		{
