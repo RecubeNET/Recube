@@ -1,49 +1,49 @@
 using System;
 using DotNetty.Buffers;
 using Recube.Api.Network.Extensions;
-using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
+using Recube.Api.Network.NetworkPlayer;
 
 namespace Recube.Core.Network.Impl.Packets.Play
 {
 	/// <summary>
-	/// Used to spawn ExperienceOrbs
+	/// Currently Only used to Spawn Thunderbolts.
 	/// </summary>
-	[Packet(0x01, NetworkPlayerState.Play)]
-	public class SpawnExperienceOrbPacket : IOutPacket
+	[Packet(0x02, NetworkPlayerState.Play)]
+	public class SpawnGlobalEntity : IOutPacket
 	{
+		public enum SpawnType
+		{
+			Thunderbolt = 1
+		}
 		/// <summary>
-		/// Entity ID
+		/// EntityID
 		/// </summary>
 		public int EntityID;
-
 		/// <summary>
-		/// Position X
+		/// The Type of the Objcets <see cref="SpawnGlobalEntity.SpawnType"/>
+		/// </summary>
+		public SpawnType Type;
+		/// <summary>
+		/// PositionX
 		/// </summary>
 		public double X;
-
 		/// <summary>
 		/// PositionY
 		/// </summary>
 		public double Y;
-
 		/// <summary>
-		/// Position Z
+		/// PositionZ
 		/// </summary>
 		public double Z;
-
-		/// <summary>
-		/// Ammount of XP orbs
-		/// </summary>
-		public short Count;
 
 		public void Write(IByteBuffer buffer)
 		{
 			buffer.WriteVarInt(EntityID);
+			buffer.WriteByte((byte) Type);
 			buffer.WriteDouble(X);
 			buffer.WriteDouble(Y);
 			buffer.WriteDouble(Z);
-			buffer.WriteShort(Count);
 		}
 	}
 }
