@@ -6,7 +6,6 @@ using Recube.Api.Network.Packets;
 namespace Recube.Core.Network.Impl.Packets.Login
 {
 	[Packet(0x0, NetworkPlayerState.Login)]
-	// ReSharper disable once UnusedMember.Global
 	public class LoginStartPacket : IInPacket
 	{
 		public string Username;

@@ -12,6 +12,7 @@ namespace Recube.Core.Network.Impl.Packets.Login
 		public int SharedSecretLength;
 		public byte[] VerifyToken;
 		public int VerifyTokenLength;
+
 		public void Read(IByteBuffer buffer)
 		{
 			SharedSecretLength = buffer.ReadVarInt();

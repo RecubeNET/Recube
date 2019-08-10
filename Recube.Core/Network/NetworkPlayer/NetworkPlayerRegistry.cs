@@ -1,40 +1,10 @@
-using System.Collections.Generic;
-using System.Threading;
 using DotNetty.Transport.Channels;
+using Recube.Core.Util;
 
 namespace Recube.Core.Network.NetworkPlayer
 {
-	public class NetworkPlayerRegistry
+	public class NetworkPlayerRegistry : RegistryBase<NetworkPlayer>
 	{
-		private List<NetworkPlayer> _list = new List<NetworkPlayer>();
-		private ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
-
-		public void Register(NetworkPlayer player)
-		{
-			_lock.EnterWriteLock();
-			try
-			{
-				_list.Add(player);
-			}
-			finally
-			{
-				_lock.ExitWriteLock();
-			}
-		}
-
-		public void Deregister(NetworkPlayer player)
-		{
-			_lock.EnterWriteLock();
-			try
-			{
-				_list.Remove(player);
-			}
-			finally
-			{
-				_lock.ExitWriteLock();
-			}
-		}
-
 		public NetworkPlayer? GetNetworkPlayerByChannel(IChannel channel)
 		{
 			_lock.EnterReadLock();
@@ -52,19 +22,6 @@ namespace Recube.Core.Network.NetworkPlayer
 			}
 
 			return null;
-		}
-
-		public IList<NetworkPlayer> GetNetworkPlayers()
-		{
-			_lock.EnterReadLock();
-			try
-			{
-				return new List<NetworkPlayer>(_list);
-			}
-			finally
-			{
-				_lock.ExitReadLock();
-			}
 		}
 	}
 }

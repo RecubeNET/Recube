@@ -3,6 +3,8 @@ using System.Net;
 using System.Threading.Tasks;
 using NLog;
 using Recube.Api;
+using Recube.Api.Entities;
+using Recube.Core.Entities;
 using Recube.Core.Network;
 using Recube.Core.Network.Impl;
 using Recube.Core.Network.NetworkPlayer;
@@ -13,15 +15,17 @@ namespace Recube.Core
 	{
 		public readonly static int ProtocolVersion = 498;
 		public readonly static ILogger RecubeLogger = LogManager.GetLogger("Recube");
+		public readonly EntityRegistry EntityRegistry = new EntityRegistry();
 
 		public readonly Type HandshakePacketHandler = typeof(HandshakePacketHandler);
 		public readonly Type LoginPacketHandler = typeof(LoginPacketHandler);
 
-
 		public readonly NetworkBootstrap NetworkBootstrap = new NetworkBootstrap();
 		public readonly NetworkPlayerRegistry NetworkPlayerRegistry = new NetworkPlayerRegistry();
+		public readonly PlayerRegistry PlayerRegistry = new PlayerRegistry();
 		public readonly Type PlayPacketHandler = typeof(PlayPacketHandler);
 		public readonly Type StatusPacketHandler = typeof(StatusPacketHandler);
+
 
 		public string Motd = @"{
 	""version"": {
@@ -56,6 +60,9 @@ namespace Recube.Core
 		public static Recube Instance { get; private set; }
 
 		public ILogger Logger => RecubeLogger;
+		public IPlayerRegistry GetPlayerRegistry() => PlayerRegistry;
+
+		public IEntityRegistry GetEntityRegistry() => EntityRegistry;
 
 		static void Main() => new Recube(); // TODO ADD ARGS FOR PORT ETC.
 	}

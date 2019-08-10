@@ -1,6 +1,7 @@
 using System;
 
-namespace Recube.Api.Network.Entities
+// By https://gist.github.com/rickbeerendonk/13655dd24ec574954366
+namespace Recube.Api.Util
 {
 	public struct UUID
 	{
