@@ -41,6 +41,7 @@ namespace Recube.Core.Network.Impl
 				Username = packet.username,
 				UUID = new UUID()
 			});
+			((NetworkPlayer.NetworkPlayer) NetworkPlayer).SetState(NetworkPlayerState.Play);
 		}
 		[PacketMethod]
 		public void OnEncryptionResponsePacket(EncryptionResponsePacket packet)
