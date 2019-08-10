@@ -1,4 +1,3 @@
-using System;
 using DotNetty.Buffers;
 using Recube.Api.Network.Extensions;
 using Recube.Api.Network.NetworkPlayer;
@@ -9,11 +8,11 @@ namespace Recube.Core.Network.Impl.Packets.Login
 	[Packet(0x01, NetworkPlayerState.Login)]
 	public class EncryptionRequestPacket : IOutPacket
 	{
-		public string ServerID = "";
-		public int PublicKeyLength;
 		public byte[] PublicKey;
-		public int VerifyTokenLength = 4;
+		public int PublicKeyLength;
+		public string ServerID = "";
 		public byte[] VerifyToken = {1, 0, 0, 1};
+		public int VerifyTokenLength = 4;
 
 		public void Write(IByteBuffer buffer)
 		{

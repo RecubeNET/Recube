@@ -1,5 +1,4 @@
-using System;
-using DotNetty.Buffers;
+ using DotNetty.Buffers;
 using Recube.Api.Network.Extensions;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
@@ -7,35 +6,35 @@ using Recube.Api.Network.Packets;
 namespace Recube.Core.Network.Impl.Packets.Play
 {
 	/// <summary>
-	/// Used to spawn ExperienceOrbs
+	///     Used to spawn ExperienceOrbs
 	/// </summary>
 	[Packet(0x01, NetworkPlayerState.Play)]
 	public class SpawnExperienceOrbPacket : IOutPacket
 	{
 		/// <summary>
-		/// Entity ID
+		///     Ammount of XP orbs
+		/// </summary>
+		public short Count;
+
+		/// <summary>
+		///     Entity ID
 		/// </summary>
 		public int EntityID;
 
 		/// <summary>
-		/// Position X
+		///     Position X
 		/// </summary>
 		public double X;
 
 		/// <summary>
-		/// PositionY
+		///     PositionY
 		/// </summary>
 		public double Y;
 
 		/// <summary>
-		/// Position Z
+		///     Position Z
 		/// </summary>
 		public double Z;
-
-		/// <summary>
-		/// Ammount of XP orbs
-		/// </summary>
-		public short Count;
 
 		public void Write(IByteBuffer buffer)
 		{

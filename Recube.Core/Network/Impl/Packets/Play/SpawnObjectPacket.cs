@@ -9,14 +9,14 @@ namespace Recube.Core.Network.Impl.Packets.Play
 {
 	// https://wiki.vg/Protocol#Spawn_Object
 	/// <summary>
-	/// Used to Spawn Objects 
-	/// <para> Not used to spawn XP, Mobs, Players, Paintings, Thunderbolts </para>
+	///     Used to Spawn Objects
+	///     <para> Not used to spawn XP, Mobs, Players, Paintings, Thunderbolts </para>
 	/// </summary>
 	[Packet(0x00, NetworkPlayerState.Play)]
 	public class SpawnObjectPacket : IOutPacket
 	{
 		/// <summary>
-		/// All Entity's spawned with this packet. 
+		///     All Entity's spawned with this packet.
 		/// </summary>
 		public enum SpawnType
 		{
@@ -51,64 +51,64 @@ namespace Recube.Core.Network.Impl.Packets.Play
 		}
 
 		/// <summary>
-		/// ID of the Entity
-		/// </summary>
-		public int EntityID;
-
-		/// <summary>
-		/// UUID of the Entity
-		/// </summary>
-		public UUID UUID;
-
-		/// <summary>
-		/// The Type of the Objcets <see cref="SpawnObjectPacket.SpawnType"/>
-		/// </summary>
-		public SpawnType Type;
-
-		/// <summary>
-		/// Position X
-		/// </summary>
-		public double X;
-
-		/// <summary>
-		/// Position Y
-		/// </summary>
-		public double Y;
-
-		/// <summary>
-		/// Position Z
-		/// </summary>
-		public double Z;
-
-		/// <summary>
-		/// Entity Pitch
-		/// </summary>
-		public int Pitch;
-
-		/// <summary>
-		/// Entity Yaw
-		/// </summary>
-		public int Yaw;
-
-		/// <summary>
-		/// Meaning dependent on the value of the Type field
+		///     Meaning dependent on the value of the Type field
 		/// </summary>
 		public int Data;
 
 		/// <summary>
-		/// Entity VelocityX
+		///     ID of the Entity
+		/// </summary>
+		public int EntityID;
+
+		/// <summary>
+		///     Entity Pitch
+		/// </summary>
+		public int Pitch;
+
+		/// <summary>
+		///     The Type of the Objcets <see cref="SpawnObjectPacket.SpawnType" />
+		/// </summary>
+		public SpawnType Type;
+
+		/// <summary>
+		///     UUID of the Entity
+		/// </summary>
+		public UUID UUID;
+
+		/// <summary>
+		///     Entity VelocityX
 		/// </summary>
 		public short VelocityX;
 
 		/// <summary>
-		/// Entity VelocityY
+		///     Entity VelocityY
 		/// </summary>
 		public short VelocityY;
 
 		/// <summary>
-		/// Entity VelocityZ
+		///     Entity VelocityZ
 		/// </summary>
 		public short VelocityZ;
+
+		/// <summary>
+		///     Position X
+		/// </summary>
+		public double X;
+
+		/// <summary>
+		///     Position Y
+		/// </summary>
+		public double Y;
+
+		/// <summary>
+		///     Entity Yaw
+		/// </summary>
+		public int Yaw;
+
+		/// <summary>
+		///     Position Z
+		/// </summary>
+		public double Z;
 
 		public void Write(IByteBuffer buffer)
 		{

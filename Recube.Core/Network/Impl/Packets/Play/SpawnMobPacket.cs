@@ -2,20 +2,20 @@ using System;
 using DotNetty.Buffers;
 using Recube.Api.Network.Entities;
 using Recube.Api.Network.Extensions;
-using Recube.Api.Network.Packets;
 using Recube.Api.Network.NetworkPlayer;
+using Recube.Api.Network.Packets;
 
 namespace Recube.Core.Network.Impl.Packets.Play
 {
 	//https://wiki.vg/Protocol#Spawn_Mob
 	/// <summary>
-	/// Used to spawn Mobs
+	///     Used to spawn Mobs
 	/// </summary>
 	[Packet(0x03, NetworkPlayerState.Play)]
 	public class SpawnMobPacket : IOutPacket
 	{
 		/// <summary>
-		/// All Entity's you can spawn with this packet.
+		///     All Entity's you can spawn with this packet.
 		/// </summary>
 		public enum SpawnType
 		{
@@ -79,70 +79,70 @@ namespace Recube.Core.Network.Impl.Packets.Play
 		}
 
 		/// <summary>
-		/// Entity ID
+		///     Entity ID
 		/// </summary>
 		public int EntityID;
 
 		/// <summary>
-		/// Entity UUID
+		///     Head Pitch
 		/// </summary>
-		public UUID UUID;
+		public int HeadPitch;
+
+		//TODO: Metadata Its not even a string!
+		/// <summary>
+		///     MetaData of the Entity Not yet implemented
+		/// </summary>
+		public string Metadata;
 
 		/// <summary>
-		/// Entity Type <see cref="SpawnMobPacket.SpawnType"/>
-		/// </summary>
-		public SpawnType Type;
-
-		/// <summary>
-		/// PositionX
-		/// </summary>
-		public double X;
-
-		/// <summary>
-		/// PositionY
-		/// </summary>
-		public double Y;
-
-		/// <summary>
-		/// PositionZ
-		/// </summary>
-		public double Z;
-
-		/// <summary>
-		/// Entity Yaw
-		/// </summary>
-		public int Yaw;
-
-		/// <summary>
-		/// Entity Pitch
+		///     Entity Pitch
 		/// </summary>
 		public int Pitch;
 
 		/// <summary>
-		/// Head Pitch
+		///     Entity Type <see cref="SpawnMobPacket.SpawnType" />
 		/// </summary>
-		public int HeadPitch;
+		public SpawnType Type;
 
 		/// <summary>
-		/// Velocity X
+		///     Entity UUID
+		/// </summary>
+		public UUID UUID;
+
+		/// <summary>
+		///     Velocity X
 		/// </summary>
 		public short VelocityX;
 
 		/// <summary>
-		/// Velocity Y
+		///     Velocity Y
 		/// </summary>
 		public short VelocityY;
 
 		/// <summary>
-		/// Velocity Z
+		///     Velocity Z
 		/// </summary>
 		public short VelocityZ;
 
-		//TODO: Metadata Its not even a string!
 		/// <summary>
-		/// MetaData of the Entity Not yet implemented
+		///     PositionX
 		/// </summary>
-		public string Metadata;
+		public double X;
+
+		/// <summary>
+		///     PositionY
+		/// </summary>
+		public double Y;
+
+		/// <summary>
+		///     Entity Yaw
+		/// </summary>
+		public int Yaw;
+
+		/// <summary>
+		///     PositionZ
+		/// </summary>
+		public double Z;
 
 		public void Write(IByteBuffer buffer)
 		{
