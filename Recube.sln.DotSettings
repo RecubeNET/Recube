@@ -1,4 +1,66 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=Minecraft/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=Mojang/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=Recube/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0C470C970439B346B7DEE5CA3F7E99C6/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0C470C970439B346B7DEE5CA3F7E99C6/Field/=ID/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0C470C970439B346B7DEE5CA3F7E99C6/Field/=ID/Order/@EntryValue">3</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0C470C970439B346B7DEE5CA3F7E99C6/Field/=STATE/@KeyIndexDefined">True</s:Boolean>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0C470C970439B346B7DEE5CA3F7E99C6/Field/=STATE/Order/@EntryValue">4</s:Int64>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0C470C970439B346B7DEE5CA3F7E99C6/Text/@EntryValue">$HEADER$
+using System;
+using DotNetty.Buffers;
+using Recube.Api.Network.Packets;
+using Recube.Api.Network.NetworkPlayer;
+
+namespace $NAMESPACE$
+{
+    [Packet($ID$, $STATE$)]
+    public class $CLASS$ : IInOutPacket 
+    {
+        public void Write(IByteBuffer buffer)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public void Read(IByteBuffer buffer)
+		{
+			throw new NotImplementedException();
+		}
+    }
+}</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=7BF4290694C25246BF439A2DB063CEF0/Text/@EntryValue">$HEADER$
+using System;
+using DotNetty.Buffers;
+using Recube.Api.Network.Packets;
+using Recube.Api.Network.NetworkPlayer;
+
+namespace $NAMESPACE$
+{
+    [Packet($ID$, $STATE$)]
+    public class $CLASS$ : IOutPacket 
+    {
+        public void Write(IByteBuffer buffer)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=C03EA3B18B33124A80460A14BCDBC664/Text/@EntryValue">$HEADER$
+using System;
+using DotNetty.Buffers;
+using Recube.Api.Network.Packets;
+using Recube.Api.Network.NetworkPlayer;
+
+namespace $NAMESPACE$
+{
+    [Packet($ID$, $STATE$)]
+    public class $CLASS$ : IInPacket 
+    {
+        public void Read(IByteBuffer buffer)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Ender/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Enderpearl/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Minecart/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Shulker/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
