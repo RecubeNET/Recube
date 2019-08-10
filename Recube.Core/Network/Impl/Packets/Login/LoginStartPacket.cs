@@ -1,4 +1,3 @@
-using System;
 using DotNetty.Buffers;
 using Recube.Api.Network.Extensions;
 using Recube.Api.Network.NetworkPlayer;
@@ -10,7 +9,8 @@ namespace Recube.Core.Network.Impl.Packets.Start
 	// ReSharper disable once UnusedMember.Global
 	public class LoginStartPacket : IInPacket
 	{
-		public String username;
+		public string username;
+
 		public void Read(IByteBuffer buffer)
 		{
 			username = buffer.ReadStringWithLength();

@@ -1,4 +1,3 @@
-using System;
 using DotNetty.Buffers;
 using Recube.Api.Network.Entities;
 using Recube.Api.Network.Extensions;
@@ -12,6 +11,7 @@ namespace Recube.Core.Network.Impl.Packets.Login
 	{
 		public string Username;
 		public UUID UUID;
+
 		public void Write(IByteBuffer buffer)
 		{
 			buffer.WriteStringWithLength(UUID.ToString());
