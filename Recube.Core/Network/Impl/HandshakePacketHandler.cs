@@ -3,8 +3,6 @@ using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 using Recube.Api.Network.Packets.Handler;
 using Recube.Core.Network.Impl.Packets.Handshake;
-using Recube.Core.Network.Impl.Packets.Login;
-using Recube.Core.Network.Impl.Packets.Start;
 using Recube.Core.Network.Impl.Packets.Status;
 using Recube.Core.Network.Packets.Handler;
 
