@@ -11,6 +11,6 @@ script:
   - sudo snap alias dotnet-sdk.dotnet dotnet
   - dotnet --version
   - dotnet build
-before_script:
-  - npm install -g eclint
-  - eclint check "Recube.Api/**/*" "Recube.Core/**/*"
+#before_script:
+#  - npm install -g eclint
+#  - eclint check "Recube.Api/**/*" "Recube.Core/**/*"
