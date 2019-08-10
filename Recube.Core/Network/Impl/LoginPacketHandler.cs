@@ -5,7 +5,6 @@ using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 using Recube.Api.Network.Packets.Handler;
 using Recube.Core.Network.Impl.Packets.Login;
-using Recube.Core.Network.Impl.Packets.Start;
 
 namespace Recube.Core.Network.Impl
 {
@@ -35,14 +34,15 @@ namespace Recube.Core.Network.Impl
 		{
 			//TODO: Send Encryption Request
 			//TODO: Dont Use Random UUID need something more unique cause username changes
-			((NetworkPlayer.NetworkPlayer) NetworkPlayer).Username = packet.username;
-			NetworkPlayer.SendPacketAsync(new LoginSuccessPacket()
+			((NetworkPlayer.NetworkPlayer) NetworkPlayer).Username = packet.Username;
+			NetworkPlayer.SendPacketAsync(new LoginSuccessPacket
 			{
-				Username = packet.username,
+				Username = packet.Username,
 				UUID = new UUID()
 			});
 			((NetworkPlayer.NetworkPlayer) NetworkPlayer).SetState(NetworkPlayerState.Play);
 		}
+
 		[PacketMethod]
 		public void OnEncryptionResponsePacket(EncryptionResponsePacket packet)
 		{
