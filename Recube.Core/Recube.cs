@@ -1,9 +1,11 @@
 using System;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using NLog;
 using Recube.Api;
 using Recube.Api.Entities;
+using Recube.Core.Block;
 using Recube.Core.Entities;
 using Recube.Core.Network;
 using Recube.Core.Network.Impl;
@@ -13,7 +15,7 @@ namespace Recube.Core
 {
 	public partial class Recube : IRecube
 	{
-		public readonly static int ProtocolVersion = 498;
+		public const int ProtocolVersion = 498;
 		public readonly static ILogger RecubeLogger = LogManager.GetLogger("Recube");
 		public readonly EntityRegistry EntityRegistry = new EntityRegistry();
 
@@ -51,6 +53,37 @@ namespace Recube.Core
 			Logger.Info("Starting Recube...");
 
 			RegisterPackets();
+			var a = new BlockParser("blocks_1.14.4.json").Parse().GetAwaiter().GetResult();
+			var b = new BlockStateRegistry();
+			foreach (var keyValuePair in a)
+			{
+				b.Register(keyValuePair.Key.Name, keyValuePair.Value);
+			}
+
+			foreach (var keyValuePair in b.GetAll())
+			{
+				var c = new StringBuilder($"{keyValuePair.Key}: \n");
+				foreach (var blockState in keyValuePair.Value)
+				{
+					var dw = new StringBuilder();
+					if (blockState.Properties != null)
+					{
+						foreach (var blockStateProperty in blockState.Properties)
+						{
+							dw.AppendJoin(", ", $"{blockStateProperty.Key}: {blockStateProperty.Value}");
+						}
+					}
+					else
+					{
+						dw.Append("NO PROPS");
+					}
+
+					c.Append($"\tID: {blockState.Id}; DEFAULT: {blockState.Default}; PROPS: {dw.ToString()}\n");
+				}
+
+				Console.WriteLine(c.ToString());
+			}
+
 
 			Task.Run(() => NetworkBootstrap.StartAsync(new IPEndPoint(IPAddress.Parse("0.0.0.0"), 25565)));
 
