@@ -116,6 +116,7 @@ namespace Recube.Core.Block
 						{
 							var parsedProperty =
 								parsedBlock.NeededProperties.FirstOrDefault(p => p.PropertyName == kvp.Key);
+
 							var parsedFirstCondition = parsedProperty?.Conditions.First(kv => true).Key;
 							if (parsedFirstCondition == null)
 								throw new FileParseException(

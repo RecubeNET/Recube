@@ -5,7 +5,10 @@ namespace Recube.Api.Block
 	public class BlockState
 	{
 		public readonly bool Default;
+
 		public readonly int Id;
+
+		// PROPERTYNAME, PROPERTYCONDITION
 		public readonly Dictionary<string, object>? Properties;
 
 		public BlockState(int id, bool @default, Dictionary<string, object>? properties)

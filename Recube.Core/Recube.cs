@@ -17,6 +17,8 @@ namespace Recube.Core
 	{
 		public const int ProtocolVersion = 498;
 		public readonly static ILogger RecubeLogger = LogManager.GetLogger("Recube");
+		public readonly BlockStateRegistry BlockStateRegistry = new BlockStateRegistry();
+
 		public readonly EntityRegistry EntityRegistry = new EntityRegistry();
 
 		public readonly Type HandshakePacketHandler = typeof(HandshakePacketHandler);
@@ -54,13 +56,12 @@ namespace Recube.Core
 
 			RegisterPackets();
 			var a = new BlockParser("blocks_1.14.4.json").Parse().GetAwaiter().GetResult();
-			var b = new BlockStateRegistry();
 			foreach (var keyValuePair in a)
 			{
-				b.Register(keyValuePair.Key.Name, keyValuePair.Value);
+				BlockStateRegistry.Register(keyValuePair.Key.Name, keyValuePair.Value);
 			}
 
-			foreach (var keyValuePair in b.GetAll())
+			foreach (var keyValuePair in BlockStateRegistry.GetAll())
 			{
 				var c = new StringBuilder($"{keyValuePair.Key}: \n");
 				foreach (var blockState in keyValuePair.Value)

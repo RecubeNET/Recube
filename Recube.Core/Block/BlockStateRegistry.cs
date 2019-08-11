@@ -68,7 +68,7 @@ namespace Recube.Core.Block
 				{
 					var blockStateProperty = blockState.Properties[propertyName];
 					if (blockStateProperty == null) return null;
-					if (blockStateProperty == value)
+					if (blockStateProperty.Equals(value))
 					{
 						return blockState;
 					}
@@ -80,6 +80,20 @@ namespace Recube.Core.Block
 			}
 
 			return null;
+		}
+
+		public List<BlockState>? GetAllBlockStatesFromBlock(string blockName)
+		{
+			_lock.EnterReadLock();
+			try
+			{
+				var l = _dictionary[blockName];
+				return l == null ? null : new List<BlockState>(l);
+			}
+			finally
+			{
+				_lock.ExitReadLock();
+			}
 		}
 
 		public Dictionary<string, List<BlockState>> GetAll()
