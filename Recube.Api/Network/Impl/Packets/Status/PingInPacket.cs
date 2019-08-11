@@ -2,16 +2,16 @@ using DotNetty.Buffers;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 
-namespace Recube.Core.Network.Impl.Packets.Status
+namespace Recube.Api.Network.Impl.Packets.Status
 {
 	[Packet(0x1, NetworkPlayerState.Status)]
-	public class PongOutPacket : IOutPacket
+	public class PingInPacket : IInPacket
 	{
 		public long Payload;
 
-		public void Write(IByteBuffer buffer)
+		public void Read(IByteBuffer buffer)
 		{
-			buffer.WriteLong(Payload);
+			Payload = buffer.ReadLong();
 		}
 	}
 }

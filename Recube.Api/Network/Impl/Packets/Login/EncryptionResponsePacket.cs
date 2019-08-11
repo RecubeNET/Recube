@@ -3,7 +3,7 @@ using Recube.Api.Network.Extensions;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 
-namespace Recube.Core.Network.Impl.Packets.Login
+namespace Recube.Api.Network.Impl.Packets.Login
 {
 	[Packet(0x01, NetworkPlayerState.Login)]
 	public class EncryptionResponsePacket : IInPacket

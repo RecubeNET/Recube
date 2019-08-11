@@ -4,7 +4,7 @@ using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 using Recube.Api.Util;
 
-namespace Recube.Core.Network.Impl.Packets.Play
+namespace Recube.Api.Network.Impl.Packets.Play
 {
 	/// <summary>
 	///     This packet is used to spawn a player when hes in view range.

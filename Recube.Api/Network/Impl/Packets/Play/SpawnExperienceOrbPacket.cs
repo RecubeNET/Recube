@@ -3,7 +3,7 @@ using Recube.Api.Network.Extensions;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 
-namespace Recube.Core.Network.Impl.Packets.Play
+namespace Recube.Api.Network.Impl.Packets.Play
 {
 	/// <summary>
 	///     Used to spawn ExperienceOrbs

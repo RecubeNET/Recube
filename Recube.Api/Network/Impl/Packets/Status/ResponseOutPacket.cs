@@ -3,7 +3,7 @@ using Recube.Api.Network.Extensions;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 
-namespace Recube.Core.Network.Impl.Packets.Status
+namespace Recube.Api.Network.Impl.Packets.Status
 {
 	[Packet(0x0, NetworkPlayerState.Status)]
 	public class ResponseOutPacket : IOutPacket

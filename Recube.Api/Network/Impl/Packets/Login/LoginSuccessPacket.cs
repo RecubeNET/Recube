@@ -4,7 +4,7 @@ using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 using Recube.Api.Util;
 
-namespace Recube.Core.Network.Impl.Packets.Login
+namespace Recube.Api.Network.Impl.Packets.Login
 {
 	[Packet(0x02, NetworkPlayerState.Login)]
 	public class LoginSuccessPacket : IOutPacket

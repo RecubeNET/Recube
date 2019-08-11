@@ -3,7 +3,7 @@ using Recube.Api.Network.Extensions;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 
-namespace Recube.Core.Network.Impl.Packets.Handshake
+namespace Recube.Api.Network.Impl.Packets.Handshake
 {
 	// https://wiki.vg/Protocol#Handshake
 	[Packet(0x0, NetworkPlayerState.Handshake)]
