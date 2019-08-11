@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
 using Recube.Api.Network.NetworkPlayer;
@@ -35,9 +36,41 @@ namespace Recube.Core.Network.NetworkPlayer
 			PacketHandler.OnActive();
 		}
 
-		public Task SendPacketAsync(IOutPacket packet)
+		public async Task SendPacketAsync(IOutPacket packet)
 		{
-			return Channel.WriteAndFlushAsync(packet);
+			if (!Channel.Active) return;
+
+			try
+			{
+				await Channel.WriteAndFlushAsync(packet);
+			}
+			catch (ChannelClosedException ignored)
+			{
+			}
+		}
+
+		public async Task WriteAsync(IOutPacket packet)
+		{
+			if (!Channel.Active) return;
+			try
+			{
+				await Channel.WriteAsync(packet);
+			}
+			catch (ChannelClosedException ignored)
+			{
+			}
+		}
+
+		public void FlushChannel()
+		{
+			if (!Channel.Active) return;
+			try
+			{
+				Channel.Flush();
+			}
+			catch (ChannelClosedException ignored)
+			{
+			}
 		}
 
 		public void SetState(NetworkPlayerState state)

@@ -36,9 +36,9 @@ namespace Recube.Core.Network.Impl
 				ReducedDebugInfo = false
 			});
 
-			for (int x = 0; x < 7; x++)
+			for (int x = 0; x < 1; x++)
 			{
-				for (int y = 0; y < 7; y++)
+				for (int y = 0; y < 1; y++)
 				{
 					var fullChunk = false;
 					var bitMask = 0b0000_0000_0000_0001;
@@ -51,24 +51,26 @@ namespace Recube.Core.Network.Impl
 					}
 
 					var blockEntities = 0;
-					Task.Run(() =>
+					/*Task.Run(() =>
+					{*/
+					_player.NetworkPlayer.WriteAsync(new ChunkDataPacketOutPacket
 					{
-						_player.NetworkPlayer.SendPacketAsync(new ChunkDataPacketOutPacket
-						{
-							ChunkX = x,
-							ChunkY = y,
-							FullChunk = false,
-							PrimaryBitMask = bitMask,
-							ByteSize = buf.ReadableBytes,
-							Data = buf.Array,
-							NumberOfBlockEntities = 0
-						});
-						buf.SafeRelease();
+						ChunkX = x,
+						ChunkY = y,
+						FullChunk = false,
+						PrimaryBitMask = bitMask,
+						ByteSize = buf.ReadableBytes,
+						Data = buf.Array,
+						NumberOfBlockEntities = 0
 					});
+					buf.SafeRelease();
+					/*});*/
 				}
 			}
 
+
 			Console.WriteLine("OKKK");
+			_player.NetworkPlayer.FlushChannel();
 			NetworkPlayer.SendPacketAsync(new SpawnPositionOutPacket
 			{
 				X = 0,
@@ -92,7 +94,7 @@ namespace Recube.Core.Network.Impl
 			if (_player == null) return;
 
 			Recube.Instance.PlayerRegistry.Deregister(_player);
-			_player.Remove();
+			Recube.Instance.EntityRegistry.DeregisterEntity(_player.EntityId);
 			NetworkBootstrap.Logger.Info($"Player {_player.Username}[{_player.Uuid}] disconnected");
 		}
 
@@ -103,7 +105,8 @@ namespace Recube.Core.Network.Impl
 
 		internal void SetPlayer(UUID uuid, string username)
 		{
-			_player = new Player(uuid, (NetworkPlayer.NetworkPlayer) NetworkPlayer, username);
+			_player = (Player) Recube.Instance.EntityRegistry.RegisterEntity(id =>
+				new Player(id, uuid, NetworkPlayer, username));
 			Recube.Instance.PlayerRegistry.Register(_player);
 			NetworkBootstrap.Logger.Info(
 				$"Player {_player.Username}[{_player.Uuid}] connected from {NetworkPlayer.Channel.RemoteAddress}");

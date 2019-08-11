@@ -4,14 +4,8 @@ namespace Recube.Api.Entities
 	{
 		public readonly uint EntityId;
 
-		public Entity()
+		public Entity(uint entityId)
 		{
-			EntityId = RecubeApi.Recube.GetEntityRegistry().RegisterEntity(this);
-		}
-
-		public void Remove()
-		{
-			RecubeApi.Recube.GetEntityRegistry().DeregisterEntity(EntityId);
 		}
 	}
 }

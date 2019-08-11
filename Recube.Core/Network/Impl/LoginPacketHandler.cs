@@ -30,25 +30,22 @@ namespace Recube.Core.Network.Impl
 		}
 
 		[PacketMethod]
-		public void OnLoginStartPacket(LoginStartPacket packet)
+		public async void OnLoginStartPacket(LoginStartPacket packet)
 		{
 			//TODO: Add Disconnect packet and event to disconnect
 			//TODO: Send Encryption Request
 			//TODO: Dont Use Random UUID need something more unique cause username changes
 			var uuid = new UUID();
 
-			Task.Run(async () =>
+			await NetworkPlayer.SendPacketAsync(new LoginSuccessPacket
 			{
-				await NetworkPlayer.SendPacketAsync(new LoginSuccessPacket
-				{
-					Username = packet.Username,
-					Uuid = uuid
-				});
-
-				NetworkPlayer.SetPacketHandler(
-					PacketHandlerFactory.CreatePacketHandler(Recube.Instance.PlayPacketHandler, NetworkPlayer));
-				((PlayPacketHandler) NetworkPlayer.PacketHandler).SetPlayer(uuid, packet.Username);
+				Username = packet.Username,
+				Uuid = uuid
 			});
+
+			var handler = PacketHandlerFactory.CreatePacketHandler(Recube.Instance.PlayPacketHandler, NetworkPlayer);
+			((PlayPacketHandler) handler).SetPlayer(uuid, packet.Username);
+			NetworkPlayer.SetPacketHandler(handler);
 		}
 
 		[PacketMethod]
