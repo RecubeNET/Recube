@@ -14,4 +14,8 @@
         <PackageReference Include="Nett" Version="0.13.0" />
         <PackageReference Include="NLog" Version="4.6.6" />
     </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Network\Impl\Packets\Play"/>
+    </ItemGroup>
 </Project>
