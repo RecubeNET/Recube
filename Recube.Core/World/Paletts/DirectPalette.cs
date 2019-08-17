@@ -8,11 +8,13 @@ namespace Recube.Core.World.Paletts
 	{
 		public uint IdForState(BlockState state)
 		{
+			//TODO: Implement
 			return BlockState.GetGlobalPaletteIDFromState(state);
 		}
 
 		public BlockState StateForId(uint id)
 		{
+			//TODO: Implement
 			return BlockState.GetStateFromGlobalPaletteID(id);
 		}
 

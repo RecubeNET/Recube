@@ -23,10 +23,11 @@ namespace Recube.Core.World
 		{
 			data.WriteInt(ChunkX);
 			data.WriteInt(ChunkZ);
-			data.WriteBoolean(true); // Full
-
+			data.WriteBoolean(true); // FULL CHUNK
 			var mask = 0;
 			var columnBuffer = ByteBufferUtil.DefaultAllocator.Buffer();
+			//TODO: THis
+
 			for (var sectionY = 0; sectionY < CHUNK_SIZE / SECTION_SIZE; sectionY++)
 			{
 				if (!IsSectionEmpty(sectionY))
@@ -45,7 +46,7 @@ namespace Recube.Core.World
 			}
 
 			data.WriteVarInt(mask);
-			data.WriteVarInt(columnBuffer.Array.Length);
+			data.WriteVarInt(columnBuffer.Capacity);
 			data.WriteBytes(columnBuffer);
 
 			// If you don't support block entities yet, use 0
@@ -70,7 +71,7 @@ namespace Recube.Core.World
 		private bool IsSectionEmpty(in int sectionY)
 		{
 			//TODO: Return proper response
-			return false;
+			return true;
 		}
 
 
@@ -99,10 +100,10 @@ namespace Recube.Core.World
 						var startLong = blockNumber * bitsPerBlock / 64;
 						var startOffset = blockNumber * bitsPerBlock % 64;
 						var endLong = ((blockNumber + 1) * bitsPerBlock - 1) / 64;
+						//TODO: BlockState
+						var block = section.GetBaseBlock(x, y, z);
 
-						var state = section.GetState(x, y, z);
-
-						ulong value = palette.IdForState(state);
+						ulong value = palette.IdForState(Recube.Instance.BlockStateRegistry.GetStateByBaseBlock(block));
 						value &= individualValueMask;
 
 						data[startLong] |= value << startOffset;
@@ -133,7 +134,7 @@ namespace Recube.Core.World
 			}
 
 			//TODO: Check for current Dimention
-			if (true)
+			if (false)
 			{
 				// IE, current dimension is overworld / 0
 				for (var y = 0; y < SECTION_SIZE; y++)

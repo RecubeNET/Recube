@@ -45,18 +45,21 @@ namespace Recube.Core.Network.Impl
 			{
 				for (var j = 0; j < 16; j++)
 				{
-					var buf = ByteBufferUtil.DefaultAllocator.Buffer();
+					var buffer = ByteBufferUtil.DefaultAllocator.Buffer();
 					var chunk = new Chunk();
-					chunk.WriteChunkDataPacket(buf);
+					chunk.ChunkX = i;
+					chunk.ChunkZ = j;
+					chunk.WriteChunkDataPacket(buffer);
 					_player.NetworkPlayer.SendPacketAsync(new ChunkDataPacketOutPacket
 					{
-						Data = buf.Array,
-						ByteSize = buf.Array.Length,
+						Data = null,
+						ByteSize = 0,
 						ChunkX = i,
 						ChunkY = j,
-						FullChunk = false,
+						FullChunk = true,
 						PrimaryBitMask = 0b0000_0000_0000_0000,
-						NumberOfBlockEntities = 0
+						NumberOfBlockEntities = 0,
+						overrideBuffer = buffer
 					});
 				}
 			}
@@ -65,17 +68,16 @@ namespace Recube.Core.Network.Impl
 			Console.WriteLine("OKKK");
 			//_player.NetworkPlayer.FlushChannel();
 
-
-			/*NetworkPlayer.SendPacketAsync(new PlayerPositionAndLookOutPacket
+			NetworkPlayer.SendPacketAsync(new PlayerPositionAndLookOutPacket
 			{
-				X = 0,
-				Y = 100,
-				Z = 0,
+				X = 1,
+				Y = 170,
+				Z = -4,
 				Yaw = 0,
 				Pitch = 0,
 				Flags = 0,
 				TeleportId = 1
-			}); */
+			});
 		}
 
 		public override void OnDisconnect()

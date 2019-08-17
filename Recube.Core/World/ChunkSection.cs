@@ -1,16 +1,17 @@
-using System.Collections.Generic;
 using Recube.Api.Block;
+using Recube.Api.Block.Impl;
 using Recube.Core.World.Paletts;
 
 namespace Recube.Core.World
 {
 	public class ChunkSection
 	{
+		public BaseBlock[,,] blocks = new BaseBlock[16, 16, 16];
 		public Palette Palette;
 
 		public ChunkSection()
 		{
-			Palette = ChoosePalette(0);
+			Palette = ChoosePalette(8);
 		}
 
 		public Palette ChoosePalette(byte bitsPerBlock)
@@ -28,10 +29,11 @@ namespace Recube.Core.World
 			return new DirectPalette();
 		}
 
-		public BlockState GetState(in int x, in int y, in int z)
+		public BaseBlock GetBaseBlock(in int x, in int y, in int z)
 		{
 			//TODO: Implement
-			return new BlockState(0, true, new Dictionary<string, object>());
+			//return blocks[x, y, z];
+			return new AirBlock();
 		}
 
 		public byte GetBlockLight(in int x, in int y, in int z)
