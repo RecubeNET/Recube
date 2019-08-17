@@ -1,15 +1,19 @@
+using System;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using Recube.Api.Entities;
 using Recube.Api.Network.Impl.Packets.Play;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 using Recube.Api.Network.Packets.Handler;
 using Recube.Api.Util;
+using Recube.Core.World;
 
 namespace Recube.Core.Network.Impl
 {
 	public class PlayPacketHandler : PacketHandler
 	{
+		public static int entityID;
 		private Player _player;
 
 		public PlayPacketHandler(INetworkPlayer networkPlayer) : base(networkPlayer)
@@ -19,65 +23,50 @@ namespace Recube.Core.Network.Impl
 		public override void OnActive()
 		{
 			((NetworkPlayer.NetworkPlayer) NetworkPlayer).SetState(NetworkPlayerState.Play);
-
+			entityID++;
 			NetworkPlayer.SendPacketAsync(new JoinGameOutPacket
 			{
-				EntityId = 1,
+				EntityId = entityID,
 				Gamemode = 1,
 				Dimension = 0,
-				Difficulty = 0,
-				MaxPlayers = 100,
+				Difficulty = 1,
+				MaxPlayers = 60,
 				LevelType = "flat",
-				ReducedDebugInfo = false
+				ReducedDebugInfo = true
 			});
 
 			NetworkPlayer.SendPacketAsync(new SpawnPositionOutPacket
 			{
-				// 202: 100000000000000000010
-				// 101: 10000000000000000001
-				X = 100,
-				Y = 50,
-				Z = 100
+				X = 1,
+				Y = 170,
+				Z = -4
 			});
-
-			/*for (var x = 0; x < 1; x++)
+			for (var i = 0; i < 16; i++)
 			{
-				for (var y = 0; y < 1; y++)
+				for (var j = 0; j < 16; j++)
 				{
-					var fullChunk = false;
-					var bitMask = 0b0000_0000_0000_0001;
 					var buf = ByteBufferUtil.DefaultAllocator.Buffer();
-					for (var i = 0; i < 4095; i++)
+					var chunk = new Chunk();
+					chunk.WriteChunkDataPacket(buf);
+					_player.NetworkPlayer.SendPacketAsync(new ChunkDataPacketOutPacket
 					{
-						var b = Recube.Instance.BlockStateRegistry
-							.GetStateByProperty(typeof(GrassBlock), typeof(GrassBlock.SnowyProperty), false);
-						buf.WriteVarInt(b.Id);
-					}
-
-					var blockEntities = 0;
-					//Task.Run(() =>
-					//{
-					_player.NetworkPlayer.WriteAsync(new ChunkDataPacketOutPacket
-					{
-						ChunkX = x,
-						ChunkY = y,
-						FullChunk = false,
-						PrimaryBitMask = bitMask,
-						ByteSize = buf.ReadableBytes,
 						Data = buf.Array,
+						ByteSize = buf.Array.Length,
+						ChunkX = i,
+						ChunkY = j,
+						FullChunk = false,
+						PrimaryBitMask = 0b0000_0000_0000_0000,
 						NumberOfBlockEntities = 0
 					});
-					buf.SafeRelease();
-					//});
 				}
 			}
 
 
 			Console.WriteLine("OKKK");
-			_player.NetworkPlayer.FlushChannel();
+			//_player.NetworkPlayer.FlushChannel();
 
 
-			NetworkPlayer.SendPacketAsync(new PlayerPositionAndLookOutPacket
+			/*NetworkPlayer.SendPacketAsync(new PlayerPositionAndLookOutPacket
 			{
 				X = 0,
 				Y = 100,

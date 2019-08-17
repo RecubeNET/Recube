@@ -1,6 +1,4 @@
-using System;
 using DotNetty.Buffers;
-using Recube.Api.Network.Extensions;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 
@@ -17,11 +15,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 		public void Write(IByteBuffer buffer)
 		{
 			_position = (((long) X & 0x3FFFFFF) << 38) | (((long) Y & 0xFFF) << 26) | ((long) Z & 0x3FFFFFF);
-			Console.WriteLine(Convert.ToString(X, 2));
-			Console.WriteLine(Convert.ToString(Y, 2));
-			Console.WriteLine(Convert.ToString(Z, 2));
-			Console.WriteLine(Convert.ToString(_position, 2));
-			buffer.WriteVarLong(_position);
+			buffer.WriteLong(_position);
 		}
 	}
 }
