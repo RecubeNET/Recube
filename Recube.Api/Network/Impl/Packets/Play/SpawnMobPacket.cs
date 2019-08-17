@@ -1,9 +1,9 @@
 using System;
 using DotNetty.Buffers;
-using Recube.Api.Network.Entities;
 using Recube.Api.Network.Extensions;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
+using Recube.Api.Util;
 
 namespace Recube.Api.Network.Impl.Packets.Play
 {
@@ -107,7 +107,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 		/// <summary>
 		///     Entity UUID
 		/// </summary>
-		public UUID UUID;
+		public Uuid UUID;
 
 		/// <summary>
 		///     Velocity X

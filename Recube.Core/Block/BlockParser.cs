@@ -132,8 +132,9 @@ namespace Recube.Core.Block
 
 					finishedBlocks.Add(parsedBlock, states);
 				}
-				
-				Recube.Instance.Logger.Info($"Successfully parsed {finishedBlocks.Count} blocks (and their state & network ids) via {_blocksJsonPath}");
+
+				Recube.Instance.Logger.Info(
+					$"Successfully parsed {finishedBlocks.Count} blocks (and their state & network ids) via {_blocksJsonPath}");
 				if (mainJObject.Count > finishedBlocks.Count)
 				{
 					Recube.Instance.Logger.Warn($"{mainJObject.Count - finishedBlocks.Count} blocks were not parsed!");
@@ -141,9 +142,9 @@ namespace Recube.Core.Block
 			}
 			catch (JsonReaderException e)
 			{
-				throw new FileParseException($"Could not parse blocks.json", e);
+				throw new FileParseException("Could not parse blocks.json", e);
 			}
-			
+
 			return finishedBlocks;
 		}
 	}

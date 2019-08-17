@@ -8,7 +8,7 @@ namespace Recube.Core.Network.Packets
 {
 	public class PacketRegistry : IPacketRegistry
 	{
-		private ConcurrentDictionary<int, Type> _packets = new ConcurrentDictionary<int, Type>();
+		private readonly ConcurrentDictionary<int, Type> _packets = new ConcurrentDictionary<int, Type>();
 
 		public bool RegisterPacket<T>(int id, T packet) where T : IPacket
 		{

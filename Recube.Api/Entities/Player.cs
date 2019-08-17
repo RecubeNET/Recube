@@ -1,5 +1,6 @@
-using Recube.Api.Network.Entities;
+using System.Text;
 using Recube.Api.Network.NetworkPlayer;
+using Recube.Api.Util;
 
 namespace Recube.Api.Entities
 {
@@ -7,7 +8,7 @@ namespace Recube.Api.Entities
 	{
 		public readonly INetworkPlayer NetworkPlayer;
 
-		public Player(uint eid, UUID uuid, INetworkPlayer networkPlayer, string username) : base(eid)
+		public Player(uint eid, Uuid uuid, INetworkPlayer networkPlayer, string username) : base(eid)
 		{
 			Uuid = uuid;
 			NetworkPlayer = networkPlayer;
@@ -15,10 +16,15 @@ namespace Recube.Api.Entities
 		}
 
 		public string Username { get; }
-		public UUID Uuid { get; }
+		public Uuid Uuid { get; }
 
 		public bool Online => NetworkPlayer.Channel.Active;
 
 		public Player GetPlayer() => this;
+
+		public Uuid GetOfflineUuid(string username)
+		{
+			return Uuid.NameUuidFromBytes(Encoding.UTF8.GetBytes("OfflinePlayer:" + username));
+		}
 	}
 }

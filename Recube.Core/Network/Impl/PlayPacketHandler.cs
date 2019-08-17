@@ -1,15 +1,10 @@
-using System;
 using System.Threading.Tasks;
-using DotNetty.Buffers;
-using DotNetty.Common.Utilities;
-using Recube.Api.Block.Impl;
 using Recube.Api.Entities;
-using Recube.Api.Network.Entities;
-using Recube.Api.Network.Extensions;
 using Recube.Api.Network.Impl.Packets.Play;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 using Recube.Api.Network.Packets.Handler;
+using Recube.Api.Util;
 
 namespace Recube.Core.Network.Impl
 {
@@ -31,12 +26,21 @@ namespace Recube.Core.Network.Impl
 				Gamemode = 1,
 				Dimension = 0,
 				Difficulty = 0,
-				MaxPlayers = 0,
-				LevelType = "",
+				MaxPlayers = 100,
+				LevelType = "flat",
 				ReducedDebugInfo = false
 			});
 
-			for (var x = 0; x < 1; x++)
+			NetworkPlayer.SendPacketAsync(new SpawnPositionOutPacket
+			{
+				// 202: 100000000000000000010
+				// 101: 10000000000000000001
+				X = 100,
+				Y = 50,
+				Z = 100
+			});
+
+			/*for (var x = 0; x < 1; x++)
 			{
 				for (var y = 0; y < 1; y++)
 				{
@@ -51,8 +55,8 @@ namespace Recube.Core.Network.Impl
 					}
 
 					var blockEntities = 0;
-					/*Task.Run(() =>
-					{*/
+					//Task.Run(() =>
+					//{
 					_player.NetworkPlayer.WriteAsync(new ChunkDataPacketOutPacket
 					{
 						ChunkX = x,
@@ -64,19 +68,15 @@ namespace Recube.Core.Network.Impl
 						NumberOfBlockEntities = 0
 					});
 					buf.SafeRelease();
-					/*});*/
+					//});
 				}
 			}
 
 
 			Console.WriteLine("OKKK");
 			_player.NetworkPlayer.FlushChannel();
-			NetworkPlayer.SendPacketAsync(new SpawnPositionOutPacket
-			{
-				X = 0,
-				Y = 100,
-				Z = 0
-			});
+
+
 			NetworkPlayer.SendPacketAsync(new PlayerPositionAndLookOutPacket
 			{
 				X = 0,
@@ -86,7 +86,7 @@ namespace Recube.Core.Network.Impl
 				Pitch = 0,
 				Flags = 0,
 				TeleportId = 1
-			});
+			}); */
 		}
 
 		public override void OnDisconnect()
@@ -103,7 +103,7 @@ namespace Recube.Core.Network.Impl
 			return Task.CompletedTask;
 		}
 
-		internal void SetPlayer(UUID uuid, string username)
+		internal void SetPlayer(Uuid uuid, string username)
 		{
 			_player = (Player) Recube.Instance.EntityRegistry.RegisterEntity(id =>
 				new Player(id, uuid, NetworkPlayer, username));

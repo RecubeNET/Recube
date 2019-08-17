@@ -14,8 +14,8 @@ namespace Recube.Api.Network.Packets.Handler
 	///     multiple states (for example login state & play state)
 	/// </summary>
 	/// <example>
-	///  To listen for specific packets just add these methods to your class
-	///  <code>
+	///     To listen for specific packets just add these methods to your class
+	///     <code>
 	///  [PacketMethod]
 	///  public void OnYourPacket(YourPacket packet)
 	///  {
@@ -36,7 +36,7 @@ namespace Recube.Api.Network.Packets.Handler
 		protected INetworkPlayer NetworkPlayer;
 
 		/// <summary>
-		/// <b>Warning: Do not add more parameters due to the fact that this class is constructed via reflections</b>
+		///     <b>Warning: Do not add more parameters due to the fact that this class is constructed via reflections</b>
 		/// </summary>
 		/// <param name="networkPlayer">The player</param>
 		protected PacketHandler(INetworkPlayer networkPlayer)
@@ -45,26 +45,26 @@ namespace Recube.Api.Network.Packets.Handler
 		}
 
 		/// <summary>
-		/// Called when the PacketHandler gets set.
-		/// If it's the first PacketHandler, then it also means that a client connected.
+		///     Called when the PacketHandler gets set.
+		///     If it's the first PacketHandler, then it also means that a client connected.
 		/// </summary>
 		public abstract void OnActive();
 
 		/// <summary>
-		/// Called when a client disconnects.
+		///     Called when a client disconnects.
 		/// </summary>
 		public abstract void OnDisconnect();
 
 		/// <summary>
-		/// Called when an incoming packet has no specified method.
+		///     Called when an incoming packet has no specified method.
 		/// </summary>
 		/// <param name="packet">The packet</param>
 		[PacketMethod]
 		public abstract Task Fallback(IInPacket packet);
 
 		/// <summary>
-		/// Gets called on an incoming packet.
-		/// Usually called by the default InboundHandler
+		///     Gets called on an incoming packet.
+		///     Usually called by the default InboundHandler
 		/// </summary>
 		/// <param name="packet">The incoming packet</param>
 		/// <exception cref="NullReferenceException">Called when the Fallback method is null</exception>

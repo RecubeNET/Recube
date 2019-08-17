@@ -2,7 +2,7 @@ using System;
 
 namespace Recube.Core.Block
 {
-	class FileParseException : Exception
+	internal class FileParseException : Exception
 	{
 		public FileParseException()
 		{

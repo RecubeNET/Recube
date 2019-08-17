@@ -6,7 +6,7 @@ using Recube.Api.Block;
 
 namespace Recube.Core.Block
 {
-	class ParsedProperty
+	internal class ParsedProperty
 	{
 		// FIRST: CONDITION LIKE: TRUE
 		// SECOND: INT VALUE OF THE ENUM VALUE
