@@ -2,6 +2,7 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using Recube.Api;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 using Recube.Core.Network.Packets;
@@ -42,8 +43,8 @@ namespace Recube.Core
 
 		private void RegisterPackets()
 		{
-			var packetClassesTypeList = Assembly.GetExecutingAssembly().GetTypes()
-				.Where(t => t.Namespace != null && t.Namespace.StartsWith("Recube.Core.Network.Impl.Packets"))
+			var packetClassesTypeList = Assembly.GetAssembly(typeof(IRecube)).GetTypes()
+				.Where(t => t.Namespace != null && t.Namespace.StartsWith("Recube.Api.Network.Impl.Packets"))
 				.ToImmutableArray();
 
 			var registered = 0;

@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
+using Recube.Api.Network.Impl.Packets.Status;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 using Recube.Api.Network.Packets.Handler;
-using Recube.Core.Network.Impl.Packets.Status;
 
 namespace Recube.Core.Network.Impl
 {
