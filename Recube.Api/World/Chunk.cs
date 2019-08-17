@@ -47,7 +47,7 @@ namespace Recube.Core.World
 			}
 
 			data.WriteVarInt(mask);
-			data.WriteVarInt(columnBuffer.Capacity);
+			data.WriteVarInt(columnBuffer.ReadableBytes);
 			data.WriteBytes(columnBuffer);
 
 			// If you don't support block entities yet, use 0
