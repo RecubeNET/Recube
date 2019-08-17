@@ -8,10 +8,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 	[Packet(0x22, NetworkPlayerState.Play)]
 	public class ChunkDataPacketOutPacket : IOutPacket
 	{
-		private Chunk chunk;
-
-		public int PrimaryBitMask;
-		//TODO: Block Entitys
+		public Chunk chunk;
 
 		public void Write(IByteBuffer buffer)
 		{

@@ -32,7 +32,7 @@ namespace Recube.Core.Network.Impl
 				Difficulty = 1,
 				MaxPlayers = 60,
 				LevelType = "flat",
-				ReducedDebugInfo = true
+				ReducedDebugInfo = false
 			});
 
 			NetworkPlayer.SendPacketAsync(new SpawnPositionOutPacket
@@ -41,22 +41,6 @@ namespace Recube.Core.Network.Impl
 				Y = 170,
 				Z = -4
 			});
-			for (var i = 0; i < 16; i++)
-			{
-				for (var j = 0; j < 16; j++)
-				{
-					var buffer = ByteBufferUtil.DefaultAllocator.Buffer();
-					var chunk = new Chunk();
-					chunk.ChunkX = i;
-					chunk.ChunkZ = j;
-					chunk.WriteChunkDataPacket(buffer);
-					_player.NetworkPlayer.SendPacketAsync(new ChunkDataPacketOutPacket());
-				}
-			}
-
-
-			Console.WriteLine("OKKK");
-			//_player.NetworkPlayer.FlushChannel();
 
 			NetworkPlayer.SendPacketAsync(new PlayerPositionAndLookOutPacket
 			{
@@ -68,6 +52,26 @@ namespace Recube.Core.Network.Impl
 				Flags = 0,
 				TeleportId = 1
 			});
+
+			for (var i = -12; i < 12; i++)
+			{
+				for (var j = -12; j < 12; j++)
+				{
+					var buffer = ByteBufferUtil.DefaultAllocator.Buffer();
+					var chunk = new Chunk();
+					chunk.ChunkX = i;
+					chunk.ChunkZ = j;
+					chunk.WriteChunkDataPacket(buffer);
+					_player.NetworkPlayer.SendPacketAsync(new ChunkDataPacketOutPacket
+					{
+						chunk = chunk
+					});
+				}
+			}
+
+
+			Console.WriteLine("OKKK");
+			//_player.NetworkPlayer.FlushChannel();
 		}
 
 		public override void OnDisconnect()
