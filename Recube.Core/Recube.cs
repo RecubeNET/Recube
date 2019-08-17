@@ -16,7 +16,7 @@ namespace Recube.Core
 	public partial class Recube : IRecube
 	{
 		public const int ProtocolVersion = 498;
-		public readonly static ILogger RecubeLogger = LogManager.GetLogger("Recube");
+		public static readonly ILogger RecubeLogger = LogManager.GetLogger("Recube");
 		public readonly BlockStateRegistry BlockStateRegistry = new BlockStateRegistry();
 
 		public readonly EntityRegistry EntityRegistry = new EntityRegistry();
@@ -33,8 +33,8 @@ namespace Recube.Core
 
 		public string Motd = @"{
 	""version"": {
-		""name"": ""1.14.4"",
-		""protocol"": 498
+		""name"": ""1.13.2"",
+		""protocol"": 404
 	},
 	""players"": {
 		""max"": 100,
@@ -79,7 +79,7 @@ namespace Recube.Core
 						dw.Append("NO PROPS");
 					}
 
-					c.Append($"\tID: {blockState.Id}; DEFAULT: {blockState.Default}; PROPS: {dw.ToString()}\n");
+					c.Append($"\tID: {blockState.Id}; DEFAULT: {blockState.Default}; PROPS: {dw}\n");
 				}
 
 				Console.WriteLine(c.ToString());
@@ -98,6 +98,6 @@ namespace Recube.Core
 
 		public IEntityRegistry GetEntityRegistry() => EntityRegistry;
 
-		static void Main() => new Recube(); // TODO ADD ARGS FOR PORT ETC.
+		private static void Main() => new Recube(); // TODO ADD ARGS FOR PORT ETC.
 	}
 }

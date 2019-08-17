@@ -1,8 +1,8 @@
 using DotNetty.Buffers;
-using Recube.Api.Network.Entities;
 using Recube.Api.Network.Extensions;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
+using Recube.Api.Util;
 
 namespace Recube.Api.Network.Impl.Packets.Login
 {
@@ -10,7 +10,7 @@ namespace Recube.Api.Network.Impl.Packets.Login
 	public class LoginSuccessPacket : IOutPacket
 	{
 		public string Username;
-		public UUID Uuid;
+		public Uuid Uuid;
 
 		public void Write(IByteBuffer buffer)
 		{

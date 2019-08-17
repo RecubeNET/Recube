@@ -1,222 +1,173 @@
 using System;
-using Recube.Api.Network.Extensions;
+using System.Security.Cryptography;
 
-namespace Recube.Api.Network.Entities
+namespace Recube.Api.Util
 {
-	public struct UUID
+	public class Uuid
 	{
-		/// <summary>
-		///     Constructs a new UUID using the specified data.
-		/// </summary>
-		/// <param name="mostSignificantBits">The most significant 64 bits of the UUID.</param>
-		/// <param name="leastSignificantBits">The least significant 64 bits of the UUID</param>
-		public UUID(long mostSignificantBits, long leastSignificantBits)
+		private static readonly long SerialVersionUid = -4856846361193249489L;
+		public readonly long LeastSigBits;
+
+		public readonly long MostSigBits;
+
+		private Uuid(byte[] data)
 		{
-			MostSignificantBits = mostSignificantBits;
-			LeastSignificantBits = leastSignificantBits;
+			long msb = 0;
+			long lsb = 0;
+			if (data.Length != 16)
+				throw new IndexOutOfRangeException("data must be 16 bytes in length");
+			for (var i = 0; i < 8; i++)
+				msb = (msb << 8) | (data[i] & 0xff);
+			for (var i = 8; i < 16; i++)
+				lsb = (lsb << 8) | (data[i] & 0xff);
+			MostSigBits = msb;
+			LeastSigBits = lsb;
 		}
 
-		/// <summary>
-		///     Creates a Random UUID
-		/// </summary>
-		public static UUID CreateRandomUuid()
+		public Uuid(long mostSigBits, long leastSigBits)
 		{
-			return new UUID(new Random().RandomLong(), new Random().RandomLong());
+			MostSigBits = mostSigBits;
+			LeastSigBits = leastSigBits;
 		}
 
-		/// <summary>
-		///     Creates a Random UUID
-		/// </summary>
-		/// <param name="seed">The Seed used to generate the UUID</param>
-		public static UUID CreateRandomUuid(string seed)
+		public static Uuid RandomUuid()
 		{
-			return new UUID(new Random(seed.GetHashCode()).RandomLong(), new Random(seed.GetHashCode()).RandomLong());
+			var randomBytes = new byte[16];
+			new Random().NextBytes(randomBytes);
+			randomBytes[6] &= 0x0f; /* clear version        */
+			randomBytes[6] |= 0x40; /* set to version 4     */
+			randomBytes[8] &= 0x3f; /* clear variant        */
+			randomBytes[8] |= 0x80; /* set to IETF variant  */
+			return new Uuid(randomBytes);
 		}
 
-		/// <summary>
-		///     Creates a Random UUID
-		/// </summary>
-		/// <param name="seed">The Seed used to generate the UUID</param>
-		public static UUID CreateRandomUuid(int seed)
+		public static Uuid NameUuidFromBytes(byte[] name)
 		{
-			return new UUID(new Random(seed.GetHashCode()).RandomLong(), new Random(seed.GetHashCode()).RandomLong());
+			var md5Bytes = MD5.Create().ComputeHash(name);
+			md5Bytes[6] &= 0x0f; /* clear version        */
+			md5Bytes[6] |= 0x30; /* set to version 3     */
+			md5Bytes[8] &= 0x3f; /* clear variant        */
+			md5Bytes[8] |= 0x80; /* set to IETF variant  */
+			return new Uuid(md5Bytes);
 		}
 
-		/// <summary>
-		///     The least significant 64 bits of this UUID's 128 bit value.
-		/// </summary>
-		public long LeastSignificantBits { get; }
-
-		/// <summary>
-		///     The most significant 64 bits of this UUID's 128 bit value.
-		/// </summary>
-		public long MostSignificantBits { get; }
-
-		/// <summary>
-		///     Returns a value that indicates whether this instance is equal to a specified
-		///     object.
-		/// </summary>
-		/// <param name="o">The object to compare with this instance.</param>
-		/// <returns>true if o is a <paramref name="uuid" /> that has the same value as this instance; otherwise, false.</returns>
-		public override bool Equals(object obj)
+		public static Uuid FromString(string name)
 		{
-			if (obj == null || !(obj is UUID))
+			var components = name.Split("-");
+			if (components.Length != 5)
+				throw new ArgumentException("Invalid UUID string: " + name);
+			for (var i = 0; i < 5; i++)
+				components[i] = "0x" + components[i];
+
+			var mostSigBits = long.Parse(components[0]);
+			mostSigBits <<= 16;
+			mostSigBits |= long.Parse(components[1]);
+			mostSigBits <<= 16;
+			mostSigBits |= long.Parse(components[2]);
+
+			var leastSigBits = long.Parse(components[3]);
+			;
+			leastSigBits <<= 48;
+			leastSigBits |= long.Parse(components[4]);
+
+			return new Uuid(mostSigBits, leastSigBits);
+		}
+
+		public int Version()
+		{
+			// Version is bits masked by 0x000000000000F000 in MS long
+			return (int) ((MostSigBits >> 12) & 0x0f);
+		}
+
+		private static long TripleShift(long n, int s)
+		{
+			if (n >= 0)
+				return n >> s;
+			return (n >> s) + (2 << ~s);
+		}
+
+
+		public int Variant()
+		{
+			// This field is composed of a varying number of bits.
+			// 0    -    -    Reserved for NCS backward compatibility
+			// 1    0    -    The IETF aka Leach-Salz variant (used by this class)
+			// 1    1    0    Reserved, Microsoft backward compatibility
+			// 1    1    1    Reserved for future definition.
+			return (int) (TripleShift(LeastSigBits, (int) (64 - TripleShift(LeastSigBits, 62))) & (LeastSigBits >> 63));
+		}
+
+		public long Timestamp()
+		{
+			if (Version() != 1)
 			{
-				return false;
+				throw new NotSupportedException("Not a time-based UUID");
 			}
 
-			var uuid = (UUID) obj;
-
-			return Equals(uuid);
+			return (MostSigBits & 0x0FFFL) << 48
+			       | ((MostSigBits >> 16) & 0x0FFFFL) << 32
+			       | TripleShift(MostSigBits, 32);
 		}
 
-		/// <summary>
-		///     Returns a value that indicates whether this instance and a specified <see cref="Uuid" />
-		///     object represent the same value.
-		/// </summary>
-		/// <param name="uuid">An object to compare to this instance.</param>
-		/// <returns>true if <paramref name="uuid" /> is equal to this instance; otherwise, false.</returns>
-		public bool Equals(UUID uuid)
+		public int ClockSequence()
 		{
-			return MostSignificantBits == uuid.MostSignificantBits && LeastSignificantBits == uuid.LeastSignificantBits;
+			if (Version() != 1)
+			{
+				throw new NotSupportedException("Not a time-based UUID");
+			}
+
+			return (int) TripleShift(LeastSigBits & 0x3FFF000000000000L, 48);
 		}
 
-		/// <summary>
-		///     Returns the hash code for this instance.
-		/// </summary>
-		/// <returns>The hash code for this instance.</returns>
-		public override int GetHashCode()
+		public long Node()
 		{
-			return ((Guid) this).GetHashCode();
+			if (Version() != 1)
+			{
+				throw new NotSupportedException("Not a time-based UUID");
+			}
+
+			return LeastSigBits & 0x0000FFFFFFFFFFFFL;
 		}
 
-		/// <summary>
-		///     <para></para>
-		///     Returns a String object representing this UUID.
-		///     </para>
-		///     <para>
-		///         The UUID string representation is as described by this BNF:
-		///     </para>
-		///     <code>
-		///   UUID                   =  "-"  "-"
-		///                             "-"
-		///                             "-"
-		///                            
-		///   time_low               = 4*
-		///   time_mid               = 2*
-		///   time_high_and_version  = 2*
-		///   variant_and_sequence   = 2*
-		///   node                   = 6*
-		///   hexOctet               = 
-		///   hexDigit               =
-		///         "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-		///         | "a" | "b" | "c" | "d" | "e" | "f"
-		///         | "A" | "B" | "C" | "D" | "E" | "F"
-		/// </code>
-		/// </summary>
-		/// <returns>A string representation of this UUID.</returns>
 		public override string ToString()
 		{
-			return ((Guid) this).ToString();
+			return Digits(MostSigBits >> 32, 8) + "-" +
+			       Digits(MostSigBits >> 16, 4) + "-" +
+			       Digits(MostSigBits, 4) + "-" +
+			       Digits(LeastSigBits >> 48, 4) + "-" +
+			       Digits(LeastSigBits, 12);
 		}
 
-		/// <summary>Indicates whether the values of two specified <see cref="T:Uuid" /> objects are equal.</summary>
-		/// <returns>true if <paramref name="a" /> and <paramref name="b" /> are equal; otherwise, false.</returns>
-		/// <param name="a">The first object to compare. </param>
-		/// <param name="b">The second object to compare. </param>
-		public static bool operator ==(UUID a, UUID b)
+		private static string Digits(long val, int digits)
 		{
-			return a.Equals(b);
+			var hi = 1L << (digits * 4);
+			return (hi | (val & (hi - 1))).ToString("X").Substring(1);
 		}
 
-		/// <summary>Indicates whether the values of two specified <see cref="T:Uuid" /> objects are not equal.</summary>
-		/// <returns>true if <paramref name="a" /> and <paramref name="b" /> are not equal; otherwise, false.</returns>
-		/// <param name="a">The first object to compare. </param>
-		/// <param name="b">The second object to compare. </param>
-		public static bool operator !=(UUID a, UUID b)
+		public override int GetHashCode()
 		{
-			return !a.Equals(b);
+			var hilo = MostSigBits ^ LeastSigBits;
+			return (int) (hilo >> 32) ^ (int) hilo;
 		}
 
-		/// <summary>Converts an <see cref="T:Uuid" /> to a <see cref="T:System.Guid" />.</summary>
-		/// <param name="value">The value to convert. </param>
-		/// <returns>A <see cref="T:System.Guid" /> that represents the converted <see cref="T:Uuid" />.</returns>
-		public static explicit operator Guid(UUID uuid)
+		public override bool Equals(object obj)
 		{
-			if (uuid == default)
-			{
-				return default;
-			}
-
-			var uuidMostSignificantBytes = BitConverter.GetBytes(uuid.MostSignificantBits);
-			var uuidLeastSignificantBytes = BitConverter.GetBytes(uuid.LeastSignificantBits);
-			var guidBytes = new byte[16]
-			{
-				uuidMostSignificantBytes[4],
-				uuidMostSignificantBytes[5],
-				uuidMostSignificantBytes[6],
-				uuidMostSignificantBytes[7],
-				uuidMostSignificantBytes[2],
-				uuidMostSignificantBytes[3],
-				uuidMostSignificantBytes[0],
-				uuidMostSignificantBytes[1],
-				uuidLeastSignificantBytes[7],
-				uuidLeastSignificantBytes[6],
-				uuidLeastSignificantBytes[5],
-				uuidLeastSignificantBytes[4],
-				uuidLeastSignificantBytes[3],
-				uuidLeastSignificantBytes[2],
-				uuidLeastSignificantBytes[1],
-				uuidLeastSignificantBytes[0]
-			};
-
-			return new Guid(guidBytes);
+			if (null == obj || !(obj is Uuid))
+				return false;
+			var id = (Uuid) obj;
+			return MostSigBits == id.MostSigBits &&
+			       LeastSigBits == id.LeastSigBits;
 		}
 
-		/// <summary>Converts a <see cref="T:System.Guid" /> to an <see cref="T:Uuid" />.</summary>
-		/// <param name="value">The value to convert. </param>
-		/// <returns>An <see cref="T:Uuid" /> that represents the converted <see cref="T:System.Guid" />.</returns>
-		public static implicit operator UUID(Guid value)
+		public int CompareTo(Uuid val)
 		{
-			if (value == default)
-			{
-				return default;
-			}
-
-			var guidBytes = value.ToByteArray();
-			var uuidBytes = new byte[16]
-			{
-				guidBytes[6],
-				guidBytes[7],
-				guidBytes[4],
-				guidBytes[5],
-				guidBytes[0],
-				guidBytes[1],
-				guidBytes[2],
-				guidBytes[3],
-				guidBytes[15],
-				guidBytes[14],
-				guidBytes[13],
-				guidBytes[12],
-				guidBytes[11],
-				guidBytes[10],
-				guidBytes[9],
-				guidBytes[8]
-			};
-
-			return new UUID(BitConverter.ToInt64(uuidBytes, 0), BitConverter.ToInt64(uuidBytes, 8));
-		}
-
-		/// <summary>
-		///     Creates a UUID from the string standard representation as described in the <see cref="ToString()" /> method.
-		/// </summary>
-		/// <param name="input">A string that specifies a UUID.</param>
-		/// <returns>A UUID with the specified value.</returns>
-		/// <exception cref="ArgumentNullException">input is null.</exception>
-		/// <exception cref="FormatException">input is not in a recognized format.</exception>
-		public static UUID FromString(string input)
-		{
-			return Guid.Parse(input);
+			// The ordering is intentionally set up so that the UUIDs
+			// can simply be numerically compared as two numbers
+			return MostSigBits < val.MostSigBits ? -1 :
+				MostSigBits > val.MostSigBits ? 1 :
+				LeastSigBits < val.LeastSigBits ? -1 :
+				LeastSigBits > val.LeastSigBits ? 1 :
+				0;
 		}
 	}
 }

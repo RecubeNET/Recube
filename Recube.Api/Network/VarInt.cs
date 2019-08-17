@@ -6,7 +6,7 @@ namespace Recube.Api.Network
 	public static class VarInt
 	{
 		/// <summary>
-		/// Reads a VarInt defined by the Minecraft protocol
+		///     Reads a VarInt defined by the Minecraft protocol
 		/// </summary>
 		/// <param name="buffer">The buffer</param>
 		/// <param name="varInt">The parsed VarInt. If the bytes could not be successfully parsed, the VarInt is null</param>
@@ -22,7 +22,7 @@ namespace Recube.Api.Network
 			{
 				nextByte = buffer.ReadByte();
 				var value = nextByte & 0b0111_1111;
-				result |= (value << (7 * bytesRead));
+				result |= value << (7 * bytesRead);
 				bytesRead++;
 
 				if (bytesRead > 5) return false;
@@ -33,7 +33,7 @@ namespace Recube.Api.Network
 		}
 
 		/// <summary>
-		/// Writes a VarInt defined by the Minecraft protocol
+		///     Writes a VarInt defined by the Minecraft protocol
 		/// </summary>
 		/// <param name="number">The int to write</param>
 		/// <param name="bytes">The parsed VarInt</param>
@@ -56,7 +56,7 @@ namespace Recube.Api.Network
 		}
 
 		/// <summary>
-		/// Reads a VarLong defined by the Minecraft protocol
+		///     Reads a VarLong defined by the Minecraft protocol
 		/// </summary>
 		/// <param name="buffer">The buffer</param>
 		/// <param name="varLong">The parsed VarLong. If the bytes could not be successfully parsed, the VarInt is null</param>
@@ -83,7 +83,7 @@ namespace Recube.Api.Network
 		}
 
 		/// <summary>
-		/// Writes a VarLong defined by the Minecraft protocol
+		///     Writes a VarLong defined by the Minecraft protocol
 		/// </summary>
 		/// <param name="number">The long to write</param>
 		/// <param name="bytes">The parsed VarLong</param>

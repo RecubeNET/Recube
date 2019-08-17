@@ -1,5 +1,5 @@
 using Recube.Api.Entities;
-using Recube.Api.Network.Entities;
+using Recube.Api.Util;
 
 namespace Recube.Api
 {
@@ -8,7 +8,7 @@ namespace Recube.Api
 	/// </summary>
 	public interface IOfflinePlayer
 	{
-		UUID Uuid { get; }
+		Uuid Uuid { get; }
 		bool Online { get; }
 
 		Player? GetPlayer();

@@ -2,7 +2,7 @@ using System;
 
 namespace Recube.Core.Block
 {
-	class PropertyParseException : Exception
+	internal class PropertyParseException : Exception
 	{
 		public PropertyParseException()
 		{

@@ -2,7 +2,7 @@ using System;
 
 namespace Recube.Core.Block
 {
-	class BlockParseException : Exception
+	internal class BlockParseException : Exception
 	{
 		public BlockParseException()
 		{

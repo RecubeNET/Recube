@@ -4,7 +4,7 @@ namespace Recube.Api
 {
 	public static class RecubeApi
 	{
-		public static IRecube Recube { get; private set; } = null;
+		public static IRecube Recube { get; private set; }
 
 		public static void SetRecubeInstance(IRecube recube)
 		{
