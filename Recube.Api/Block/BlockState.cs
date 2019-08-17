@@ -18,6 +18,20 @@ namespace Recube.Api.Block
 			Default = @default;
 		}
 
+		public static float TotalNumberOfStates { get; set; } = 14;
+
+		public static uint GetGlobalPaletteIDFromState(BlockState state)
+		{
+			//TODO: Implement
+			return 0;
+		}
+
+		public static BlockState GetStateFromGlobalPaletteID(uint id)
+		{
+			//TODO Return new BLockState
+			return new BlockState(0, true, new Dictionary<string, object>());
+		}
+
 		public bool? ReadPropertyAsBool(string name)
 		{
 			if (!Properties.ContainsKey(name)) return null;

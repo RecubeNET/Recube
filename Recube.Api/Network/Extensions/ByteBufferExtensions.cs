@@ -45,5 +45,13 @@ namespace Recube.Api.Network.Extensions
 			var length = buffer.ReadVarInt();
 			return buffer.ReadString(length, Encoding.UTF8);
 		}
+
+		public static void WriteULongArray(this IByteBuffer buffer, ulong[] data)
+		{
+			foreach (var value in data)
+			{
+				buffer.WriteLong((long) value);
+			}
+		}
 	}
 }
