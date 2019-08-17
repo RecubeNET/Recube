@@ -1,10 +1,10 @@
 using Recube.Api.Entities;
-using Recube.Api.Util;
+using Recube.Api.Network.Entities;
 
 namespace Recube.Api
 {
 	/// <summary>
-	/// Parent class of <see cref="Player"/>
+	///     Parent class of <see cref="Player" />
 	/// </summary>
 	public interface IOfflinePlayer
 	{

@@ -1,46 +1,63 @@
 using System;
+using Recube.Api.Network.Extensions;
 
-// By https://gist.github.com/rickbeerendonk/13655dd24ec574954366
-namespace Recube.Api.Util
+namespace Recube.Api.Network.Entities
 {
 	public struct UUID
 	{
-		private readonly long leastSignificantBits;
-		private readonly long mostSignificantBits;
-
 		/// <summary>
-		/// Constructs a new UUID using the specified data.
+		///     Constructs a new UUID using the specified data.
 		/// </summary>
 		/// <param name="mostSignificantBits">The most significant 64 bits of the UUID.</param>
 		/// <param name="leastSignificantBits">The least significant 64 bits of the UUID</param>
 		public UUID(long mostSignificantBits, long leastSignificantBits)
 		{
-			this.mostSignificantBits = mostSignificantBits;
-			this.leastSignificantBits = leastSignificantBits;
+			MostSignificantBits = mostSignificantBits;
+			LeastSignificantBits = leastSignificantBits;
 		}
 
 		/// <summary>
-		/// The least significant 64 bits of this UUID's 128 bit value.
+		///     Creates a Random UUID
 		/// </summary>
-		public long LeastSignificantBits
+		public static UUID CreateRandomUuid()
 		{
-			get { return leastSignificantBits; }
+			return new UUID(new Random().RandomLong(), new Random().RandomLong());
 		}
 
 		/// <summary>
-		/// The most significant 64 bits of this UUID's 128 bit value.
+		///     Creates a Random UUID
 		/// </summary>
-		public long MostSignificantBits
+		/// <param name="seed">The Seed used to generate the UUID</param>
+		public static UUID CreateRandomUuid(string seed)
 		{
-			get { return mostSignificantBits; }
+			return new UUID(new Random(seed.GetHashCode()).RandomLong(), new Random(seed.GetHashCode()).RandomLong());
 		}
 
 		/// <summary>
-		/// Returns a value that indicates whether this instance is equal to a specified
-		/// object.
+		///     Creates a Random UUID
+		/// </summary>
+		/// <param name="seed">The Seed used to generate the UUID</param>
+		public static UUID CreateRandomUuid(int seed)
+		{
+			return new UUID(new Random(seed.GetHashCode()).RandomLong(), new Random(seed.GetHashCode()).RandomLong());
+		}
+
+		/// <summary>
+		///     The least significant 64 bits of this UUID's 128 bit value.
+		/// </summary>
+		public long LeastSignificantBits { get; }
+
+		/// <summary>
+		///     The most significant 64 bits of this UUID's 128 bit value.
+		/// </summary>
+		public long MostSignificantBits { get; }
+
+		/// <summary>
+		///     Returns a value that indicates whether this instance is equal to a specified
+		///     object.
 		/// </summary>
 		/// <param name="o">The object to compare with this instance.</param>
-		/// <returns>true if o is a <paramref name="uuid"/> that has the same value as this instance; otherwise, false.</returns>
+		/// <returns>true if o is a <paramref name="uuid" /> that has the same value as this instance; otherwise, false.</returns>
 		public override bool Equals(object obj)
 		{
 			if (obj == null || !(obj is UUID))
@@ -48,25 +65,24 @@ namespace Recube.Api.Util
 				return false;
 			}
 
-			UUID uuid = (UUID) obj;
+			var uuid = (UUID) obj;
 
 			return Equals(uuid);
 		}
 
 		/// <summary>
-		/// Returns a value that indicates whether this instance and a specified <see cref="Uuid"/>
-		/// object represent the same value.
+		///     Returns a value that indicates whether this instance and a specified <see cref="Uuid" />
+		///     object represent the same value.
 		/// </summary>
 		/// <param name="uuid">An object to compare to this instance.</param>
-		/// <returns>true if <paramref name="uuid"/> is equal to this instance; otherwise, false.</returns>
+		/// <returns>true if <paramref name="uuid" /> is equal to this instance; otherwise, false.</returns>
 		public bool Equals(UUID uuid)
 		{
-			return this.mostSignificantBits == uuid.mostSignificantBits &&
-			       this.leastSignificantBits == uuid.leastSignificantBits;
+			return MostSignificantBits == uuid.MostSignificantBits && LeastSignificantBits == uuid.LeastSignificantBits;
 		}
 
 		/// <summary>
-		/// Returns the hash code for this instance.
+		///     Returns the hash code for this instance.
 		/// </summary>
 		/// <returns>The hash code for this instance.</returns>
 		public override int GetHashCode()
@@ -75,13 +91,13 @@ namespace Recube.Api.Util
 		}
 
 		/// <summary>
-		/// <para></para>
-		/// Returns a String object representing this UUID.
-		/// </para>
-		/// <para>
-		/// The UUID string representation is as described by this BNF:
-		/// </para>
-		/// <code>
+		///     <para></para>
+		///     Returns a String object representing this UUID.
+		///     </para>
+		///     <para>
+		///         The UUID string representation is as described by this BNF:
+		///     </para>
+		///     <code>
 		///   UUID                   =  "-"  "-"
 		///                             "-"
 		///                             "-"
@@ -122,19 +138,19 @@ namespace Recube.Api.Util
 			return !a.Equals(b);
 		}
 
-		/// <summary>Converts an <see cref="T:Uuid"/> to a <see cref="T:System.Guid" />.</summary>
+		/// <summary>Converts an <see cref="T:Uuid" /> to a <see cref="T:System.Guid" />.</summary>
 		/// <param name="value">The value to convert. </param>
-		/// <returns>A <see cref="T:System.Guid"/> that represents the converted <see cref="T:Uuid" />.</returns>
+		/// <returns>A <see cref="T:System.Guid" /> that represents the converted <see cref="T:Uuid" />.</returns>
 		public static explicit operator Guid(UUID uuid)
 		{
-			if (uuid == default(UUID))
+			if (uuid == default)
 			{
-				return default(Guid);
+				return default;
 			}
 
-			byte[] uuidMostSignificantBytes = BitConverter.GetBytes(uuid.mostSignificantBits);
-			byte[] uuidLeastSignificantBytes = BitConverter.GetBytes(uuid.leastSignificantBits);
-			byte[] guidBytes = new byte[16]
+			var uuidMostSignificantBytes = BitConverter.GetBytes(uuid.MostSignificantBits);
+			var uuidLeastSignificantBytes = BitConverter.GetBytes(uuid.LeastSignificantBits);
+			var guidBytes = new byte[16]
 			{
 				uuidMostSignificantBytes[4],
 				uuidMostSignificantBytes[5],
@@ -157,18 +173,18 @@ namespace Recube.Api.Util
 			return new Guid(guidBytes);
 		}
 
-		/// <summary>Converts a <see cref="T:System.Guid" /> to an <see cref="T:Uuid"/>.</summary>
+		/// <summary>Converts a <see cref="T:System.Guid" /> to an <see cref="T:Uuid" />.</summary>
 		/// <param name="value">The value to convert. </param>
-		/// <returns>An <see cref="T:Uuid"/> that represents the converted <see cref="T:System.Guid" />.</returns>
+		/// <returns>An <see cref="T:Uuid" /> that represents the converted <see cref="T:System.Guid" />.</returns>
 		public static implicit operator UUID(Guid value)
 		{
-			if (value == default(Guid))
+			if (value == default)
 			{
-				return default(UUID);
+				return default;
 			}
 
-			byte[] guidBytes = value.ToByteArray();
-			byte[] uuidBytes = new byte[16]
+			var guidBytes = value.ToByteArray();
+			var uuidBytes = new byte[16]
 			{
 				guidBytes[6],
 				guidBytes[7],
@@ -192,7 +208,7 @@ namespace Recube.Api.Util
 		}
 
 		/// <summary>
-		/// Creates a UUID from the string standard representation as described in the <see cref="ToString()"/> method.
+		///     Creates a UUID from the string standard representation as described in the <see cref="ToString()" /> method.
 		/// </summary>
 		/// <param name="input">A string that specifies a UUID.</param>
 		/// <returns>A UUID with the specified value.</returns>
@@ -200,7 +216,7 @@ namespace Recube.Api.Util
 		/// <exception cref="FormatException">input is not in a recognized format.</exception>
 		public static UUID FromString(string input)
 		{
-			return (UUID) Guid.Parse(input);
+			return Guid.Parse(input);
 		}
 	}
 }

@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Network\Entities"/>
         <Folder Include="Network\Impl\Packets\Play"/>
     </ItemGroup>
 </Project>

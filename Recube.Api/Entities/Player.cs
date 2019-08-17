@@ -1,5 +1,5 @@
+using Recube.Api.Network.Entities;
 using Recube.Api.Network.NetworkPlayer;
-using Recube.Api.Util;
 
 namespace Recube.Api.Entities
 {
