@@ -50,17 +50,7 @@ namespace Recube.Core.Network.Impl
 					chunk.ChunkX = i;
 					chunk.ChunkZ = j;
 					chunk.WriteChunkDataPacket(buffer);
-					_player.NetworkPlayer.SendPacketAsync(new ChunkDataPacketOutPacket
-					{
-						Data = null,
-						ByteSize = 0,
-						ChunkX = i,
-						ChunkY = j,
-						FullChunk = true,
-						PrimaryBitMask = 0b0000_0000_0000_0000,
-						NumberOfBlockEntities = 0,
-						overrideBuffer = buffer
-					});
+					_player.NetworkPlayer.SendPacketAsync(new ChunkDataPacketOutPacket());
 				}
 			}
 

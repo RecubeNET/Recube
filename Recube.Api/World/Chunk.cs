@@ -1,4 +1,5 @@
 using DotNetty.Buffers;
+using Recube.Api;
 using Recube.Api.Network.Extensions;
 
 namespace Recube.Core.World
@@ -103,7 +104,7 @@ namespace Recube.Core.World
 						//TODO: BlockState
 						var block = section.GetBaseBlock(x, y, z);
 
-						ulong value = palette.IdForState(Recube.Instance.BlockStateRegistry.GetStateByBaseBlock(block));
+						ulong value = palette.IdForState(RecubeApi.BlockStateRegistry.GetStateByBaseBlock(block));
 						value &= individualValueMask;
 
 						data[startLong] |= value << startOffset;
