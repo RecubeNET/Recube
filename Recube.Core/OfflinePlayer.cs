@@ -1,6 +1,6 @@
 using Recube.Api;
 using Recube.Api.Entities;
-using Recube.Api.Util;
+using Recube.Api.Network.Entities;
 
 namespace Recube.Core
 {

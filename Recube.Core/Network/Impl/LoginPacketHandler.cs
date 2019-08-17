@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
+using Recube.Api.Network.Entities;
 using Recube.Api.Network.Impl.Packets.Login;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 using Recube.Api.Network.Packets.Handler;
-using Recube.Api.Util;
 using Recube.Core.Network.Packets.Handler;
 
 namespace Recube.Core.Network.Impl
@@ -35,7 +35,7 @@ namespace Recube.Core.Network.Impl
 			//TODO: Add Disconnect packet and event to disconnect
 			//TODO: Send Encryption Request
 			//TODO: Dont Use Random UUID need something more unique cause username changes
-			var uuid = new UUID();
+			var uuid = UUID.CreateRandomUuid();
 
 			await NetworkPlayer.SendPacketAsync(new LoginSuccessPacket
 			{

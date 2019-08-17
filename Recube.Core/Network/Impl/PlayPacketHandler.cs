@@ -4,12 +4,12 @@ using DotNetty.Buffers;
 using DotNetty.Common.Utilities;
 using Recube.Api.Block.Impl;
 using Recube.Api.Entities;
+using Recube.Api.Network.Entities;
 using Recube.Api.Network.Extensions;
 using Recube.Api.Network.Impl.Packets.Play;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 using Recube.Api.Network.Packets.Handler;
-using Recube.Api.Util;
 
 namespace Recube.Core.Network.Impl
 {
@@ -36,14 +36,14 @@ namespace Recube.Core.Network.Impl
 				ReducedDebugInfo = false
 			});
 
-			for (int x = 0; x < 1; x++)
+			for (var x = 0; x < 1; x++)
 			{
-				for (int y = 0; y < 1; y++)
+				for (var y = 0; y < 1; y++)
 				{
 					var fullChunk = false;
 					var bitMask = 0b0000_0000_0000_0001;
 					var buf = ByteBufferUtil.DefaultAllocator.Buffer();
-					for (int i = 0; i < 4095; i++)
+					for (var i = 0; i < 4095; i++)
 					{
 						var b = Recube.Instance.BlockStateRegistry
 							.GetStateByProperty(typeof(GrassBlock), typeof(GrassBlock.SnowyProperty), false);

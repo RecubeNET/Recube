@@ -1,5 +1,5 @@
 using Recube.Api.Entities;
-using Recube.Api.Util;
+using Recube.Api.Network.Entities;
 using Recube.Core.Util;
 
 namespace Recube.Core.Entities
