@@ -94,6 +94,7 @@ namespace Recube.Core
 		public static Recube Instance { get; private set; }
 
 		public ILogger Logger => RecubeLogger;
+
 		public IPlayerRegistry GetPlayerRegistry() => PlayerRegistry;
 
 		public IEntityRegistry GetEntityRegistry() => EntityRegistry;
