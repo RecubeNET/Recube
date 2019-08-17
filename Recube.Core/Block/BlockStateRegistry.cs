@@ -57,6 +57,12 @@ namespace Recube.Core.Block
 			return GetStateByProperty(blockName.Name, propertyName, value);
 		}
 
+		public BlockState? GetStateByBaseBlock(BaseBlock block)
+		{
+			//TODO: Implement
+			return null;
+		}
+
 		public BlockState? GetStateByProperty(string blockName, string propertyName, object value)
 		{
 			_lock.EnterReadLock();

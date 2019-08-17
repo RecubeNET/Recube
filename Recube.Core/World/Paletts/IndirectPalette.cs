@@ -21,13 +21,15 @@ namespace Recube.Core.World.Paletts
 
 		public uint IdForState(BlockState state)
 		{
-			if (stateToId.ContainsKey(state))
+			//TODO: Implement
+			if (state != null && stateToId.ContainsKey(state))
 				return stateToId[state];
 			return 0;
 		}
 
 		public BlockState StateForId(uint id)
 		{
+			//TODO: Implement
 			if (idToState.ContainsKey(id))
 				return idToState[id];
 			return new BlockState(0, false, new Dictionary<string, object>());
