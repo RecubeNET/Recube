@@ -11,9 +11,9 @@ namespace Recube.Api.Network.Extensions
 			return nbt;
 		}
 
-		public static NbtString? GetString(this NbtCompound nbt, string tag)
+		public static string GetString(this NbtCompound nbt, string tag)
 		{
-			return nbt.Get<NbtString>(tag);
+			return nbt.Get<NbtString>(tag).Value;
 		}
 
 		public static NbtCompound AddByte(this NbtCompound nbt, string tag, byte value)
@@ -22,9 +22,9 @@ namespace Recube.Api.Network.Extensions
 			return nbt;
 		}
 
-		public static NbtByte? GetByte(this NbtCompound nbt, string tag)
+		public static byte GetByte(this NbtCompound nbt, string tag)
 		{
-			return nbt.Get<NbtByte>(tag);
+			return nbt.Get<NbtByte>(tag).Value;
 		}
 
 		public static NbtCompound AddDouble(this NbtCompound nbt, string tag, double value)
@@ -33,9 +33,9 @@ namespace Recube.Api.Network.Extensions
 			return nbt;
 		}
 
-		public static NbtDouble? GetDouble(this NbtCompound nbt, string tag)
+		public static double GetDouble(this NbtCompound nbt, string tag)
 		{
-			return nbt.Get<NbtDouble>(tag);
+			return nbt.Get<NbtDouble>(tag).Value;
 		}
 
 		public static NbtCompound AddLong(this NbtCompound nbt, string tag, long value)
@@ -44,9 +44,9 @@ namespace Recube.Api.Network.Extensions
 			return nbt;
 		}
 
-		public static NbtLong? GetLong(this NbtCompound nbt, string tag)
+		public static long GetLong(this NbtCompound nbt, string tag)
 		{
-			return nbt.Get<NbtLong>(tag);
+			return nbt.Get<NbtLong>(tag).Value;
 		}
 
 		public static NbtCompound AddInt(this NbtCompound nbt, string tag, int value)
@@ -55,9 +55,9 @@ namespace Recube.Api.Network.Extensions
 			return nbt;
 		}
 
-		public static NbtInt? GetInt(this NbtCompound nbt, string tag)
+		public static int GetInt(this NbtCompound nbt, string tag)
 		{
-			return nbt.Get<NbtInt>(tag);
+			return nbt.Get<NbtInt>(tag).Value;
 		}
 
 		public static NbtCompound AddNbtCompound(this NbtCompound nbt, NbtCompound value)
@@ -66,9 +66,26 @@ namespace Recube.Api.Network.Extensions
 			return nbt;
 		}
 
-		public static NbtCompound? GetNbtCompound(this NbtCompound nbt, string tag)
+		public static NbtCompound GetNbtCompound(this NbtCompound nbt, string tag)
 		{
 			return nbt.Get<NbtCompound>(tag);
+		}
+
+		public static NbtCompound AddBoolean(this NbtCompound nbt, string tag, bool value)
+		{
+			nbt.AddByte(tag, value ? (byte) 1 : (byte) 0);
+			return nbt;
+		}
+
+		public static bool GetBoolean(this NbtCompound nbt, string tag)
+		{
+			// ReSharper disable once PossibleNullReferenceException
+			if (nbt.Get<NbtByte>(tag) != null && nbt.Get<NbtByte>(tag).Value == 1)
+			{
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

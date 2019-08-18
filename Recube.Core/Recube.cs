@@ -59,6 +59,7 @@ namespace Recube.Core
 			RegisterPackets();
 			IWorld world = new RecubeWorld("World");
 			world.SaveWorld();
+			world.LoadWorld();
 
 			var a = new BlockParser("blocks_1.14.4.json").Parse().GetAwaiter().GetResult();
 			foreach (var keyValuePair in a)
