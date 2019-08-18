@@ -16,12 +16,19 @@ namespace Recube.Api.World
 			Hard = 3
 		}
 
-
 		public enum Dimensions
 		{
 			End = -1,
 			Overworld = 0,
 			Nether = 1
+		}
+
+		public enum GameTypes
+		{
+			Survival = 0,
+			Creative = 1,
+			Adventure = 2,
+			Spectator = 3
 		}
 
 		public enum Generators
@@ -30,20 +37,50 @@ namespace Recube.Api.World
 			Flat
 		}
 
-		public readonly Dimensions Dimension;
-		public readonly Generators Generator;
-		public readonly string worldName;
-		public int BorderSize = 60000000;
-		public float DayTime;
+		private readonly bool allowCommands = false;
+		private readonly double BorderDamagePerBlock = 0.2D;
+		private readonly double BorderSafeZone = 5D;
+		private readonly double BorderSize = 60000000D;
+		private readonly double BorderSizeLerpTarget = 60000000D;
+		private readonly long BorderSizeLerpTime = 0L;
+		private readonly double BorderWarningBlocks = 5D;
+		private readonly double BorderWarningTime = 15;
 
-		public Difficulties Difficulty;
-		public Dictionary<string, string> GameRules = new Dictionary<string, string>();
-		public long Seed;
-		public BlockPosition SpawnBlockPosition = new BlockPosition(0, 0, 0);
+		private readonly int ClearWeatherTime = 0;
+
+		//Todo: Change Version
+		private readonly int DataVersion = 512;
+		private readonly int DayTime = 0;
+		private readonly Difficulties Difficulty = Difficulties.Easy;
+		private readonly bool DificultyLocked = false;
+
+		private readonly Dictionary<string, string> GameRules = new Dictionary<string, string>();
+		private readonly GameTypes GameType = GameTypes.Survival;
+		private readonly Generators Generator = Generators.Default;
+		private readonly string GeneratorOptions = "";
+		private readonly bool Hardcore = false;
+		private readonly bool initialized = true;
+		private readonly bool MapFeatures = true;
+		private readonly bool Raining = false;
+		private readonly int RainTime = 0;
+		private readonly BlockPosition SpawnPoint = new BlockPosition(0, 0, 0);
+		private readonly bool Thundering = false;
+		private readonly int ThunderTime = 0;
+
+		//TODO: Change Version
+		private readonly int Version = 19133;
+		private readonly string WorldName;
+		private BlockPosition BorderCenter;
+		private int GeneratorVersion;
+		private long LastPlayed;
+		private long RandomSeed;
+
+		private long Time;
+
 
 		protected IWorld(string worldName)
 		{
-			this.worldName = worldName;
+			WorldName = worldName;
 			GameRules["announceAdvancements"] = "true";
 			GameRules["commandBlockOutput"] = "true";
 			GameRules["disableElytraMovementCheck"] = "false";
@@ -71,7 +108,7 @@ namespace Recube.Api.World
 
 		public void SaveWorld()
 		{
-			Directory.CreateDirectory("./" + worldName);
+			Directory.CreateDirectory("./" + WorldName);
 			var levelData = new NbtFile();
 			var Data = new NbtCompound("Data");
 
@@ -90,42 +127,43 @@ namespace Recube.Api.World
 				new NbtString("Name", "1.13.2"),
 				new NbtByte("Snapshot", 0)
 			}));
-			Data.AddByte("allowCommands", 0)
-				.AddDouble("BorderCenterX", 0)
-				.AddDouble("BorderCenterZ", 0)
-				.AddDouble("BorderDamagePerBlock", 0.2D)
-				.AddDouble("BorderSafeZone", 5)
-				.AddDouble("BorderSize", 60000000)
-				.AddDouble("BorderSizeLerpTarget", 60000000)
-				.AddLong("BorderSizeLerpTime", 0)
-				.AddDouble("BorderWarningBlocks", 5)
-				.AddDouble("BorderWarningTime", 15)
-				.AddInt("clearWeatherTime", 0)
-				.AddInt("DataVersion", 1631)
-				.AddLong("DayTime", 24570)
+			Data.AddByte("allowCommands", allowCommands ? (byte) 1 : (byte) 0)
+				.AddDouble("BorderCenterX", BorderCenter.x)
+				.AddDouble("BorderCenterZ", BorderCenter.z)
+				.AddDouble("BorderDamagePerBlock", BorderDamagePerBlock)
+				.AddDouble("BorderSafeZone", BorderSafeZone)
+				.AddDouble("BorderSize", BorderSize)
+				.AddDouble("BorderSizeLerpTarget", BorderSizeLerpTarget)
+				.AddLong("BorderSizeLerpTime", BorderSizeLerpTime)
+				.AddDouble("BorderWarningBlocks", BorderWarningBlocks)
+				.AddDouble("BorderWarningTime", BorderWarningTime)
+				.AddInt("clearWeatherTime", ClearWeatherTime)
+				.AddInt("DataVersion", DataVersion)
+				.AddLong("DayTime", DayTime)
 				.AddByte("Difficulty", (byte) Difficulty)
-				.AddByte("DifficultyLocked", 0)
-				.AddInt("GameType", 0)
+				.AddByte("DifficultyLocked", DificultyLocked ? (byte) 1 : (byte) 0)
+				.AddInt("GameType", (byte) GameType)
 				.AddString("generatorName", Generator.ToString().ToLower())
-				.AddInt("generatorVersion", 1)
-				.AddByte("hardcore", 0)
-				.AddByte("initialized", 1)
-				.AddLong("LastPlayed", 0)
-				.AddString("LevelName", worldName)
-				.AddByte("MapFeatures", 1)
-				.AddByte("raining", 0)
-				.AddInt("rainTime", 0)
-				.AddLong("RandomSeed", Seed)
+				.AddString("generatorOptions", GeneratorOptions)
+				.AddInt("generatorVersion", GeneratorVersion)
+				.AddByte("hardcore", Hardcore ? (byte) 1 : (byte) 0)
+				.AddByte("initialized", initialized ? (byte) 1 : (byte) 0)
+				.AddLong("LastPlayed", LastPlayed)
+				.AddString("LevelName", WorldName)
+				.AddByte("MapFeatures", MapFeatures ? (byte) 1 : (byte) 0)
+				.AddByte("raining", Raining ? (byte) 1 : (byte) 0)
+				.AddInt("rainTime", RainTime)
+				.AddLong("RandomSeed", RandomSeed)
 				.AddLong("SizeOnDisk", 0)
-				.AddInt("SpawnX", SpawnBlockPosition.x)
-				.AddInt("SpawnY", SpawnBlockPosition.y)
-				.AddInt("SpawnZ", SpawnBlockPosition.z)
-				.AddByte("thundering", 0)
-				.AddInt("thunderTime", 44821)
-				.AddLong("Time", 24570)
-				.AddInt("version", 19133);
+				.AddInt("SpawnX", SpawnPoint.x)
+				.AddInt("SpawnY", SpawnPoint.y)
+				.AddInt("SpawnZ", SpawnPoint.z)
+				.AddByte("thundering", Thundering ? (byte) 1 : (byte) 0)
+				.AddInt("thunderTime", ThunderTime)
+				.AddLong("Time", Time)
+				.AddInt("version", Version);
 			levelData.RootTag["Data"] = Data;
-			levelData.SaveToFile("./" + worldName + "/level.dat", NbtCompression.None);
+			levelData.SaveToFile("./" + WorldName + "/level.dat", NbtCompression.None);
 		}
 	}
 }
