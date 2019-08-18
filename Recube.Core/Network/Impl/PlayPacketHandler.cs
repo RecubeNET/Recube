@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
 using Recube.Api.Entities;
+using Recube.Api.Entities.DataStructures;
 using Recube.Api.Network.Impl.Packets.Play;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
@@ -37,9 +38,7 @@ namespace Recube.Core.Network.Impl
 
 			NetworkPlayer.SendPacketAsync(new SpawnPositionOutPacket
 			{
-				X = 1,
-				Y = 170,
-				Z = -4
+				BlockPosition = new BlockPosition(1, 170, -4)
 			});
 
 			NetworkPlayer.SendPacketAsync(new PlayerPositionAndLookOutPacket
