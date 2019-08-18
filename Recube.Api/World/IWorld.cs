@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using fNbt;
 using Recube.Api.Entities.DataStructures;
@@ -37,45 +39,42 @@ namespace Recube.Api.World
 			Flat
 		}
 
-		private readonly bool allowCommands = false;
-		private readonly double BorderDamagePerBlock = 0.2D;
-		private readonly double BorderSafeZone = 5D;
-		private readonly double BorderSize = 60000000D;
-		private readonly double BorderSizeLerpTarget = 60000000D;
-		private readonly long BorderSizeLerpTime = 0L;
-		private readonly double BorderWarningBlocks = 5D;
-		private readonly double BorderWarningTime = 15;
-
-		private readonly int ClearWeatherTime = 0;
+		public bool allowCommands;
+		public BlockPosition BorderCenter;
+		public double BorderDamagePerBlock = 0.2D;
+		public double BorderSafeZone = 5D;
+		public double BorderSize = 60000000D;
+		public double BorderSizeLerpTarget = 60000000D;
+		public long BorderSizeLerpTime;
+		public double BorderWarningBlocks = 5D;
+		public double BorderWarningTime = 15;
+		public int ClearWeatherTime;
 
 		//Todo: Change Version
-		private readonly int DataVersion = 512;
-		private readonly int DayTime = 0;
-		private readonly Difficulties Difficulty = Difficulties.Easy;
-		private readonly bool DificultyLocked = false;
-
-		private readonly Dictionary<string, string> GameRules = new Dictionary<string, string>();
-		private readonly GameTypes GameType = GameTypes.Survival;
-		private readonly Generators Generator = Generators.Default;
-		private readonly string GeneratorOptions = "";
-		private readonly bool Hardcore = false;
-		private readonly bool initialized = true;
-		private readonly bool MapFeatures = true;
-		private readonly bool Raining = false;
-		private readonly int RainTime = 0;
-		private readonly BlockPosition SpawnPoint = new BlockPosition(0, 0, 0);
-		private readonly bool Thundering = false;
-		private readonly int ThunderTime = 0;
+		public int DataVersion = 512;
+		public long DayTime;
+		public Difficulties Difficulty = Difficulties.Easy;
+		public bool DificultyLocked;
+		public Dictionary<string, string> GameRules = new Dictionary<string, string>();
+		public GameTypes GameType = GameTypes.Survival;
+		public Generators Generator = Generators.Default;
+		public string GeneratorOptions = "";
+		public int GeneratorVersion;
+		public bool Hardcore;
+		public bool initialized = true;
+		public long LastPlayed;
+		public bool MapFeatures = true;
+		public bool Raining;
+		public int RainTime;
+		public long RandomSeed;
+		public BlockPosition SpawnPoint = new BlockPosition(0, 0, 0);
+		public bool Thundering;
+		public int ThunderTime;
+		public long Time;
 
 		//TODO: Change Version
-		private readonly int Version = 19133;
-		private readonly string WorldName;
-		private BlockPosition BorderCenter;
-		private int GeneratorVersion;
-		private long LastPlayed;
-		private long RandomSeed;
-
-		private long Time;
+		public int Version = 19133;
+		public string WorldName;
 
 
 		protected IWorld(string worldName)
@@ -164,6 +163,55 @@ namespace Recube.Api.World
 				.AddInt("version", Version);
 			levelData.RootTag["Data"] = Data;
 			levelData.SaveToFile("./" + WorldName + "/level.dat", NbtCompression.None);
+		}
+
+		public void LoadWorld()
+		{
+			var levelData = new NbtFile();
+			levelData.LoadFromFile("./" + WorldName + "/level.dat");
+			var Data = levelData.RootTag.GetNbtCompound("Data");
+			if (Data == null)
+				throw new NoNullAllowedException("Data is null while trying to load world");
+			GameRules.Clear();
+			foreach (var nbtTag in Data.GetNbtCompound("GameRules"))
+			{
+				GameRules.Add(nbtTag.Name, nbtTag.StringValue);
+			}
+
+			allowCommands = Data.GetBoolean("allowCommands");
+			BorderCenter = new BlockPosition((int) Data.GetDouble("BorderCenterX"), 0,
+				(int) Data.GetDouble("BorderCenterZ"));
+			BorderDamagePerBlock = Data.GetDouble("BorderDamagePerBlock");
+			BorderSafeZone = Data.GetDouble("BorderSafeZone");
+			BorderSize = Data.GetDouble("BorderSize");
+			BorderSizeLerpTarget = Data.GetDouble("BorderSizeLerpTarget");
+			BorderSizeLerpTime = Data.GetLong("BorderSizeLerpTime");
+			BorderWarningBlocks = Data.GetDouble("BorderWarningBlocks");
+			BorderWarningTime = Data.GetDouble("BorderWarningTime");
+			ClearWeatherTime = Data.GetInt("clearWeatherTime");
+			DataVersion = Data.GetInt("DataVersion");
+			DayTime = Data.GetLong("DayTime");
+			Difficulty = (Difficulties) Data.GetByte("Difficulty");
+			DificultyLocked = Data.GetBoolean("DifficultyLocked");
+			GameType = (GameTypes) Data.GetInt("GameType");
+			Generators nbtGenerator;
+			Enum.TryParse(Data.GetString("generatorName"), true, out nbtGenerator);
+			Generator = nbtGenerator;
+			GeneratorOptions = Data.GetString("generatorOptions");
+			GeneratorVersion = Data.GetInt("generatorVersion");
+			Hardcore = Data.GetBoolean("hardcore");
+			initialized = Data.GetBoolean("initialized");
+			LastPlayed = Data.GetLong("LastPlayed");
+			WorldName = Data.GetString("LevelName");
+			MapFeatures = Data.GetBoolean("MapFeatures");
+			Raining = Data.GetBoolean("raining");
+			RainTime = Data.GetInt("rainTime");
+			RandomSeed = Data.GetLong("RandomSeed");
+			SpawnPoint = new BlockPosition(Data.GetInt("SpawnX"), Data.GetInt("SpawnY"), Data.GetInt("SpawnZ"));
+			Thundering = Data.GetBoolean("thundering");
+			ThunderTime = Data.GetInt("thunderTime");
+			Time = Data.GetLong("Time");
+			Version = Data.GetInt("version");
 		}
 	}
 }
