@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using NLog;
 using Recube.Api;
 using Recube.Api.Entities;
+using Recube.Api.World;
 using Recube.Core.Block;
 using Recube.Core.Entities;
 using Recube.Core.Network;
 using Recube.Core.Network.Impl;
 using Recube.Core.Network.NetworkPlayer;
+using Recube.Core.World;
 
 namespace Recube.Core
 {
@@ -55,6 +57,9 @@ namespace Recube.Core
 			Logger.Info("Starting Recube...");
 
 			RegisterPackets();
+			IWorld world = new RecubeWorld("World");
+			world.SaveWorld();
+
 			var a = new BlockParser("blocks_1.14.4.json").Parse().GetAwaiter().GetResult();
 			foreach (var keyValuePair in a)
 			{
