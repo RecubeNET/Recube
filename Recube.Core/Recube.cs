@@ -70,7 +70,7 @@ namespace Recube.Core
 			var fileBuffer = File.Open("./World/region/r.0.1.mca", FileMode.OpenOrCreate);
 			var file = new RegionFile(fileBuffer);
 
-
+			//TODO: Remove
 			var nbtFile = new NbtFile();
 			var levelData = new NbtCompound("Level");
 			nbtFile.RootTag.Add(levelData);
