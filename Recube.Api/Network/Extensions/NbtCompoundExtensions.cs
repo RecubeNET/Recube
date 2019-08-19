@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using fNbt;
 
 namespace Recube.Api.Network.Extensions
@@ -86,6 +87,39 @@ namespace Recube.Api.Network.Extensions
 			}
 
 			return false;
+		}
+
+		public static NbtCompound AddNbtCompoundArray(this NbtCompound nbt, string tag, List<NbtCompound> value)
+		{
+			nbt[tag] = new NbtList(tag, value, NbtTagType.Compound);
+			return nbt;
+		}
+
+		public static NbtList GetNbtCompoundArray(this NbtCompound nbt, string tag)
+		{
+			return nbt.Get<NbtList>(tag);
+		}
+
+		public static NbtCompound AddByteArray(this NbtCompound nbt, string tag, byte[] value)
+		{
+			nbt[tag] = new NbtByteArray(tag, value);
+			return nbt;
+		}
+
+		public static byte[] GetByteArray(this NbtCompound nbt, string tag)
+		{
+			return nbt.Get<NbtByteArray>(tag).Value;
+		}
+
+		public static NbtCompound AddIntArray(this NbtCompound nbt, string tag, int[] value)
+		{
+			nbt[tag] = new NbtIntArray(tag, value);
+			return nbt;
+		}
+
+		public static int[] GetIntArray(this NbtCompound nbt, string tag)
+		{
+			return nbt.Get<NbtIntArray>(tag).Value;
 		}
 	}
 }

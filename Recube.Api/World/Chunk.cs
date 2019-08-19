@@ -1,16 +1,21 @@
+using System;
 using DotNetty.Buffers;
 using Recube.Api;
 using Recube.Api.Network.Extensions;
+using Recube.Api.Util;
 
 namespace Recube.Core.World
 {
-	public class Chunk
+	public class Chunk : IDisposable
 	{
 		private readonly int CHUNK_SIZE = 256;
 		private readonly int SECTION_SIZE = 16;
+		public byte[] BiomeId = ArrayOf<byte>.Create(256, 1);
+		public byte[] BiomId = ArrayOf<byte>.Create(256, 1);
 
-		public int ChunkX;
-		public int ChunkZ;
+		public long InhabitedTime = 0;
+		public long LastUpdate = 0;
+		public bool LightPopulated = false;
 
 		public ChunkSection[] Sections = new ChunkSection[16]
 		{
@@ -20,10 +25,26 @@ namespace Recube.Core.World
 			new ChunkSection()
 		};
 
+		public bool TerrainPopulated = false;
+
+		public int X;
+		public int Z;
+
+		public Chunk(int x, int z)
+		{
+			X = x;
+			Z = z;
+		}
+
+		public void Dispose()
+		{
+			throw new NotImplementedException();
+		}
+
 		public void WriteChunkDataPacket(IByteBuffer data)
 		{
-			data.WriteInt(ChunkX);
-			data.WriteInt(ChunkZ);
+			data.WriteInt(X);
+			data.WriteInt(Z);
 			data.WriteBoolean(true); // FULL CHUNK
 			var mask = 0;
 			var columnBuffer = ByteBufferUtil.DefaultAllocator.Buffer();
@@ -152,6 +173,38 @@ namespace Recube.Core.World
 					}
 				}
 			}
+		}
+
+		public byte GetBlock(in int x, in int y, in int z)
+		{
+			/*var index = x + 16*z + 16*16*y;
+			if (index >= 0 && index < Blocks.Length)
+			{
+				return (Blocks[index]);
+			}*/
+			return 0x0;
+		}
+
+		public byte GetMetadata(in int x, in int y, in int z)
+		{
+			/*var index = x + 16*z + 16*16*y;
+			if (index >= 0 && index < Metadata.Length)
+			{
+				return (byte) (Metadata[index]);
+			}*/
+			return 0x0;
+		}
+
+		public byte GetBlocklight(in int x, in int y, in int z)
+		{
+			//return Blocklight[(x*2048) + (z*256) + y];
+			return byte.MaxValue;
+		}
+
+		public byte GetSkylight(in int x, in int y, in int z)
+		{
+			//return Skylight[(x*2048) + (z*256) + y];
+			return byte.MaxValue;
 		}
 	}
 }
