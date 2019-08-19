@@ -108,6 +108,8 @@ namespace Recube.Core
 
 			var nbtBuffer = nbtFile.SaveToBuffer(NbtCompression.ZLib);
 			file.Write(0, 0, nbtBuffer, nbtBuffer.Length);
+			Console.WriteLine(file.DoesChunkExist(0, 0));
+			Console.WriteLine(file.DoesChunkExist(0, 3));
 			file.Write(2, 0, nbtBuffer, nbtBuffer.Length);
 
 			//file.close();

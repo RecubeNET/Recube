@@ -10,6 +10,7 @@ namespace Recube.Api.World
 {
 	public abstract class IWorld
 	{
+		//TODO: Rewrite this interface
 		public enum Difficulties
 		{
 			Peaceful = 0,

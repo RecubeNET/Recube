@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using fNbt;
 using Recube.Api.Network.Extensions;
 
 namespace Recube.Api.World
@@ -56,18 +57,17 @@ namespace Recube.Api.World
 				//Reset Pointer
 				this.regionFile.Position = 0;
 
-				for (var j1 = 0; j1 < 1024; ++j1)
+				for (var offsetIndex = 0; offsetIndex < 1024; ++offsetIndex)
 				{
 					var offsetBuffer = new byte[4];
 					this.regionFile.Read(offsetBuffer, 0, 4);
-					// Making sure its a Big-Endian
-					var k = BitConverter.ToInt32(offsetBuffer.ChangeEndian(), 0);
-					offsets[j1] = k;
-					if (k != 0 && (k >> 8) + (k & 255) <= sectorsFree.Count)
+					var offset = BitConverter.ToInt32(offsetBuffer.ChangeEndian(), 0);
+					offsets[offsetIndex] = offset;
+					if (offset != 0 && (offset >> 8) + (offset & 255) <= sectorsFree.Count)
 					{
-						for (var l = 0; l < (k & 255); ++l)
+						for (var l = 0; l < (offset & 255); ++l)
 						{
-							sectorsFree[(k >> 8) + 1] = false;
+							sectorsFree[(offset >> 8) + l] = false;
 						}
 					}
 				}
@@ -84,6 +84,49 @@ namespace Recube.Api.World
 			{
 				Console.WriteLine(exception);
 				throw;
+			}
+		}
+
+		public NbtFile? getChunkData(int x, int z)
+		{
+			if (OutOfBounds(x, z))
+				return null;
+			try
+			{
+				var i = getOffset(x, z);
+				if (i == 0)
+					return null;
+
+				var j = i >> 8;
+				var k = i & 255;
+				if (j + k > sectorsFree.Count)
+					return null;
+
+				regionFile.Seek(j * 4096, SeekOrigin.Begin);
+				var dataLength = new byte[4];
+				regionFile.Read(dataLength, 0, 4);
+				var l = BitConverter.ToInt32(dataLength.ChangeEndian());
+				if (l > 4096 * k)
+					return null;
+
+				if (l <= 0)
+					return null;
+
+				var compressionType = (byte) regionFile.ReadByte();
+				if (compressionType == 1 || compressionType == 2)
+				{
+					var byte1 = new byte[l - 1];
+					regionFile.Read(byte1, 0, l - 1);
+					var file = new NbtFile();
+					file.LoadFromBuffer(byte1, 0, l - 1, NbtCompression.AutoDetect);
+					return file;
+				}
+
+				return null;
+			}
+			catch (IOException)
+			{
+				return null;
 			}
 		}
 
@@ -122,7 +165,7 @@ namespace Recube.Api.World
 				var ROffset = Offset >> 8;
 				var AndOffset = Offset & 255;
 				var NeededSectors = (length + 5) / 4096 + 1;
-				if (NeededSectors >= 256)
+				if (NeededSectors >= 256) // Chunk can not be 1MB or above so just return.
 					return;
 
 				if (ROffset != 0 && AndOffset == 1)
