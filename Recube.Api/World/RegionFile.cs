@@ -61,7 +61,7 @@ namespace Recube.Api.World
 					var offsetBuffer = new byte[4];
 					this.regionFile.Read(offsetBuffer, 0, 4);
 					// Making sure its a Big-Endian
-					var k = BitConverter.ToInt32(offsetBuffer.ToBigEndian(), 0);
+					var k = BitConverter.ToInt32(offsetBuffer.ChangeEndian(), 0);
 					offsets[j1] = k;
 					if (k != 0 && (k >> 8) + (k & 255) <= sectorsFree.Count)
 					{
@@ -76,7 +76,7 @@ namespace Recube.Api.World
 				{
 					var timeStempBuffer = new byte[4];
 					// Making sure its a Big-Endian
-					this.regionFile.Read(timeStempBuffer.ToBigEndian(), 0, 4);
+					this.regionFile.Read(timeStempBuffer.ChangeEndian(), 0, 4);
 					chunkTimestamps[k1] = BitConverter.ToInt32(timeStempBuffer);
 				}
 			}
@@ -103,7 +103,7 @@ namespace Recube.Api.World
 				regionFile.Seek(ROffset * 4096, SeekOrigin.Begin);
 				var timestampBuffer = new byte[4];
 				regionFile.Read(timestampBuffer, 0, 4);
-				var TimeStamp = BitConverter.ToInt32(timestampBuffer.ToBigEndian());
+				var TimeStamp = BitConverter.ToInt32(timestampBuffer.ChangeEndian());
 				if (TimeStamp > 4096 * AndOffset)
 					return false;
 				return TimeStamp > 0;
@@ -205,7 +205,7 @@ namespace Recube.Api.World
 		private void Write(int sectorNumber, byte[] data, int length)
 		{
 			regionFile.Seek(sectorNumber * 4096, SeekOrigin.Begin); // Set Position
-			regionFile.Write(BitConverter.GetBytes(length + 1).ToBigEndian()); // Length of Data
+			regionFile.Write(BitConverter.GetBytes(length + 1).ChangeEndian()); // Length of Data
 			regionFile.WriteByte(2); // Compression Method
 			regionFile.Write(data, 0, length); // Write Data
 		}
@@ -229,7 +229,7 @@ namespace Recube.Api.World
 		{
 			offsets[x + z * 32] = offset;
 			regionFile.Seek((x + z * 32) * 4, SeekOrigin.Begin);
-			regionFile.Write(BitConverter.GetBytes(offset).ToBigEndian());
+			regionFile.Write(BitConverter.GetBytes(offset).ChangeEndian());
 			regionFile.Flush();
 		}
 
@@ -237,7 +237,7 @@ namespace Recube.Api.World
 		{
 			chunkTimestamps[x + z * 32] = timestamp;
 			regionFile.Seek(4096 + (x + z * 32) * 4, SeekOrigin.Begin);
-			regionFile.Write(BitConverter.GetBytes(timestamp).ToBigEndian());
+			regionFile.Write(BitConverter.GetBytes(timestamp).ChangeEndian());
 			regionFile.Flush();
 		}
 
