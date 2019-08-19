@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,17 +67,17 @@ namespace Recube.Core
 			world.SaveWorld();
 			world.LoadWorld();
 
+			var fileBuffer = File.Open("./World/region/r.0.1.mca", FileMode.OpenOrCreate);
+			var file = new RegionFile(fileBuffer);
 
-			var file = new RegionFile("./World/region/r.0.1.mca");
-			Console.WriteLine(file.hasChunk(0, 2));
 
 			var nbtFile = new NbtFile();
-			var start = nbtFile.RootTag;
 			var levelData = new NbtCompound("Level");
+			nbtFile.RootTag.Add(levelData);
 			levelData.AddBoolean("TerrainPopulated", true)
 				.AddBoolean("LightPopulated", true)
 				.AddInt("xPos", 0)
-				.AddInt("zPos", 34)
+				.AddInt("zPos", 32)
 				.AddLong("LastUpdate", 239219)
 				.AddByteArray("Biomes", ArrayOf<byte>.Create(256, 127))
 				.AddNbtCompoundArray("Sections", new List<NbtCompound>
@@ -105,14 +106,11 @@ namespace Recube.Core
 				.AddLong("InhabitedTime", 62632)
 				.AddIntArray("HeightMap", ArrayOf<int>.Create(256, 10));
 
-			//ChunkData.AddNbtCompound(levelData);
-			start.AddInt("DataVersion", 512);
-			nbtFile.RootTag.AddNbtCompound(levelData);
-			var nbtBuffer = nbtFile.SaveToBuffer(NbtCompression.GZip);
-			nbtFile.SaveToFile("./Test", NbtCompression.GZip);
-			file.write(0, 2, nbtBuffer, nbtBuffer.Length);
-			Console.WriteLine(file.hasChunk(0, 2));
-			file.close();
+			var nbtBuffer = nbtFile.SaveToBuffer(NbtCompression.ZLib);
+			file.Write(0, 0, nbtBuffer, nbtBuffer.Length);
+			file.Write(2, 0, nbtBuffer, nbtBuffer.Length);
+
+			//file.close();
 
 			var a = new BlockParser("blocks_1.14.4.json").Parse().GetAwaiter().GetResult();
 			foreach (var keyValuePair in a)

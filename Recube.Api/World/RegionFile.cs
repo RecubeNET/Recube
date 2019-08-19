@@ -1,258 +1,175 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
+using Recube.Api.Network.Extensions;
 
 namespace Recube.Api.World
 {
 	public class RegionFile
 	{
-		private static readonly int VERSION_GZIP = 1;
-		private static readonly int VERSION_DEFLATE = 2;
-		private static readonly int SECTOR_BYTES = 4096;
-		private static readonly int SECTOR_INTS = SECTOR_BYTES / 4;
-		private static readonly int CHUNK_HEADER_SIZE = 5;
-
-		private static readonly byte[] emptySector = new byte[4096];
-		private readonly int[] chunkTimestamps;
-		private readonly FileStream file;
-
-		private readonly string fileName;
-		private readonly int[] offsets;
-		private readonly List<bool> sectorFree;
+		private static readonly byte[] EMPTY_SECTOR = new byte[4096];
+		private readonly int[] chunkTimestamps = new int[1024];
+		private readonly int[] offsets = new int[1024];
+		private readonly FileStream regionFile;
+		private readonly List<bool> sectorsFree;
+		private long lastModified;
 		private int sizeDelta;
 
-		public RegionFile(string fileName)
+		public RegionFile(FileStream regionFile)
 		{
-			offsets = new int[SECTOR_INTS];
-			chunkTimestamps = new int[SECTOR_INTS];
-
-			this.fileName = fileName;
-
-			Console.WriteLine("REGION LOAD: " + fileName);
-			//TODO: DOnt Hardcore World
-			Directory.CreateDirectory("./World/region");
+			this.regionFile = regionFile;
 			sizeDelta = 0;
 			try
 			{
-				if (File.Exists(fileName))
+				if (File.Exists(this.regionFile.Name))
 				{
-					LastModified = File.GetLastWriteTime(fileName).Ticks;
+					lastModified = File.GetLastWriteTime(this.regionFile.Name).Ticks;
 				}
 
-				file = File.Open(this.fileName, FileMode.OpenOrCreate);
-				if (file.Length < SECTOR_BYTES)
+				// Write header if not pressent
+				if (this.regionFile.Length < 4096L)
 				{
-					file.SetLength(SECTOR_BYTES * 2);
-					sizeDelta += SECTOR_BYTES * 2;
+					this.regionFile.SetLength(this.regionFile.Length + 4096L * 2);
+					sizeDelta += 8192;
 				}
 
-				if ((file.Length & 0xfff) != 0)
+				// File Padding
+				if ((this.regionFile.Length & 4095L) != 0L)
 				{
-					//File SIze is not a multiple of 4KB, grow it
-					for (var i = 0; i < (file.Length & 0xfff); ++i)
+					for (var i = 0; (long) i < (this.regionFile.Length & 4095L); ++i)
 					{
-						file.Write(BitConverter.GetBytes(0));
+						this.regionFile.WriteByte(0);
 					}
 				}
 
-				var nSectors = (int) file.Length / SECTOR_BYTES;
-				sectorFree = new List<bool>(nSectors);
+				// Create Free Sector List
+				var i1 = (int) this.regionFile.Length / 4096;
+				sectorsFree = new List<bool>();
 
-				for (var i = 0; i < nSectors; ++i)
+				for (var i = 0; i < i1; ++i)
 				{
-					sectorFree.Add(true);
+					sectorsFree.Add(true);
 				}
 
-				sectorFree[0] = false;
-				sectorFree[1] = false;
+				sectorsFree[0] = false;
+				sectorsFree[1] = false;
+				//Reset Pointer
+				this.regionFile.Position = 0;
 
-				file.Seek(0, SeekOrigin.Begin);
-				for (var i = 0; i < SECTOR_INTS; ++i)
+				for (var j1 = 0; j1 < 1024; ++j1)
 				{
-					var offSetByte = new byte[4];
-					file.Read(offSetByte, 0, 4);
-					var offset = BitConverter.ToInt32(offSetByte);
-					offsets[i] = offset;
-					if (offset != 0 && (offset >> 8) + (offset & 0xFF) <= sectorFree.Count)
+					var offsetBuffer = new byte[4];
+					this.regionFile.Read(offsetBuffer, 0, 4);
+					// Making sure its a Big-Endian
+					var k = BitConverter.ToInt32(offsetBuffer.ToBigEndian(), 0);
+					offsets[j1] = k;
+					if (k != 0 && (k >> 8) + (k & 255) <= sectorsFree.Count)
 					{
-						for (var sectorSum = 0; sectorSum < (offset & 0xFF); ++sectorSum)
+						for (var l = 0; l < (k & 255); ++l)
 						{
-							sectorFree[(offset >> 8) + sectorSum] = false;
+							sectorsFree[(k >> 8) + 1] = false;
 						}
 					}
 				}
 
-				for (var i = 0; i < SECTOR_INTS; ++i)
+				for (var k1 = 0; k1 < 1024; ++k1)
 				{
-					var offSetByte = new byte[4];
-					file.Read(offSetByte, 0, 4);
-					var lastModValue = BitConverter.ToInt32(offSetByte);
-					chunkTimestamps[i] = lastModValue;
+					var timeStempBuffer = new byte[4];
+					// Making sure its a Big-Endian
+					this.regionFile.Read(timeStempBuffer.ToBigEndian(), 0, 4);
+					chunkTimestamps[k1] = BitConverter.ToInt32(timeStempBuffer);
 				}
-
-				file.Flush();
 			}
-			catch (Exception exception)
+			catch (IOException exception)
 			{
 				Console.WriteLine(exception);
 				throw;
 			}
 		}
 
-		public long LastModified { get; }
-
-		public BinaryReader? getChunkDataInputStream(int x, int z)
-		{
-			if (outOfBounds(x, z))
-			{
-				Console.WriteLine($"READ {x}, {z} out of bounds");
-				return null;
-			}
-
-			try
-			{
-				var offset = getOffset(x, z);
-				if (offset == 0)
-				{
-					Console.WriteLine($"READ {x}, {z} Miss");
-					return null;
-				}
-
-				var sectorNumber = offset >> 8;
-				var numSectors = offset & 0xFF;
-
-				if (sectorNumber + numSectors > sectorFree.Count)
-				{
-					Console.WriteLine($"READ {x}, {z} Invalid Sector");
-					return null;
-				}
-
-				file.Seek(sectorNumber * SECTOR_BYTES, SeekOrigin.Begin);
-				var length = file.ReadByte();
-
-				if (length > SECTOR_BYTES * numSectors)
-				{
-					Console.WriteLine($"READ {x}, {z} Invalid length: {length} > 4096 * {numSectors}");
-					return null;
-				}
-
-				var version = (byte) file.ReadByte();
-				if (version == VERSION_GZIP)
-				{
-					var data = new byte[length - 1];
-					file.Read(data);
-					var ret =
-						new BinaryReader(new GZipStream(new MemoryStream(data), CompressionMode.Decompress));
-					Console.WriteLine($"READ {x}, {z} Found");
-					return ret;
-				}
-
-				if (version == VERSION_DEFLATE)
-				{
-					var data = new byte[length - 1];
-					file.Read(data);
-					var ret =
-						new BinaryReader(new DeflateStream(new MemoryStream(data), CompressionMode.Decompress));
-					Console.WriteLine($"READ {x}, {z} Found");
-					return ret;
-				}
-
-				Console.WriteLine($"READ {x}, {z} Unknown version " + version);
-				return null;
-			}
-			catch (IOException exception)
-			{
-				Console.WriteLine($"READ {x}, {z} IOException");
-				return null;
-			}
-		}
-
-		//TODO: Line 247
-
-		public void write(int x, int z, byte[] data, int length)
+		public void Write(int x, int z, byte[] data, int length)
 		{
 			try
 			{
-				var offset = getOffset(x, z);
-				var sectorNumber = offset >> 8;
-				var sectorsAllocated = offset & 0xFF;
-				var sectorsNeeded = (length + CHUNK_HEADER_SIZE) / SECTOR_BYTES + 1;
-				if (sectorsNeeded >= 256)
-				{
+				//Offset
+				var i = getOffset(x, z);
+				//Sector Number
+				var j = i >> 8;
+				//FreeSectors??
+				var k = i & 255;
+				var l = (length + 5) / 4096 + 1;
+				if (l >= 256)
 					return;
-				}
 
-				if (sectorNumber != 0 && sectorsAllocated == sectorsNeeded)
+				if (j != 0 && k == 1)
 				{
-					//Overwrite Sector
-					Console.WriteLine($"WRITE {x}, {z} Rewrite");
-					write(sectorNumber, data, length);
+					Write(j, data, length);
 				}
 				else
 				{
-					for (var i = 0; i < sectorsAllocated; ++i)
+					for (var i1 = 0; i1 < k; ++i1)
 					{
-						sectorFree[sectorNumber + i] = true;
+						sectorsFree[j + i1] = true;
 					}
 
-					var runStart = sectorFree.IndexOf(true);
-					var runLength = 0;
-					if (runStart != -1)
+					var l1 = sectorsFree.IndexOf(true);
+					var j1 = 0;
+					if (l1 != -1)
 					{
-						for (var i = runStart; i < sectorFree.Count; ++i)
+						for (var k1 = l1; k1 < sectorsFree.Count; ++k1)
 						{
-							if (runLength != 0)
+							if (j1 != 0)
 							{
-								if (sectorFree[i]) runLength++;
-								else runLength = 0;
+								if (sectorsFree[k1])
+								{
+									++j1;
+								}
+								else
+								{
+									j1 = 0;
+								}
 							}
-							else if (sectorFree[i])
+							else if (sectorsFree[k1])
 							{
-								runStart = i;
-								runLength = 1;
+								l1 = k1;
+								j1 = 1;
 							}
 
-							if (runLength >= sectorsNeeded)
+							if (j1 >= 1)
 							{
 								break;
 							}
 						}
 					}
 
-					if (runLength >= sectorsNeeded)
+					if (j1 >= 1)
 					{
-						// Found Free Space Reuseing
-						Console.WriteLine($"SAVE {x}, {z} Reuse");
-						sectorNumber = runStart;
-						setOffset(x, z, (sectorNumber << 8) | sectorsNeeded);
-						for (var i = 0; i < sectorsNeeded; ++i)
+						j = l1;
+						SetOffset(x, z, l1 << 8 | l);
+						for (var j2 = 0; j2 < l; j2++)
 						{
-							sectorFree[sectorNumber + i] = false;
+							sectorsFree[j + j2] = false;
 						}
 
-						write(sectorNumber, data, length);
+						Write(j, data, length);
 					}
 					else
 					{
-						//No Free SPace Grow FIle
-						Console.WriteLine($"SAVE {x}, {z} Grow File: {length}");
-						file.Seek(file.Length, SeekOrigin.Begin);
-						sectorNumber = sectorFree.Count;
-						for (var i = 0; i < sectorsNeeded; ++i)
+						regionFile.Seek(0, SeekOrigin.End);
+						j = sectorsFree.Count;
+						for (var i2 = 0; i2 < l; ++i2)
 						{
-							file.SetLength(file.Length + emptySector.Length);
-							sectorFree.Add(false);
-							file.Flush();
+							regionFile.Write(EMPTY_SECTOR);
+							sectorsFree.Add(false);
 						}
 
-						sizeDelta += SECTOR_BYTES * sectorsNeeded;
-						write(sectorNumber, data, length);
-						setOffset(x, z, (sectorNumber << 8) | sectorsNeeded);
+						sizeDelta += 4096 * l;
+						Write(j, data, length);
+						SetOffset(x, z, j << 8 | l);
 					}
 				}
 
-				setTimestamp(x, z, (int) (DateTime.Now.Ticks / 1000L));
+				SetChunkTimestamp(x, z, (int) DateTime.Now.Ticks / 1000);
 			}
 			catch (IOException exception)
 			{
@@ -261,24 +178,15 @@ namespace Recube.Api.World
 			}
 		}
 
-		private void write(int sectorNumber, byte[] data, int length)
+		private void Write(int sectorNumber, byte[] data, int length)
 		{
-			Console.WriteLine(" " + sectorNumber);
-			file.Seek(sectorNumber * SECTOR_BYTES, SeekOrigin.Begin);
-			file.Write(BitConverter.GetBytes(length + 1));
-			file.Write(BitConverter.GetBytes(VERSION_DEFLATE));
-			file.Write(data, 0, length);
-			file.Flush();
+			regionFile.Seek(sectorNumber * 4096, SeekOrigin.Begin);
+			regionFile.Write(BitConverter.GetBytes(length + 1).ToBigEndian());
+			regionFile.WriteByte(2);
+			regionFile.Write(data, 0, length);
 		}
 
-		public int getSizeDelta()
-		{
-			var ret = sizeDelta;
-			sizeDelta = 0;
-			return ret;
-		}
-
-		private bool outOfBounds(int x, int z)
+		public bool OutOfBounds(int x, int z)
 		{
 			return x < 0 || x >= 32 || z < 0 || z >= 32;
 		}
@@ -288,30 +196,39 @@ namespace Recube.Api.World
 			return offsets[x + z * 32];
 		}
 
-		public bool hasChunk(int x, int z)
+		public bool IsChunkSaved(int x, int z)
 		{
 			return getOffset(x, z) != 0;
 		}
 
-		private void setOffset(int x, int z, int offset)
+		public void SetOffset(int x, int z, int offset)
 		{
 			offsets[x + z * 32] = offset;
-			file.Seek((x + z * 32) * 4, SeekOrigin.Begin);
-			file.Write(BitConverter.GetBytes(offset));
-			file.Flush();
+			regionFile.Seek((x + z * 32) * 4, SeekOrigin.Begin);
+			// Making sure its a Big-Endian
+			regionFile.Write(BitConverter.GetBytes(offset).ToBigEndian());
+			regionFile.Flush();
 		}
 
-		private void setTimestamp(int x, int z, int value)
+		public void SetChunkTimestamp(int x, int z, int timestamp)
 		{
-			chunkTimestamps[x + z * 32] = value;
-			file.Seek(SECTOR_BYTES + (x + z * 32) * 4, SeekOrigin.Begin);
-			file.Write(BitConverter.GetBytes(value));
-			file.Flush();
+			chunkTimestamps[x + z * 32] = timestamp;
+			regionFile.Seek(4096 + (x + z * 32) * 4, SeekOrigin.Begin);
+			// Making sure its a Big-Endian
+			//660309
+			regionFile.Write(BitConverter.GetBytes(timestamp).ToBigEndian());
+			regionFile.Flush();
 		}
 
-		public void close()
+		public void Close()
 		{
-			file.Close();
+			//TODO: Improve this shit.
+			if (regionFile != null)
+			{
+				regionFile.Flush();
+				regionFile.Close();
+				regionFile.DisposeAsync();
+			}
 		}
 	}
 }
