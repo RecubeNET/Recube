@@ -87,85 +87,109 @@ namespace Recube.Api.World
 			}
 		}
 
+		public bool DoesChunkExist(int x, int z)
+		{
+			if (OutOfBounds(x, z))
+				return false;
+			var Offset = getOffset(x, z);
+			if (Offset == 0)
+				return false;
+			var ROffset = Offset >> 8;
+			var AndOffset = Offset & 255;
+			if (ROffset + AndOffset > sectorsFree.Count)
+				return false;
+			try
+			{
+				regionFile.Seek(ROffset * 4096, SeekOrigin.Begin);
+				var timestampBuffer = new byte[4];
+				regionFile.Read(timestampBuffer, 0, 4);
+				var TimeStamp = BitConverter.ToInt32(timestampBuffer.ToBigEndian());
+				if (TimeStamp > 4096 * AndOffset)
+					return false;
+				return TimeStamp > 0;
+			}
+			catch (IOException)
+			{
+				return false;
+			}
+		}
+
 		public void Write(int x, int z, byte[] data, int length)
 		{
 			try
 			{
-				//Offset
-				var i = getOffset(x, z);
-				//Sector Number
-				var j = i >> 8;
-				//FreeSectors??
-				var k = i & 255;
-				var l = (length + 5) / 4096 + 1;
-				if (l >= 256)
+				var Offset = getOffset(x, z);
+				var ROffset = Offset >> 8;
+				var AndOffset = Offset & 255;
+				var NeededSectors = (length + 5) / 4096 + 1;
+				if (NeededSectors >= 256)
 					return;
 
-				if (j != 0 && k == 1)
+				if (ROffset != 0 && AndOffset == 1)
 				{
-					Write(j, data, length);
+					Write(ROffset, data, length);
 				}
 				else
 				{
-					for (var i1 = 0; i1 < k; ++i1)
+					for (var i1 = 0; i1 < AndOffset; ++i1)
 					{
-						sectorsFree[j + i1] = true;
+						sectorsFree[ROffset + i1] = true;
 					}
 
-					var l1 = sectorsFree.IndexOf(true);
-					var j1 = 0;
-					if (l1 != -1)
+					var firstFreeSector = sectorsFree.IndexOf(true);
+					var runAmmount = 0;
+					if (firstFreeSector != -1)
 					{
-						for (var k1 = l1; k1 < sectorsFree.Count; ++k1)
+						for (var k1 = firstFreeSector; k1 < sectorsFree.Count; ++k1)
 						{
-							if (j1 != 0)
+							if (runAmmount != 0)
 							{
 								if (sectorsFree[k1])
 								{
-									++j1;
+									++runAmmount;
 								}
 								else
 								{
-									j1 = 0;
+									runAmmount = 0;
 								}
 							}
 							else if (sectorsFree[k1])
 							{
-								l1 = k1;
-								j1 = 1;
+								firstFreeSector = k1;
+								runAmmount = 1;
 							}
 
-							if (j1 >= 1)
+							if (runAmmount >= 1)
 							{
 								break;
 							}
 						}
 					}
 
-					if (j1 >= 1)
+					if (runAmmount >= 1)
 					{
-						j = l1;
-						SetOffset(x, z, l1 << 8 | l);
-						for (var j2 = 0; j2 < l; j2++)
+						ROffset = firstFreeSector;
+						SetOffset(x, z, firstFreeSector << 8 | NeededSectors);
+						for (var NeededSector = 0; NeededSector < NeededSectors; NeededSector++)
 						{
-							sectorsFree[j + j2] = false;
+							sectorsFree[ROffset + NeededSector] = false;
 						}
 
-						Write(j, data, length);
+						Write(ROffset, data, length);
 					}
 					else
 					{
 						regionFile.Seek(0, SeekOrigin.End);
-						j = sectorsFree.Count;
-						for (var i2 = 0; i2 < l; ++i2)
+						ROffset = sectorsFree.Count;
+						for (var NeededSector = 0; NeededSector < NeededSectors; ++NeededSector)
 						{
 							regionFile.Write(EMPTY_SECTOR);
 							sectorsFree.Add(false);
 						}
 
-						sizeDelta += 4096 * l;
-						Write(j, data, length);
-						SetOffset(x, z, j << 8 | l);
+						sizeDelta += 4096 * NeededSectors;
+						Write(ROffset, data, length);
+						SetOffset(x, z, ROffset << 8 | NeededSectors);
 					}
 				}
 
@@ -180,13 +204,13 @@ namespace Recube.Api.World
 
 		private void Write(int sectorNumber, byte[] data, int length)
 		{
-			regionFile.Seek(sectorNumber * 4096, SeekOrigin.Begin);
-			regionFile.Write(BitConverter.GetBytes(length + 1).ToBigEndian());
-			regionFile.WriteByte(2);
-			regionFile.Write(data, 0, length);
+			regionFile.Seek(sectorNumber * 4096, SeekOrigin.Begin); // Set Position
+			regionFile.Write(BitConverter.GetBytes(length + 1).ToBigEndian()); // Length of Data
+			regionFile.WriteByte(2); // Compression Method
+			regionFile.Write(data, 0, length); // Write Data
 		}
 
-		public bool OutOfBounds(int x, int z)
+		private bool OutOfBounds(int x, int z)
 		{
 			return x < 0 || x >= 32 || z < 0 || z >= 32;
 		}
@@ -201,21 +225,18 @@ namespace Recube.Api.World
 			return getOffset(x, z) != 0;
 		}
 
-		public void SetOffset(int x, int z, int offset)
+		private void SetOffset(int x, int z, int offset)
 		{
 			offsets[x + z * 32] = offset;
 			regionFile.Seek((x + z * 32) * 4, SeekOrigin.Begin);
-			// Making sure its a Big-Endian
 			regionFile.Write(BitConverter.GetBytes(offset).ToBigEndian());
 			regionFile.Flush();
 		}
 
-		public void SetChunkTimestamp(int x, int z, int timestamp)
+		private void SetChunkTimestamp(int x, int z, int timestamp)
 		{
 			chunkTimestamps[x + z * 32] = timestamp;
 			regionFile.Seek(4096 + (x + z * 32) * 4, SeekOrigin.Begin);
-			// Making sure its a Big-Endian
-			//660309
 			regionFile.Write(BitConverter.GetBytes(timestamp).ToBigEndian());
 			regionFile.Flush();
 		}

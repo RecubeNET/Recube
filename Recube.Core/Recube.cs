@@ -64,8 +64,8 @@ namespace Recube.Core
 			RegisterPackets();
 
 			IWorld world = new RecubeWorld("World");
-			world.SaveWorld();
-			world.LoadWorld();
+			world.SaveLevelData();
+			world.LoadLevelData();
 
 			var fileBuffer = File.Open("./World/region/r.0.1.mca", FileMode.OpenOrCreate);
 			var file = new RegionFile(fileBuffer);
