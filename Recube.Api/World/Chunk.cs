@@ -8,6 +8,7 @@ namespace Recube.Core.World
 {
 	public class Chunk : IDisposable
 	{
+		//TODO: Rewrite this class
 		private readonly int CHUNK_SIZE = 256;
 		private readonly int SECTION_SIZE = 16;
 		public byte[] BiomeId = ArrayOf<byte>.Create(256, 1);
