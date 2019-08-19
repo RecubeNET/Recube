@@ -57,9 +57,7 @@ namespace Recube.Core.Network.Impl
 				for (var j = -12; j < 12; j++)
 				{
 					var buffer = ByteBufferUtil.DefaultAllocator.Buffer();
-					var chunk = new Chunk();
-					chunk.ChunkX = i;
-					chunk.ChunkZ = j;
+					var chunk = new Chunk(i, j);
 					chunk.WriteChunkDataPacket(buffer);
 					_player.NetworkPlayer.SendPacketAsync(new ChunkDataPacketOutPacket
 					{

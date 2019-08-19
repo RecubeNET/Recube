@@ -5,6 +5,8 @@ using System.IO;
 using fNbt;
 using Recube.Api.Entities.DataStructures;
 using Recube.Api.Network.Extensions;
+using Recube.Api.Util;
+using Recube.Core.World;
 
 namespace Recube.Api.World
 {
@@ -103,6 +105,98 @@ namespace Recube.Api.World
 			GameRules["showDeathMessages"] = "true";
 			GameRules["spawnRadius"] = "10";
 			GameRules["spectatorsGenerateChunks"] = "true";
+		}
+
+		public Chunk LoadChunk(int ChunkX, int ChunkZ)
+		{
+			//TODO: Just Debug
+			var RegionX = (int) MathF.Floor(ChunkX / 32f);
+			var RegionZ = (int) MathF.Floor(ChunkZ / 32f);
+			var path = "./" + WorldName + "/region/" + $"r.{RegionX}.{RegionZ}.mca";
+			var regionFile = new NbtFile();
+			regionFile.LoadFromFile(path);
+			Console.WriteLine(regionFile.RootTag.ToString());
+			return null;
+		}
+
+		public void SaveChunk(Chunk chunk)
+		{
+			var width = 32;
+			var depth = 32;
+
+			var RegionX = (int) MathF.Floor(chunk.X / 32f);
+			var RegionZ = (int) MathF.Floor(chunk.Z / 32f);
+			var path = "./" + WorldName + "/region/" + $"r.{RegionX}.{RegionZ}.mca";
+			Directory.CreateDirectory("./" + WorldName + "/region/");
+			//Create New RegionFile
+			if (!File.Exists(path))
+			{
+				using (var regionFile = File.Open(path, FileMode.Create))
+				{
+					var buffer = new byte[8192];
+					regionFile.Write(buffer, 0, buffer.Length);
+				}
+			}
+
+			using (var regionFile = File.Open(path, FileMode.Open))
+			{
+				var buffer = new byte[8192];
+				regionFile.Read(buffer, 0, buffer.Length);
+
+				var xi = RegionX % width;
+				if (xi < 0) xi += 32;
+				var zi = RegionZ % depth;
+				if (zi < 0) zi += 32;
+
+				var tableOffset = (xi + zi * width) * 4;
+
+				regionFile.Seek(tableOffset, SeekOrigin.Begin);
+
+				var offsetBuffer = new byte[4];
+				regionFile.Read(offsetBuffer, 0, 3);
+				Array.Reverse(offsetBuffer);
+				var offset = BitConverter.ToInt32(offsetBuffer, 0) << 4;
+
+				var length = regionFile.ReadByte();
+
+				if (offset == 0 || length == 0)
+				{
+					regionFile.Seek(0, SeekOrigin.End);
+					offset = (int) regionFile.Position;
+					regionFile.Seek(tableOffset, SeekOrigin.Begin);
+
+					var bytes = BitConverter.GetBytes(offset >> 4);
+					Array.Reverse(bytes);
+					regionFile.Write(bytes, 0, 3);
+					regionFile.WriteByte(1);
+				}
+
+				regionFile.Seek(offset, SeekOrigin.Begin);
+				var waste = new byte[4];
+				regionFile.Write(waste, 0, 4); //Length
+				regionFile.WriteByte(0x2); // Compression Mode (ZLib)
+
+				//Write NBT
+				var chunkData = new NbtFile();
+				var data = chunkData.RootTag;
+				var chunkCompound = new NbtCompound($"Chunk[{xi}, {zi}");
+				var LevelCompound = new NbtCompound("Level");
+
+				LevelCompound.AddByteArray("Biomes", ArrayOf<byte>.Create(256, 1));
+				LevelCompound.AddInt("xPos", chunk.X).AddInt("zPos", chunk.Z);
+
+				chunkCompound.AddNbtCompound(LevelCompound).AddInt("DataVersion", 1631);
+				data.AddNbtCompound(chunkCompound);
+
+				var nbtBuffer = chunkData.SaveToBuffer(NbtCompression.ZLib);
+				regionFile.Write(nbtBuffer, 0, nbtBuffer.Length);
+
+				var lenght = nbtBuffer.Length + 5;
+				int reminder;
+				Math.DivRem(lenght, 4095, out reminder);
+				var padding = new byte[4095 - reminder];
+				if (padding.Length > 0) regionFile.Write(padding, 0, padding.Length);
+			}
 		}
 
 		public void SaveWorld()
