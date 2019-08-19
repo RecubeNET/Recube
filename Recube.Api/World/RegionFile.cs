@@ -16,6 +16,10 @@ namespace Recube.Api.World
 		private long lastModified;
 		private int sizeDelta;
 
+		/// <summary>
+		///     Region File Used to store 32x32 Chunks
+		/// </summary>
+		/// <param name="regionFile">FileStream of the Region File(r.X.Z.mca)</param>
 		public RegionFile(FileStream regionFile)
 		{
 			this.regionFile = regionFile;
@@ -87,6 +91,12 @@ namespace Recube.Api.World
 			}
 		}
 
+		/// <summary>
+		///     Returns a Relative Chunk within the Region
+		/// </summary>
+		/// <param name="x">Chunk X Position within the Region (0-31)</param>
+		/// <param name="z">Chunk Z Position within the Region (0-31)</param>
+		/// <returns>Chunk as NbtFile</returns>
 		public NbtFile? getChunkData(int x, int z)
 		{
 			if (OutOfBounds(x, z))
@@ -130,6 +140,12 @@ namespace Recube.Api.World
 			}
 		}
 
+		/// <summary>
+		///     Returns if the region contains the chunk
+		/// </summary>
+		/// <param name="x">Chunk X Position within the Region (0-31)</param>
+		/// <param name="z">Chunk Z Position within the Region (0-31)</param>
+		/// <returns>If the chunk exist withing the Region</returns>
 		public bool DoesChunkExist(int x, int z)
 		{
 			if (OutOfBounds(x, z))
@@ -157,6 +173,13 @@ namespace Recube.Api.World
 			}
 		}
 
+		/// <summary>
+		///     Writes NBT Data to the Chunk X, Z Within the Region
+		/// </summary>
+		/// <param name="x">Chunk X Position within the Region (0-31)</param>
+		/// <param name="z">Chunk Z Position within the Region (0-31)</param>
+		/// <param name="data">NBT Data as Byte Array</param>
+		/// <param name="length">Length of the NBT Data Written</param>
 		public void Write(int x, int z, byte[] data, int length)
 		{
 			try
@@ -263,6 +286,12 @@ namespace Recube.Api.World
 			return offsets[x + z * 32];
 		}
 
+		/// <summary>
+		///     Returns if the Chunk is saved
+		/// </summary>
+		/// <param name="x">Chunk X Position within the Region (0-31)</param>
+		/// <param name="z">Chunk Z Position within the Region (0-31)</param>
+		/// <returns>If Chunk is saved</returns>
 		public bool IsChunkSaved(int x, int z)
 		{
 			return getOffset(x, z) != 0;
