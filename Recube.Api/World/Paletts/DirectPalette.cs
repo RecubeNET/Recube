@@ -2,9 +2,9 @@ using System;
 using DotNetty.Buffers;
 using Recube.Api.Block;
 
-namespace Recube.Core.World.Paletts
+namespace Recube.Api.World.Paletts
 {
-	public class DirectPalette : Palette
+	public class DirectPalette : IPalette
 	{
 		public uint IdForState(BlockState state)
 		{

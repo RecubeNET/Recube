@@ -8,7 +8,7 @@ using Recube.Api.Network.Extensions;
 
 namespace Recube.Api.World
 {
-	public abstract class IWorld
+	public abstract class World
 	{
 		//TODO: Rewrite this interface
 		public enum Difficulties
@@ -40,7 +40,7 @@ namespace Recube.Api.World
 			Flat
 		}
 
-		public bool allowCommands;
+		public bool AllowCommands;
 		public BlockPosition BorderCenter;
 		public double BorderDamagePerBlock = 0.2D;
 		public double BorderSafeZone = 5D;
@@ -62,7 +62,7 @@ namespace Recube.Api.World
 		public string GeneratorOptions = "";
 		public int GeneratorVersion;
 		public bool Hardcore;
-		public bool initialized = true;
+		public bool Initialized = true;
 		public long LastPlayed;
 		public bool MapFeatures = true;
 		public bool Raining;
@@ -81,7 +81,7 @@ namespace Recube.Api.World
 		// var RegionZ = (int) MathF.Floor(ChunkZ / 32f);
 		// var path = "./" + WorldName + "/region/" + $"r.{RegionX}.{RegionZ}.mca";
 
-		protected IWorld(string worldName)
+		protected World(string worldName)
 		{
 			WorldName = worldName;
 			GameRules["announceAdvancements"] = "true";
@@ -113,26 +113,26 @@ namespace Recube.Api.World
 		{
 			Directory.CreateDirectory("./" + WorldName);
 			var levelData = new NbtFile();
-			var Data = new NbtCompound("Data");
+			var data = new NbtCompound("Data");
 
-			var GameRulesData = new NbtCompound("GameRules");
+			var gameRulesData = new NbtCompound("GameRules");
 			foreach (var rule in GameRules)
 			{
-				GameRulesData.AddString(rule.Key, rule.Value);
+				gameRulesData.AddString(rule.Key, rule.Value);
 			}
 
-			Data.AddNbtCompound(GameRulesData);
+			data.AddNbtCompound(gameRulesData);
 
 			//TODO: Change Version
-			Data.AddNbtCompound(new NbtCompound("Version", new List<NbtTag>
+			data.AddNbtCompound(new NbtCompound("Version", new List<NbtTag>
 			{
 				new NbtInt("Id", 1631),
 				new NbtString("Name", "1.13.2"),
 				new NbtByte("Snapshot", 0)
 			}));
-			Data.AddByte("allowCommands", allowCommands ? (byte) 1 : (byte) 0)
-				.AddDouble("BorderCenterX", BorderCenter.x)
-				.AddDouble("BorderCenterZ", BorderCenter.z)
+			data.AddByte("allowCommands", AllowCommands ? (byte) 1 : (byte) 0)
+				.AddDouble("BorderCenterX", BorderCenter.X)
+				.AddDouble("BorderCenterZ", BorderCenter.Z)
 				.AddDouble("BorderDamagePerBlock", BorderDamagePerBlock)
 				.AddDouble("BorderSafeZone", BorderSafeZone)
 				.AddDouble("BorderSize", BorderSize)
@@ -150,7 +150,7 @@ namespace Recube.Api.World
 				.AddString("generatorOptions", GeneratorOptions)
 				.AddInt("generatorVersion", GeneratorVersion)
 				.AddByte("hardcore", Hardcore ? (byte) 1 : (byte) 0)
-				.AddByte("initialized", initialized ? (byte) 1 : (byte) 0)
+				.AddByte("initialized", Initialized ? (byte) 1 : (byte) 0)
 				.AddLong("LastPlayed", LastPlayed)
 				.AddString("LevelName", WorldName)
 				.AddByte("MapFeatures", MapFeatures ? (byte) 1 : (byte) 0)
@@ -158,14 +158,14 @@ namespace Recube.Api.World
 				.AddInt("rainTime", RainTime)
 				.AddLong("RandomSeed", RandomSeed)
 				.AddLong("SizeOnDisk", 0)
-				.AddInt("SpawnX", SpawnPoint.x)
-				.AddInt("SpawnY", SpawnPoint.y)
-				.AddInt("SpawnZ", SpawnPoint.z)
+				.AddInt("SpawnX", SpawnPoint.X)
+				.AddInt("SpawnY", SpawnPoint.Y)
+				.AddInt("SpawnZ", SpawnPoint.Z)
 				.AddByte("thundering", Thundering ? (byte) 1 : (byte) 0)
 				.AddInt("thunderTime", ThunderTime)
 				.AddLong("Time", Time)
 				.AddInt("version", Version);
-			levelData.RootTag["Data"] = Data;
+			levelData.RootTag["Data"] = data;
 			levelData.SaveToFile("./" + WorldName + "/level.dat", NbtCompression.None);
 		}
 
@@ -173,49 +173,49 @@ namespace Recube.Api.World
 		{
 			var levelData = new NbtFile();
 			levelData.LoadFromFile("./" + WorldName + "/level.dat");
-			var Data = levelData.RootTag.GetNbtCompound("Data");
-			if (Data == null)
+			var data = levelData.RootTag.GetNbtCompound("Data");
+			if (data == null)
 				throw new NoNullAllowedException("Data is null while trying to load world");
 			GameRules.Clear();
-			foreach (var nbtTag in Data.GetNbtCompound("GameRules"))
+			foreach (var nbtTag in data.GetNbtCompound("GameRules"))
 			{
 				GameRules.Add(nbtTag.Name, nbtTag.StringValue);
 			}
 
-			allowCommands = Data.GetBoolean("allowCommands");
-			BorderCenter = new BlockPosition((int) Data.GetDouble("BorderCenterX"), 0,
-				(int) Data.GetDouble("BorderCenterZ"));
-			BorderDamagePerBlock = Data.GetDouble("BorderDamagePerBlock");
-			BorderSafeZone = Data.GetDouble("BorderSafeZone");
-			BorderSize = Data.GetDouble("BorderSize");
-			BorderSizeLerpTarget = Data.GetDouble("BorderSizeLerpTarget");
-			BorderSizeLerpTime = Data.GetLong("BorderSizeLerpTime");
-			BorderWarningBlocks = Data.GetDouble("BorderWarningBlocks");
-			BorderWarningTime = Data.GetDouble("BorderWarningTime");
-			ClearWeatherTime = Data.GetInt("clearWeatherTime");
-			DataVersion = Data.GetInt("DataVersion");
-			DayTime = Data.GetLong("DayTime");
-			Difficulty = (Difficulties) Data.GetByte("Difficulty");
-			DificultyLocked = Data.GetBoolean("DifficultyLocked");
-			GameType = (GameTypes) Data.GetInt("GameType");
+			AllowCommands = data.GetBoolean("allowCommands");
+			BorderCenter = new BlockPosition((int) data.GetDouble("BorderCenterX"), 0,
+				(int) data.GetDouble("BorderCenterZ"));
+			BorderDamagePerBlock = data.GetDouble("BorderDamagePerBlock");
+			BorderSafeZone = data.GetDouble("BorderSafeZone");
+			BorderSize = data.GetDouble("BorderSize");
+			BorderSizeLerpTarget = data.GetDouble("BorderSizeLerpTarget");
+			BorderSizeLerpTime = data.GetLong("BorderSizeLerpTime");
+			BorderWarningBlocks = data.GetDouble("BorderWarningBlocks");
+			BorderWarningTime = data.GetDouble("BorderWarningTime");
+			ClearWeatherTime = data.GetInt("clearWeatherTime");
+			DataVersion = data.GetInt("DataVersion");
+			DayTime = data.GetLong("DayTime");
+			Difficulty = (Difficulties) data.GetByte("Difficulty");
+			DificultyLocked = data.GetBoolean("DifficultyLocked");
+			GameType = (GameTypes) data.GetInt("GameType");
 			Generators nbtGenerator;
-			Enum.TryParse(Data.GetString("generatorName"), true, out nbtGenerator);
+			Enum.TryParse(data.GetString("generatorName"), true, out nbtGenerator);
 			Generator = nbtGenerator;
-			GeneratorOptions = Data.GetString("generatorOptions");
-			GeneratorVersion = Data.GetInt("generatorVersion");
-			Hardcore = Data.GetBoolean("hardcore");
-			initialized = Data.GetBoolean("initialized");
-			LastPlayed = Data.GetLong("LastPlayed");
-			WorldName = Data.GetString("LevelName");
-			MapFeatures = Data.GetBoolean("MapFeatures");
-			Raining = Data.GetBoolean("raining");
-			RainTime = Data.GetInt("rainTime");
-			RandomSeed = Data.GetLong("RandomSeed");
-			SpawnPoint = new BlockPosition(Data.GetInt("SpawnX"), Data.GetInt("SpawnY"), Data.GetInt("SpawnZ"));
-			Thundering = Data.GetBoolean("thundering");
-			ThunderTime = Data.GetInt("thunderTime");
-			Time = Data.GetLong("Time");
-			Version = Data.GetInt("version");
+			GeneratorOptions = data.GetString("generatorOptions");
+			GeneratorVersion = data.GetInt("generatorVersion");
+			Hardcore = data.GetBoolean("hardcore");
+			Initialized = data.GetBoolean("initialized");
+			LastPlayed = data.GetLong("LastPlayed");
+			WorldName = data.GetString("LevelName");
+			MapFeatures = data.GetBoolean("MapFeatures");
+			Raining = data.GetBoolean("raining");
+			RainTime = data.GetInt("rainTime");
+			RandomSeed = data.GetLong("RandomSeed");
+			SpawnPoint = new BlockPosition(data.GetInt("SpawnX"), data.GetInt("SpawnY"), data.GetInt("SpawnZ"));
+			Thundering = data.GetBoolean("thundering");
+			ThunderTime = data.GetInt("thunderTime");
+			Time = data.GetLong("Time");
+			Version = data.GetInt("version");
 		}
 	}
 }

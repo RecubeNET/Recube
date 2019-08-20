@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using fNbt;
 using NLog;
 using Recube.Api;
+using Recube.Api.Block;
 using Recube.Api.Entities;
 using Recube.Api.Network.Extensions;
 using Recube.Api.Util;
@@ -63,7 +64,7 @@ namespace Recube.Core
 
 			RegisterPackets();
 
-			IWorld world = new RecubeWorld("World");
+			Api.World.World world = new RecubeWorld("World");
 			world.SaveLevelData();
 			world.LoadLevelData();
 
@@ -157,6 +158,7 @@ namespace Recube.Core
 		public IPlayerRegistry GetPlayerRegistry() => PlayerRegistry;
 
 		public IEntityRegistry GetEntityRegistry() => EntityRegistry;
+		public IBlockStateRegistry GetBlockStateRegistry() => BlockStateRegistry;
 
 		private static void Main() => new Recube(); // TODO ADD ARGS FOR PORT ETC.
 	}

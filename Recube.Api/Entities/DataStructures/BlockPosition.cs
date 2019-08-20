@@ -1,21 +1,23 @@
+// ReSharper disable FieldCanBeMadeReadOnly.Global
+
 namespace Recube.Api.Entities.DataStructures
 {
 	public struct BlockPosition
 	{
-		public int x;
-		public int y;
-		public int z;
+		public int X;
+		public int Y;
+		public int Z;
 
 		public BlockPosition(int x, int y, int z)
 		{
-			this.x = x;
-			this.y = y;
-			this.z = z;
+			X = x;
+			Y = y;
+			Z = z;
 		}
 
-		public long toLong()
+		public long ToLong()
 		{
-			return (((long) x & 0x3FFFFFF) << 38) | (((long) y & 0xFFF) << 26) | ((long) z & 0x3FFFFFF);
+			return (((long) X & 0x3FFFFFF) << 38) | (((long) Y & 0xFFF) << 26) | ((long) Z & 0x3FFFFFF);
 		}
 	}
 }

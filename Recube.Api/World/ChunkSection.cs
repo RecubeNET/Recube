@@ -1,20 +1,20 @@
 using Recube.Api.Block;
 using Recube.Api.Block.Impl;
-using Recube.Core.World.Paletts;
+using Recube.Api.World.Paletts;
 
-namespace Recube.Core.World
+namespace Recube.Api.World
 {
 	public class ChunkSection
 	{
-		public BaseBlock[,,] blocks = new BaseBlock[16, 16, 16];
-		public Palette Palette;
+		public BaseBlock[,,] Blocks = new BaseBlock[16, 16, 16];
+		public IPalette Palette;
 
 		public ChunkSection()
 		{
 			Palette = ChoosePalette(8);
 		}
 
-		public Palette ChoosePalette(byte bitsPerBlock)
+		public IPalette ChoosePalette(byte bitsPerBlock)
 		{
 			if (bitsPerBlock <= 4)
 			{

@@ -1,18 +1,16 @@
 using System;
 using DotNetty.Buffers;
-using Recube.Api;
 using Recube.Api.Network.Extensions;
 using Recube.Api.Util;
 
-namespace Recube.Core.World
+namespace Recube.Api.World
 {
 	public class Chunk : IDisposable
 	{
 		//TODO: Rewrite this class
-		private readonly int CHUNK_SIZE = 256;
-		private readonly int SECTION_SIZE = 16;
+		private const int ChunkSize = 256;
+		private const int SectionSize = 16;
 		public byte[] BiomeId = ArrayOf<byte>.Create(256, 1);
-		public byte[] BiomId = ArrayOf<byte>.Create(256, 1);
 
 		public long InhabitedTime = 0;
 		public long LastUpdate = 0;
@@ -51,7 +49,7 @@ namespace Recube.Core.World
 			var columnBuffer = ByteBufferUtil.DefaultAllocator.Buffer();
 			//TODO: THis
 
-			for (var sectionY = 0; sectionY < CHUNK_SIZE / SECTION_SIZE; sectionY++)
+			for (var sectionY = 0; sectionY < ChunkSize / SectionSize; sectionY++)
 			{
 				if (!IsSectionEmpty(sectionY))
 				{
@@ -60,9 +58,9 @@ namespace Recube.Core.World
 				}
 			}
 
-			for (var z = 0; z < SECTION_SIZE; z++)
+			for (var z = 0; z < SectionSize; z++)
 			{
-				for (var x = 0; x < SECTION_SIZE; x++)
+				for (var x = 0; x < SectionSize; x++)
 				{
 					columnBuffer.WriteInt(GetBiome(x, z)); // Use 127 for 'void' if your server doesn't support biomes
 				}
@@ -113,20 +111,21 @@ namespace Recube.Core.World
 			// A bitmask that contains bitsPerBlock set bits
 			var individualValueMask = (uint) ((1 << bitsPerBlock) - 1);
 
-			for (var y = 0; y < SECTION_SIZE; y++)
+			for (var y = 0; y < SectionSize; y++)
 			{
-				for (var z = 0; z < SECTION_SIZE; z++)
+				for (var z = 0; z < SectionSize; z++)
 				{
-					for (var x = 0; x < SECTION_SIZE; x++)
+					for (var x = 0; x < SectionSize; x++)
 					{
-						var blockNumber = (y * SECTION_SIZE + z) * SECTION_SIZE + x;
+						var blockNumber = (y * SectionSize + z) * SectionSize + x;
 						var startLong = blockNumber * bitsPerBlock / 64;
 						var startOffset = blockNumber * bitsPerBlock % 64;
 						var endLong = ((blockNumber + 1) * bitsPerBlock - 1) / 64;
 						//TODO: BlockState
 						var block = section.GetBaseBlock(x, y, z);
 
-						ulong value = palette.IdForState(RecubeApi.BlockStateRegistry.GetStateByBaseBlock(block));
+						ulong value =
+							palette.IdForState(RecubeApi.Recube.GetBlockStateRegistry().GetStateByBaseBlock(block));
 						value &= individualValueMask;
 
 						data[startLong] |= value << startOffset;
@@ -142,16 +141,16 @@ namespace Recube.Core.World
 			buf.WriteVarInt(dataLength);
 			buf.WriteULongArray(data);
 
-			for (var y = 0; y < SECTION_SIZE; y++)
+			for (var y = 0; y < SectionSize; y++)
 			{
-				for (var z = 0; z < SECTION_SIZE; z++)
+				for (var z = 0; z < SectionSize; z++)
 				{
-					for (var x = 0; x < SECTION_SIZE; x += 2)
+					for (var x = 0; x < SectionSize; x += 2)
 					{
 						// Note: x += 2 above; we read 2 values along x each time
-						var ligntValue =
+						var lightValue =
 							(byte) (section.GetBlockLight(x, y, z) | (section.GetBlockLight(x + 1, y, z) << 4));
-						buf.WriteByte(ligntValue);
+						buf.WriteByte(lightValue);
 					}
 				}
 			}
@@ -160,11 +159,11 @@ namespace Recube.Core.World
 			if (false)
 			{
 				// IE, current dimension is overworld / 0
-				for (var y = 0; y < SECTION_SIZE; y++)
+				for (var y = 0; y < SectionSize; y++)
 				{
-					for (var z = 0; z < SECTION_SIZE; z++)
+					for (var z = 0; z < SectionSize; z++)
 					{
-						for (var x = 0; x < SECTION_SIZE; x += 2)
+						for (var x = 0; x < SectionSize; x += 2)
 						{
 							// Note: x += 2 above; we read 2 values along x each time
 							var skyLight =
@@ -196,7 +195,7 @@ namespace Recube.Core.World
 			return 0x0;
 		}
 
-		public byte GetBlocklight(in int x, in int y, in int z)
+		public byte GetBlockLight(in int x, in int y, in int z)
 		{
 			//return Blocklight[(x*2048) + (z*256) + y];
 			return byte.MaxValue;

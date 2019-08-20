@@ -12,6 +12,12 @@ namespace Recube.Core.Block
 		private readonly Dictionary<string, List<BlockState>> _dictionary = new Dictionary<string, List<BlockState>>();
 		private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
 
+		public BlockState? GetStateByBaseBlock(BaseBlock block)
+		{
+			//TODO: Implement
+			return null;
+		}
+
 		public bool Register(string blockName, List<BlockState> blockStates)
 		{
 			_lock.EnterWriteLock();
@@ -55,12 +61,6 @@ namespace Recube.Core.Block
 				throw new InvalidOperationException($"Property needs to have the {nameof(PropertyStateAttribute)}");
 			var propertyName = attr.PropertyKey;
 			return GetStateByProperty(blockName.Name, propertyName, value);
-		}
-
-		public BlockState? GetStateByBaseBlock(BaseBlock block)
-		{
-			//TODO: Implement
-			return null;
 		}
 
 		public BlockState? GetStateByProperty(string blockName, string propertyName, object value)
