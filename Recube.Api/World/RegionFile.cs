@@ -8,13 +8,13 @@ namespace Recube.Api.World
 {
 	public class RegionFile
 	{
-		private static readonly byte[] EMPTY_SECTOR = new byte[4096];
-		private readonly int[] chunkTimestamps = new int[1024];
-		private readonly int[] offsets = new int[1024];
-		private readonly FileStream regionFile;
-		private readonly List<bool> sectorsFree;
-		private long lastModified;
-		private int sizeDelta;
+		private static readonly byte[] EmptySector = new byte[4096];
+		private readonly int[] _chunkTimestamps = new int[1024];
+		private readonly int[] _offsets = new int[1024];
+		private readonly FileStream _regionFile;
+		private readonly List<bool> _sectorsFree;
+		private long _lastModified;
+		private int _sizeDelta;
 
 		/// <summary>
 		///     Region File Used to store 32x32 Chunks
@@ -22,56 +22,56 @@ namespace Recube.Api.World
 		/// <param name="regionFile">FileStream of the Region File(r.X.Z.mca)</param>
 		public RegionFile(FileStream regionFile)
 		{
-			this.regionFile = regionFile;
-			sizeDelta = 0;
+			_regionFile = regionFile;
+			_sizeDelta = 0;
 			try
 			{
-				if (File.Exists(this.regionFile.Name))
+				if (File.Exists(_regionFile.Name))
 				{
-					lastModified = File.GetLastWriteTime(this.regionFile.Name).Ticks;
+					_lastModified = File.GetLastWriteTime(_regionFile.Name).Ticks;
 				}
 
 				// Write header if not pressent
-				if (this.regionFile.Length < 4096L)
+				if (_regionFile.Length < 4096L)
 				{
-					this.regionFile.SetLength(this.regionFile.Length + 4096L * 2);
-					sizeDelta += 8192;
+					_regionFile.SetLength(_regionFile.Length + 4096L * 2);
+					_sizeDelta += 8192;
 				}
 
 				// File Padding
-				if ((this.regionFile.Length & 4095L) != 0L)
+				if ((_regionFile.Length & 4095L) != 0L)
 				{
-					for (var i = 0; (long) i < (this.regionFile.Length & 4095L); ++i)
+					for (var i = 0; (long) i < (_regionFile.Length & 4095L); ++i)
 					{
-						this.regionFile.WriteByte(0);
+						_regionFile.WriteByte(0);
 					}
 				}
 
 				// Create Free Sector List
-				var i1 = (int) this.regionFile.Length / 4096;
-				sectorsFree = new List<bool>();
+				var i1 = (int) _regionFile.Length / 4096;
+				_sectorsFree = new List<bool>();
 
 				for (var i = 0; i < i1; ++i)
 				{
-					sectorsFree.Add(true);
+					_sectorsFree.Add(true);
 				}
 
-				sectorsFree[0] = false;
-				sectorsFree[1] = false;
+				_sectorsFree[0] = false;
+				_sectorsFree[1] = false;
 				//Reset Pointer
-				this.regionFile.Position = 0;
+				_regionFile.Position = 0;
 
 				for (var offsetIndex = 0; offsetIndex < 1024; ++offsetIndex)
 				{
 					var offsetBuffer = new byte[4];
-					this.regionFile.Read(offsetBuffer, 0, 4);
+					_regionFile.Read(offsetBuffer, 0, 4);
 					var offset = BitConverter.ToInt32(offsetBuffer.ChangeEndian(), 0);
-					offsets[offsetIndex] = offset;
-					if (offset != 0 && (offset >> 8) + (offset & 255) <= sectorsFree.Count)
+					_offsets[offsetIndex] = offset;
+					if (offset != 0 && (offset >> 8) + (offset & 255) <= _sectorsFree.Count)
 					{
 						for (var l = 0; l < (offset & 255); ++l)
 						{
-							sectorsFree[(offset >> 8) + l] = false;
+							_sectorsFree[(offset >> 8) + l] = false;
 						}
 					}
 				}
@@ -80,8 +80,8 @@ namespace Recube.Api.World
 				{
 					var timeStempBuffer = new byte[4];
 					// Making sure its a Big-Endian
-					this.regionFile.Read(timeStempBuffer.ChangeEndian(), 0, 4);
-					chunkTimestamps[k1] = BitConverter.ToInt32(timeStempBuffer);
+					_regionFile.Read(timeStempBuffer.ChangeEndian(), 0, 4);
+					_chunkTimestamps[k1] = BitConverter.ToInt32(timeStempBuffer);
 				}
 			}
 			catch (IOException exception)
@@ -97,24 +97,24 @@ namespace Recube.Api.World
 		/// <param name="x">Chunk X Position within the Region (0-31)</param>
 		/// <param name="z">Chunk Z Position within the Region (0-31)</param>
 		/// <returns>Chunk as NbtFile</returns>
-		public NbtFile? getChunkData(int x, int z)
+		public NbtFile? GetChunkData(int x, int z)
 		{
 			if (OutOfBounds(x, z))
 				return null;
 			try
 			{
-				var i = getOffset(x, z);
+				var i = GetOffset(x, z);
 				if (i == 0)
 					return null;
 
 				var j = i >> 8;
 				var k = i & 255;
-				if (j + k > sectorsFree.Count)
+				if (j + k > _sectorsFree.Count)
 					return null;
 
-				regionFile.Seek(j * 4096, SeekOrigin.Begin);
+				_regionFile.Seek(j * 4096, SeekOrigin.Begin);
 				var dataLength = new byte[4];
-				regionFile.Read(dataLength, 0, 4);
+				_regionFile.Read(dataLength, 0, 4);
 				var l = BitConverter.ToInt32(dataLength.ChangeEndian());
 				if (l > 4096 * k)
 					return null;
@@ -122,11 +122,11 @@ namespace Recube.Api.World
 				if (l <= 0)
 					return null;
 
-				var compressionType = (byte) regionFile.ReadByte();
+				var compressionType = (byte) _regionFile.ReadByte();
 				if (compressionType == 1 || compressionType == 2)
 				{
 					var byte1 = new byte[l - 1];
-					regionFile.Read(byte1, 0, l - 1);
+					_regionFile.Read(byte1, 0, l - 1);
 					var file = new NbtFile();
 					file.LoadFromBuffer(byte1, 0, l - 1, NbtCompression.AutoDetect);
 					return file;
@@ -150,22 +150,22 @@ namespace Recube.Api.World
 		{
 			if (OutOfBounds(x, z))
 				return false;
-			var Offset = getOffset(x, z);
-			if (Offset == 0)
+			var offset = GetOffset(x, z);
+			if (offset == 0)
 				return false;
-			var ROffset = Offset >> 8;
-			var AndOffset = Offset & 255;
-			if (ROffset + AndOffset > sectorsFree.Count)
+			var rOffset = offset >> 8;
+			var andOffset = offset & 255;
+			if (rOffset + andOffset > _sectorsFree.Count)
 				return false;
 			try
 			{
-				regionFile.Seek(ROffset * 4096, SeekOrigin.Begin);
+				_regionFile.Seek(rOffset * 4096, SeekOrigin.Begin);
 				var timestampBuffer = new byte[4];
-				regionFile.Read(timestampBuffer, 0, 4);
-				var TimeStamp = BitConverter.ToInt32(timestampBuffer.ChangeEndian());
-				if (TimeStamp > 4096 * AndOffset)
+				_regionFile.Read(timestampBuffer, 0, 4);
+				var timeStamp = BitConverter.ToInt32(timestampBuffer.ChangeEndian());
+				if (timeStamp > 4096 * andOffset)
 					return false;
-				return TimeStamp > 0;
+				return timeStamp > 0;
 			}
 			catch (IOException)
 			{
@@ -184,78 +184,78 @@ namespace Recube.Api.World
 		{
 			try
 			{
-				var Offset = getOffset(x, z);
-				var ROffset = Offset >> 8;
-				var AndOffset = Offset & 255;
-				var NeededSectors = (length + 5) / 4096 + 1;
-				if (NeededSectors >= 256) // Chunk can not be 1MB or above so just return.
+				var offset = GetOffset(x, z);
+				var rOffset = offset >> 8;
+				var andOffset = offset & 255;
+				var neededSectors = (length + 5) / 4096 + 1;
+				if (neededSectors >= 256) // Chunk can not be 1MB or above so just return.
 					return;
 
-				if (ROffset != 0 && AndOffset == 1)
+				if (rOffset != 0 && andOffset == 1)
 				{
-					Write(ROffset, data, length);
+					Write(rOffset, data, length);
 				}
 				else
 				{
-					for (var i1 = 0; i1 < AndOffset; ++i1)
+					for (var i1 = 0; i1 < andOffset; ++i1)
 					{
-						sectorsFree[ROffset + i1] = true;
+						_sectorsFree[rOffset + i1] = true;
 					}
 
-					var firstFreeSector = sectorsFree.IndexOf(true);
-					var runAmmount = 0;
+					var firstFreeSector = _sectorsFree.IndexOf(true);
+					var runAmount = 0;
 					if (firstFreeSector != -1)
 					{
-						for (var k1 = firstFreeSector; k1 < sectorsFree.Count; ++k1)
+						for (var k1 = firstFreeSector; k1 < _sectorsFree.Count; ++k1)
 						{
-							if (runAmmount != 0)
+							if (runAmount != 0)
 							{
-								if (sectorsFree[k1])
+								if (_sectorsFree[k1])
 								{
-									++runAmmount;
+									++runAmount;
 								}
 								else
 								{
-									runAmmount = 0;
+									runAmount = 0;
 								}
 							}
-							else if (sectorsFree[k1])
+							else if (_sectorsFree[k1])
 							{
 								firstFreeSector = k1;
-								runAmmount = 1;
+								runAmount = 1;
 							}
 
-							if (runAmmount >= 1)
+							if (runAmount >= 1)
 							{
 								break;
 							}
 						}
 					}
 
-					if (runAmmount >= 1)
+					if (runAmount >= 1)
 					{
-						ROffset = firstFreeSector;
-						SetOffset(x, z, firstFreeSector << 8 | NeededSectors);
-						for (var NeededSector = 0; NeededSector < NeededSectors; NeededSector++)
+						rOffset = firstFreeSector;
+						SetOffset(x, z, firstFreeSector << 8 | neededSectors);
+						for (var neededSector = 0; neededSector < neededSectors; neededSector++)
 						{
-							sectorsFree[ROffset + NeededSector] = false;
+							_sectorsFree[rOffset + neededSector] = false;
 						}
 
-						Write(ROffset, data, length);
+						Write(rOffset, data, length);
 					}
 					else
 					{
-						regionFile.Seek(0, SeekOrigin.End);
-						ROffset = sectorsFree.Count;
-						for (var NeededSector = 0; NeededSector < NeededSectors; ++NeededSector)
+						_regionFile.Seek(0, SeekOrigin.End);
+						rOffset = _sectorsFree.Count;
+						for (var neededSector = 0; neededSector < neededSectors; ++neededSector)
 						{
-							regionFile.Write(EMPTY_SECTOR);
-							sectorsFree.Add(false);
+							_regionFile.Write(EmptySector);
+							_sectorsFree.Add(false);
 						}
 
-						sizeDelta += 4096 * NeededSectors;
-						Write(ROffset, data, length);
-						SetOffset(x, z, ROffset << 8 | NeededSectors);
+						_sizeDelta += 4096 * neededSectors;
+						Write(rOffset, data, length);
+						SetOffset(x, z, rOffset << 8 | neededSectors);
 					}
 				}
 
@@ -270,10 +270,10 @@ namespace Recube.Api.World
 
 		private void Write(int sectorNumber, byte[] data, int length)
 		{
-			regionFile.Seek(sectorNumber * 4096, SeekOrigin.Begin); // Set Position
-			regionFile.Write(BitConverter.GetBytes(length + 1).ChangeEndian()); // Length of Data
-			regionFile.WriteByte(2); // Compression Method
-			regionFile.Write(data, 0, length); // Write Data
+			_regionFile.Seek(sectorNumber * 4096, SeekOrigin.Begin); // Set Position
+			_regionFile.Write(BitConverter.GetBytes(length + 1).ChangeEndian()); // Length of Data
+			_regionFile.WriteByte(2); // Compression Method
+			_regionFile.Write(data, 0, length); // Write Data
 		}
 
 		private bool OutOfBounds(int x, int z)
@@ -281,9 +281,9 @@ namespace Recube.Api.World
 			return x < 0 || x >= 32 || z < 0 || z >= 32;
 		}
 
-		private int getOffset(int x, int z)
+		private int GetOffset(int x, int z)
 		{
-			return offsets[x + z * 32];
+			return _offsets[x + z * 32];
 		}
 
 		/// <summary>
@@ -294,33 +294,33 @@ namespace Recube.Api.World
 		/// <returns>If Chunk is saved</returns>
 		public bool IsChunkSaved(int x, int z)
 		{
-			return getOffset(x, z) != 0;
+			return GetOffset(x, z) != 0;
 		}
 
 		private void SetOffset(int x, int z, int offset)
 		{
-			offsets[x + z * 32] = offset;
-			regionFile.Seek((x + z * 32) * 4, SeekOrigin.Begin);
-			regionFile.Write(BitConverter.GetBytes(offset).ChangeEndian());
-			regionFile.Flush();
+			_offsets[x + z * 32] = offset;
+			_regionFile.Seek((x + z * 32) * 4, SeekOrigin.Begin);
+			_regionFile.Write(BitConverter.GetBytes(offset).ChangeEndian());
+			_regionFile.Flush();
 		}
 
 		private void SetChunkTimestamp(int x, int z, int timestamp)
 		{
-			chunkTimestamps[x + z * 32] = timestamp;
-			regionFile.Seek(4096 + (x + z * 32) * 4, SeekOrigin.Begin);
-			regionFile.Write(BitConverter.GetBytes(timestamp).ChangeEndian());
-			regionFile.Flush();
+			_chunkTimestamps[x + z * 32] = timestamp;
+			_regionFile.Seek(4096 + (x + z * 32) * 4, SeekOrigin.Begin);
+			_regionFile.Write(BitConverter.GetBytes(timestamp).ChangeEndian());
+			_regionFile.Flush();
 		}
 
 		public void Close()
 		{
 			//TODO: Improve this shit.
-			if (regionFile != null)
+			if (_regionFile != null)
 			{
-				regionFile.Flush();
-				regionFile.Close();
-				regionFile.DisposeAsync();
+				_regionFile.Flush();
+				_regionFile.Close();
+				_regionFile.DisposeAsync();
 			}
 		}
 	}

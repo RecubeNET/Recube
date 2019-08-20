@@ -12,7 +12,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 
 		public void Write(IByteBuffer buffer)
 		{
-			buffer.WriteLong(BlockPosition.toLong());
+			buffer.WriteLong(BlockPosition.ToLong());
 		}
 	}
 }

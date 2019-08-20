@@ -1,9 +1,9 @@
 using DotNetty.Buffers;
 using Recube.Api.Block;
 
-namespace Recube.Core.World
+namespace Recube.Api.World
 {
-	public interface Palette
+	public interface IPalette
 	{
 		uint IdForState(BlockState state);
 		BlockState StateForId(uint id);

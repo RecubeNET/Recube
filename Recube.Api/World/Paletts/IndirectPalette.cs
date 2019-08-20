@@ -4,9 +4,9 @@ using DotNetty.Buffers;
 using Recube.Api.Block;
 using Recube.Api.Network.Extensions;
 
-namespace Recube.Core.World.Paletts
+namespace Recube.Api.World.Paletts
 {
-	public class IndirectPalette : Palette
+	public class IndirectPalette : IPalette
 	{
 		private readonly byte bitsPerBlock;
 		private Dictionary<uint, BlockState> idToState;

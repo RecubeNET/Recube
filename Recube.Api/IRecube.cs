@@ -1,4 +1,5 @@
 using NLog;
+using Recube.Api.Block;
 using Recube.Api.Entities;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
@@ -13,5 +14,6 @@ namespace Recube.Api
 
 		IPlayerRegistry GetPlayerRegistry();
 		IEntityRegistry GetEntityRegistry();
+		IBlockStateRegistry GetBlockStateRegistry();
 	}
 }

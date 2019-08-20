@@ -8,7 +8,7 @@ using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 using Recube.Api.Network.Packets.Handler;
 using Recube.Api.Util;
-using Recube.Core.World;
+using Recube.Api.World;
 
 namespace Recube.Core.Network.Impl
 {
@@ -61,7 +61,7 @@ namespace Recube.Core.Network.Impl
 					chunk.WriteChunkDataPacket(buffer);
 					_player.NetworkPlayer.SendPacketAsync(new ChunkDataPacketOutPacket
 					{
-						chunk = chunk
+						Chunk = chunk
 					});
 				}
 			}
