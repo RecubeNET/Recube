@@ -8,9 +8,9 @@ using Recube.Api.Network.Extensions;
 
 namespace Recube.Api.World
 {
-	public abstract class World
+	public class World
 	{
-		//TODO: Rewrite this interface
+		//TODO: Rewrite this
 		public enum Difficulties
 		{
 			Peaceful = 0,
