@@ -16,9 +16,4 @@
         <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
         <PackageReference Include="NLog" Version="4.6.6" />
     </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Network\Entities" />
-        <Folder Include="Network\Impl\Packets\Play" />
-    </ItemGroup>
 </Project>
