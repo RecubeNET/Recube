@@ -14,7 +14,7 @@ namespace Recube.Core
 		public Uuid Uuid { get; }
 		public bool Online => GetPlayer() != null;
 
-		public Player GetPlayer()
+		public Player? GetPlayer()
 		{
 			return Recube.Instance.PlayerRegistry.GetPlayerByUuid(Uuid);
 		}

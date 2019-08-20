@@ -6,8 +6,8 @@ namespace Recube.Core.Util
 {
 	public class RegistryBase<T> : IRegistryBase<T>
 	{
-		protected List<T> List = new List<T>();
-		protected ReaderWriterLockSlim Lock = new ReaderWriterLockSlim();
+		protected readonly List<T> List = new List<T>();
+		protected readonly ReaderWriterLockSlim Lock = new ReaderWriterLockSlim();
 
 		public void Register(T t)
 		{

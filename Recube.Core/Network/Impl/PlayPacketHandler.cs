@@ -14,7 +14,6 @@ namespace Recube.Core.Network.Impl
 {
 	public class PlayPacketHandler : PacketHandler
 	{
-		public static int EntityId;
 		private Player _player;
 
 		public PlayPacketHandler(INetworkPlayer networkPlayer) : base(networkPlayer)
@@ -24,10 +23,9 @@ namespace Recube.Core.Network.Impl
 		public override void OnActive()
 		{
 			((NetworkPlayer.NetworkPlayer) NetworkPlayer).SetState(NetworkPlayerState.Play);
-			EntityId++;
 			NetworkPlayer.SendPacketAsync(new JoinGameOutPacket
 			{
-				EntityId = EntityId,
+				EntityId = _player.EntityId,
 				Gamemode = 1,
 				Dimension = 0,
 				Difficulty = 1,
