@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
 using Recube.Api.Entities;
-using Recube.Api.Entities.DataStructures;
 using Recube.Api.Network.Impl.Packets.Play;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;

@@ -1,6 +1,6 @@
 // ReSharper disable FieldCanBeMadeReadOnly.Global
 
-namespace Recube.Api.Entities.DataStructures
+namespace Recube.Api.Util
 {
 	public struct BlockPosition
 	{
