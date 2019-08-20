@@ -1,23 +1,16 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using fNbt;
 using NLog;
 using Recube.Api;
 using Recube.Api.Block;
 using Recube.Api.Entities;
-using Recube.Api.Network.Extensions;
-using Recube.Api.Util;
-using Recube.Api.World;
 using Recube.Core.Block;
 using Recube.Core.Entities;
 using Recube.Core.Network;
 using Recube.Core.Network.Impl;
 using Recube.Core.Network.NetworkPlayer;
-using Recube.Core.World;
 
 namespace Recube.Core
 {
@@ -63,57 +56,6 @@ namespace Recube.Core
 			Logger.Info("Starting Recube...");
 
 			RegisterPackets();
-
-			Api.World.World world = new RecubeWorld("World");
-			world.SaveLevelData();
-			world.LoadLevelData();
-
-			var fileBuffer = File.Open("./World/region/r.0.1.mca", FileMode.OpenOrCreate);
-			var file = new RegionFile(fileBuffer);
-
-			//TODO: Remove
-			var nbtFile = new NbtFile();
-			var levelData = new NbtCompound("Level");
-			nbtFile.RootTag.Add(levelData);
-			levelData.AddBoolean("TerrainPopulated", true)
-				.AddBoolean("LightPopulated", true)
-				.AddInt("xPos", 0)
-				.AddInt("zPos", 32)
-				.AddLong("LastUpdate", 239219)
-				.AddByteArray("Biomes", ArrayOf<byte>.Create(256, 127))
-				.AddNbtCompoundArray("Sections", new List<NbtCompound>
-				{
-					new NbtCompound()
-						.AddByte("Y", 0)
-						.AddByteArray("BlockLight", ArrayOf<byte>.Create(2048, 0))
-						.AddByteArray("Blocks", ArrayOf<byte>.Create(4096, 0x07))
-						.AddByteArray("Data", ArrayOf<byte>.Create(2048, 0))
-						.AddByteArray("SkyLight", ArrayOf<byte>.Create(2048, 0)),
-					new NbtCompound()
-						.AddByte("Y", 1)
-						.AddByteArray("BlockLight", ArrayOf<byte>.Create(2048, 0))
-						.AddByteArray("Blocks", ArrayOf<byte>.Create(4096, 0x07))
-						.AddByteArray("Data", ArrayOf<byte>.Create(2048, 0))
-						.AddByteArray("SkyLight", ArrayOf<byte>.Create(2048, 0)),
-					new NbtCompound()
-						.AddByte("Y", 2)
-						.AddByteArray("BlockLight", ArrayOf<byte>.Create(2048, 0))
-						.AddByteArray("Blocks", ArrayOf<byte>.Create(4096, 0x07))
-						.AddByteArray("Data", ArrayOf<byte>.Create(2048, 0))
-						.AddByteArray("SkyLight", ArrayOf<byte>.Create(2048, 0))
-				})
-				.AddNbtCompoundArray("TileEntities", new List<NbtCompound>())
-				.AddNbtCompoundArray("Entities", new List<NbtCompound>())
-				.AddLong("InhabitedTime", 62632)
-				.AddIntArray("HeightMap", ArrayOf<int>.Create(256, 10));
-
-			var nbtBuffer = nbtFile.SaveToBuffer(NbtCompression.ZLib);
-			file.Write(0, 0, nbtBuffer, nbtBuffer.Length);
-			Console.WriteLine(file.DoesChunkExist(0, 0));
-			Console.WriteLine(file.DoesChunkExist(0, 3));
-			file.Write(2, 0, nbtBuffer, nbtBuffer.Length);
-
-			//file.close();
 
 			var a = new BlockParser("blocks_1.14.4.json").Parse().GetAwaiter().GetResult();
 			foreach (var keyValuePair in a)
