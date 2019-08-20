@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using fNbt;
-using Recube.Api.Entities.DataStructures;
 using Recube.Api.Network.Extensions;
+using Recube.Api.Util;
 
 namespace Recube.Api.World
 {
@@ -140,7 +139,7 @@ namespace Recube.Api.World
 		}
 
 		/// <summary>
-		/// 	Loads a world from it's level.dat file
+		///     Loads a world from it's level.dat file
 		/// </summary>
 		/// <exception cref="WorldParseException">When a required NBT tag is missing</exception>
 		public void LoadLevelData()
