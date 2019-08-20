@@ -72,7 +72,7 @@ namespace Recube.Core.Block
 									{
 										jToken.ToObject(condition.Key.GetType());
 									}
-									catch (FormatException e)
+									catch (FormatException)
 									{
 										throw new FileParseException(
 											$"Could not map {jToken.Type} to {condition.Key.GetType().Name} in property \"{parsedProperty.PropertyName}\" in block {parsedBlock.Name}");

@@ -156,9 +156,9 @@ namespace Recube.Api.World
 			}
 
 			//TODO: Check for current Dimention
-			if (false)
-			{
-				// IE, current dimension is overworld / 0
+			// IE, current dimension is overworld / 0
+
+			/*
 				for (var y = 0; y < SectionSize; y++)
 				{
 					for (var z = 0; z < SectionSize; z++)
@@ -171,8 +171,8 @@ namespace Recube.Api.World
 							buf.WriteByte(skyLight);
 						}
 					}
-				}
-			}
+		}
+		*/
 		}
 
 		public byte GetBlock(in int x, in int y, in int z)
@@ -187,23 +187,23 @@ namespace Recube.Api.World
 
 		public byte GetMetadata(in int x, in int y, in int z)
 		{
-			/*var index = x + 16*z + 16*16*y;
-			if (index >= 0 && index < Metadata.Length)
-			{
-				return (byte) (Metadata[index]);
-			}*/
+/*var index = x + 16*z + 16*16*y;
+if (index >= 0 && index < Metadata.Length)
+{
+	return (byte) (Metadata[index]);
+}*/
 			return 0x0;
 		}
 
 		public byte GetBlockLight(in int x, in int y, in int z)
 		{
-			//return Blocklight[(x*2048) + (z*256) + y];
+//return Blocklight[(x*2048) + (z*256) + y];
 			return byte.MaxValue;
 		}
 
 		public byte GetSkylight(in int x, in int y, in int z)
 		{
-			//return Skylight[(x*2048) + (z*256) + y];
+//return Skylight[(x*2048) + (z*256) + y];
 			return byte.MaxValue;
 		}
 	}

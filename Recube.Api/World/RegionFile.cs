@@ -315,7 +315,7 @@ namespace Recube.Api.World
 
 		public void Close()
 		{
-			//TODO: Improve this shit.
+			//TODO: Improve this.
 			if (_regionFile != null)
 			{
 				_regionFile.Flush();
