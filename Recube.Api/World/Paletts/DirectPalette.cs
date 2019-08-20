@@ -9,13 +9,13 @@ namespace Recube.Api.World.Paletts
 		public uint IdForState(BlockState state)
 		{
 			//TODO: Implement
-			return BlockState.GetGlobalPaletteIDFromState(state);
+			return BlockState.GetGlobalPaletteIdFromState(state);
 		}
 
 		public BlockState StateForId(uint id)
 		{
 			//TODO: Implement
-			return BlockState.GetStateFromGlobalPaletteID(id);
+			return BlockState.GetStateFromGlobalPaletteId(id);
 		}
 
 		public byte GetBitsPerBlock()

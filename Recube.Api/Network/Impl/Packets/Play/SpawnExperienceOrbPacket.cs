@@ -19,7 +19,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 		/// <summary>
 		///     Entity ID
 		/// </summary>
-		public int EntityID;
+		public int EntityId;
 
 		/// <summary>
 		///     Position X
@@ -38,7 +38,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 
 		public void Write(IByteBuffer buffer)
 		{
-			buffer.WriteVarInt(EntityID);
+			buffer.WriteVarInt(EntityId);
 			buffer.WriteDouble(X);
 			buffer.WriteDouble(Y);
 			buffer.WriteDouble(Z);

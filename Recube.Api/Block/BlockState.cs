@@ -20,13 +20,13 @@ namespace Recube.Api.Block
 
 		public static float TotalNumberOfStates { get; set; } = 14;
 
-		public static uint GetGlobalPaletteIDFromState(BlockState state)
+		public static uint GetGlobalPaletteIdFromState(BlockState state)
 		{
 			//TODO: Implement
 			return 0;
 		}
 
-		public static BlockState GetStateFromGlobalPaletteID(uint id)
+		public static BlockState GetStateFromGlobalPaletteId(uint id)
 		{
 			//TODO Return new BLockState
 			return new BlockState(0, true, new Dictionary<string, object>());

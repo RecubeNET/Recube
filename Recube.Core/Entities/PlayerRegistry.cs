@@ -8,10 +8,10 @@ namespace Recube.Core.Entities
 	{
 		public Player? GetPlayerByUuid(Uuid uuid)
 		{
-			_lock.EnterReadLock();
+			Lock.EnterReadLock();
 			try
 			{
-				foreach (var player in _list)
+				foreach (var player in List)
 				{
 					if (player.Uuid.Equals(uuid))
 						return player;
@@ -19,7 +19,7 @@ namespace Recube.Core.Entities
 			}
 			finally
 			{
-				_lock.ExitReadLock();
+				Lock.ExitReadLock();
 			}
 
 			return null;

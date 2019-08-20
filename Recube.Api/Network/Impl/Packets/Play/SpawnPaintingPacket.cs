@@ -31,7 +31,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 		/// <summary>
 		///     EntityID
 		/// </summary>
-		public int EntityID;
+		public int EntityId;
 
 		/// <summary>
 		///     Motive of the Picture
@@ -47,7 +47,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 		/// <summary>
 		///     Entity UUID
 		/// </summary>
-		public Uuid UUID;
+		public Uuid Uuid;
 
 		public void Write(IByteBuffer buffer)
 		{

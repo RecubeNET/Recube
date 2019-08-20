@@ -19,7 +19,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 		/// <summary>
 		///     EntityID
 		/// </summary>
-		public int EntityID;
+		public int EntityId;
 
 		/// <summary>
 		///     The Type of the Objcets <see cref="SpawnGlobalEntity.SpawnType" />
@@ -43,7 +43,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 
 		public void Write(IByteBuffer buffer)
 		{
-			buffer.WriteVarInt(EntityID);
+			buffer.WriteVarInt(EntityId);
 			buffer.WriteByte((byte) Type);
 			buffer.WriteDouble(X);
 			buffer.WriteDouble(Y);

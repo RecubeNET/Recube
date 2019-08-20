@@ -81,7 +81,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 		/// <summary>
 		///     Entity ID
 		/// </summary>
-		public int EntityID;
+		public int EntityId;
 
 		/// <summary>
 		///     Head Pitch
@@ -107,7 +107,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 		/// <summary>
 		///     Entity UUID
 		/// </summary>
-		public Uuid UUID;
+		public Uuid Uuid;
 
 		/// <summary>
 		///     Velocity X
@@ -146,8 +146,8 @@ namespace Recube.Api.Network.Impl.Packets.Play
 
 		public void Write(IByteBuffer buffer)
 		{
-			buffer.WriteVarInt(EntityID);
-			buffer.WriteStringWithLength(UUID.ToString());
+			buffer.WriteVarInt(EntityId);
+			buffer.WriteStringWithLength(Uuid.ToString());
 			buffer.WriteVarInt((int) Type);
 			buffer.WriteDouble(X);
 			buffer.WriteDouble(Y);

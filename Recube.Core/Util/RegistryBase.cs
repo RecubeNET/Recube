@@ -6,45 +6,45 @@ namespace Recube.Core.Util
 {
 	public class RegistryBase<T> : IRegistryBase<T>
 	{
-		protected List<T> _list = new List<T>();
-		protected ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+		protected List<T> List = new List<T>();
+		protected ReaderWriterLockSlim Lock = new ReaderWriterLockSlim();
 
 		public void Register(T t)
 		{
-			_lock.EnterWriteLock();
+			Lock.EnterWriteLock();
 			try
 			{
-				_list.Add(t);
+				List.Add(t);
 			}
 			finally
 			{
-				_lock.ExitWriteLock();
+				Lock.ExitWriteLock();
 			}
 		}
 
 		public void Deregister(T t)
 		{
-			_lock.EnterWriteLock();
+			Lock.EnterWriteLock();
 			try
 			{
-				_list.Remove(t);
+				List.Remove(t);
 			}
 			finally
 			{
-				_lock.ExitWriteLock();
+				Lock.ExitWriteLock();
 			}
 		}
 
 		public IList<T> GetAll()
 		{
-			_lock.EnterReadLock();
+			Lock.EnterReadLock();
 			try
 			{
-				return new List<T>(_list);
+				return new List<T>(List);
 			}
 			finally
 			{
-				_lock.ExitReadLock();
+				Lock.ExitReadLock();
 			}
 		}
 	}
