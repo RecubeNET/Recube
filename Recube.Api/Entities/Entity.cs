@@ -2,9 +2,10 @@ namespace Recube.Api.Entities
 {
 	public abstract class Entity
 	{
-		public readonly uint EntityId;
+		public readonly int EntityId;
 
-		public Entity(uint entityId)
+		
+		public Entity(int entityId)
 		{
 		}
 	}

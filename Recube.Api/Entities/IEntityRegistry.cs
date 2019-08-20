@@ -4,8 +4,8 @@ namespace Recube.Api.Entities
 {
 	public interface IEntityRegistry
 	{
-		Entity RegisterEntity(Func<uint, Entity> func);
-		Entity? DeregisterEntity(uint id);
-		Entity? GetEntityById(uint id);
+		Entity RegisterEntity(Func<int, Entity> func);
+		Entity? DeregisterEntity(int id);
+		Entity? GetEntityById(int id);
 	}
 }

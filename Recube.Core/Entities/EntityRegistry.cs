@@ -7,11 +7,11 @@ namespace Recube.Core.Entities
 {
 	public class EntityRegistry : IEntityRegistry
 	{
-		private readonly Dictionary<uint, Entity> _dictionary = new Dictionary<uint, Entity>();
+		private readonly Dictionary<int, Entity> _dictionary = new Dictionary<int, Entity>();
 		private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
-		private uint _lastId;
+		private int _lastId;
 
-		public Entity RegisterEntity(Func<uint, Entity> func)
+		public Entity RegisterEntity(Func<int, Entity> func)
 		{
 			var id = GetFreeId();
 
@@ -30,7 +30,7 @@ namespace Recube.Core.Entities
 			return ent;
 		}
 
-		public Entity? DeregisterEntity(uint id)
+		public Entity? DeregisterEntity(int id)
 		{
 			Entity ent;
 			_lock.EnterWriteLock();
@@ -46,7 +46,7 @@ namespace Recube.Core.Entities
 			return ent;
 		}
 
-		public Entity? GetEntityById(uint id)
+		public Entity? GetEntityById(int id)
 		{
 			_lock.EnterReadLock();
 			try
@@ -59,7 +59,7 @@ namespace Recube.Core.Entities
 			}
 		}
 
-		private uint GetFreeId()
+		private int GetFreeId()
 		{
 			_lock.EnterWriteLock();
 			try
