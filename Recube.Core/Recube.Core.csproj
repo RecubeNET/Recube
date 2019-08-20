@@ -31,9 +31,4 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="World"/>
-    </ItemGroup>
-
 </Project>
