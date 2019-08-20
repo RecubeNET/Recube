@@ -10,36 +10,6 @@ namespace Recube.Api.World
 {
 	public class World
 	{
-		//TODO: Rewrite this
-		public enum Difficulties
-		{
-			Peaceful = 0,
-			Easy = 1,
-			Normal = 2,
-			Hard = 3
-		}
-
-		public enum Dimensions
-		{
-			End = -1,
-			Overworld = 0,
-			Nether = 1
-		}
-
-		public enum GameTypes
-		{
-			Survival = 0,
-			Creative = 1,
-			Adventure = 2,
-			Spectator = 3
-		}
-
-		public enum Generators
-		{
-			Default,
-			Flat
-		}
-
 		public bool AllowCommands;
 		public BlockPosition BorderCenter;
 		public double BorderDamagePerBlock = 0.2D;
@@ -54,11 +24,11 @@ namespace Recube.Api.World
 		//Todo: Change Version
 		public int DataVersion = 512;
 		public long DayTime;
-		public Difficulties Difficulty = Difficulties.Easy;
-		public bool DificultyLocked;
+		public GameDifficulty Difficulty = GameDifficulty.Easy;
+		public bool DifficultyLocked;
 		public Dictionary<string, string> GameRules = new Dictionary<string, string>();
-		public GameTypes GameType = GameTypes.Survival;
-		public Generators Generator = Generators.Default;
+		public GameType GameType = GameType.Survival;
+		public WorldGenerator Generator = WorldGenerator.Default;
 		public string GeneratorOptions = "";
 		public int GeneratorVersion;
 		public bool Hardcore;
@@ -144,7 +114,7 @@ namespace Recube.Api.World
 				.AddInt("DataVersion", DataVersion)
 				.AddLong("DayTime", DayTime)
 				.AddByte("Difficulty", (byte) Difficulty)
-				.AddByte("DifficultyLocked", DificultyLocked ? (byte) 1 : (byte) 0)
+				.AddByte("DifficultyLocked", DifficultyLocked ? (byte) 1 : (byte) 0)
 				.AddInt("GameType", (byte) GameType)
 				.AddString("generatorName", Generator.ToString().ToLower())
 				.AddString("generatorOptions", GeneratorOptions)
@@ -169,53 +139,85 @@ namespace Recube.Api.World
 			levelData.SaveToFile("./" + WorldName + "/level.dat", NbtCompression.None);
 		}
 
+		/// <summary>
+		/// 	Loads a world from it's level.dat file
+		/// </summary>
+		/// <exception cref="WorldParseException">When a required NBT tag is missing</exception>
 		public void LoadLevelData()
 		{
 			var levelData = new NbtFile();
 			levelData.LoadFromFile("./" + WorldName + "/level.dat");
 			var data = levelData.RootTag.GetNbtCompound("Data");
 			if (data == null)
-				throw new NoNullAllowedException("Data is null while trying to load world");
+				throw new WorldParseException("Data is null while trying to load world");
 			GameRules.Clear();
 			foreach (var nbtTag in data.GetNbtCompound("GameRules"))
 			{
-				GameRules.Add(nbtTag.Name, nbtTag.StringValue);
+				GameRules.Add(nbtTag.Name ?? throw new WorldParseException("GameRule tag name is null"),
+					nbtTag.StringValue);
 			}
 
-			AllowCommands = data.GetBoolean("allowCommands");
-			BorderCenter = new BlockPosition((int) data.GetDouble("BorderCenterX"), 0,
-				(int) data.GetDouble("BorderCenterZ"));
-			BorderDamagePerBlock = data.GetDouble("BorderDamagePerBlock");
-			BorderSafeZone = data.GetDouble("BorderSafeZone");
-			BorderSize = data.GetDouble("BorderSize");
-			BorderSizeLerpTarget = data.GetDouble("BorderSizeLerpTarget");
-			BorderSizeLerpTime = data.GetLong("BorderSizeLerpTime");
-			BorderWarningBlocks = data.GetDouble("BorderWarningBlocks");
-			BorderWarningTime = data.GetDouble("BorderWarningTime");
-			ClearWeatherTime = data.GetInt("clearWeatherTime");
-			DataVersion = data.GetInt("DataVersion");
-			DayTime = data.GetLong("DayTime");
-			Difficulty = (Difficulties) data.GetByte("Difficulty");
-			DificultyLocked = data.GetBoolean("DifficultyLocked");
-			GameType = (GameTypes) data.GetInt("GameType");
-			Generators nbtGenerator;
-			Enum.TryParse(data.GetString("generatorName"), true, out nbtGenerator);
+			AllowCommands = data.GetBoolean("allowCommands") ?? throw new WorldParseException("allowCommands is null");
+			// BORDER CENTER
+			var borderCenterX = data.GetInt("BorderCenterX");
+			if (!borderCenterX.HasValue) throw new WorldParseException("BorderCenterX is null");
+
+			var borderCenterZ = data.GetInt("BorderCenterZ");
+			if (!borderCenterZ.HasValue) throw new WorldParseException("BorderCenterZ is null");
+
+			BorderCenter = new BlockPosition(borderCenterX.Value, 0, borderCenterZ.Value);
+			////
+			BorderDamagePerBlock = data.GetDouble("BorderDamagePerBlock") ??
+			                       throw new WorldParseException("BorderDamagePerBlock is null");
+			BorderSafeZone = data.GetDouble("BorderSafeZone") ??
+			                 throw new WorldParseException("BorderSafeZone is null");
+			BorderSize = data.GetDouble("BorderSize") ?? throw new WorldParseException("BorderSize is null");
+			BorderSizeLerpTarget = data.GetDouble("BorderSizeLerpTarget") ??
+			                       throw new WorldParseException("BorderSizeLerpTarget is null");
+			BorderSizeLerpTime = data.GetLong("BorderSizeLerpTime") ??
+			                     throw new WorldParseException("BorderSizeLerpTime is null");
+			BorderWarningBlocks = data.GetDouble("BorderWarningBlocks") ??
+			                      throw new WorldParseException("BorderWarningBlocks is null");
+			BorderWarningTime = data.GetDouble("BorderWarningTime") ??
+			                    throw new WorldParseException("BorderWarningTime is null");
+			ClearWeatherTime = data.GetInt("clearWeatherTime") ??
+			                   throw new WorldParseException("clearWeatherTime is null");
+			DataVersion = data.GetInt("DataVersion") ?? throw new WorldParseException("DataVersion is null");
+			DayTime = data.GetLong("DayTime") ?? throw new WorldParseException("DayTime is null");
+			Difficulty =
+				(GameDifficulty) (data.GetByte("Difficulty") ?? throw new WorldParseException("Difficulty is null"));
+			DifficultyLocked = data.GetBoolean("DifficultyLocked") ??
+			                   throw new WorldParseException("DifficultyLocked is null");
+			// GAME TYPE
+			var gameType = data.GetInt("GameType") ?? throw new WorldParseException("GameType is null");
+			GameType = (GameType) gameType;
+			var generatorName = data.GetString("generatorName") ??
+			                    throw new WorldParseException("generatorName is null");
+			Enum.TryParse(generatorName, true, out WorldGenerator nbtGenerator);
+			////
 			Generator = nbtGenerator;
-			GeneratorOptions = data.GetString("generatorOptions");
-			GeneratorVersion = data.GetInt("generatorVersion");
-			Hardcore = data.GetBoolean("hardcore");
-			Initialized = data.GetBoolean("initialized");
-			LastPlayed = data.GetLong("LastPlayed");
-			WorldName = data.GetString("LevelName");
-			MapFeatures = data.GetBoolean("MapFeatures");
-			Raining = data.GetBoolean("raining");
-			RainTime = data.GetInt("rainTime");
-			RandomSeed = data.GetLong("RandomSeed");
-			SpawnPoint = new BlockPosition(data.GetInt("SpawnX"), data.GetInt("SpawnY"), data.GetInt("SpawnZ"));
-			Thundering = data.GetBoolean("thundering");
-			ThunderTime = data.GetInt("thunderTime");
-			Time = data.GetLong("Time");
-			Version = data.GetInt("version");
+			GeneratorOptions = data.GetString("generatorOptions") ??
+			                   throw new WorldParseException("generatorOptions is null");
+			GeneratorVersion = data.GetInt("generatorVersion") ??
+			                   throw new WorldParseException("generatorVersion is null");
+			Hardcore = data.GetBoolean("hardcore") ?? throw new WorldParseException("hardcore is null");
+			Initialized = data.GetBoolean("initialized") ?? throw new WorldParseException("initialized is null");
+			LastPlayed = data.GetLong("LastPlayed") ?? throw new WorldParseException("LastPlayed is null");
+			WorldName = data.GetString("LevelName") ?? throw new WorldParseException("LevelName is null");
+			MapFeatures = data.GetBoolean("MapFeatures") ?? throw new WorldParseException("MapFeatures is null");
+			Raining = data.GetBoolean("raining") ?? throw new WorldParseException("raining is null");
+			RainTime = data.GetInt("rainTime") ?? throw new WorldParseException("rainTime is null");
+			RandomSeed = data.GetLong("RandomSeed") ?? throw new WorldParseException("RandomSeed is null");
+			// SPAWN POSITION
+			var spawnX = data.GetInt("SpawnX") ?? throw new WorldParseException("SpawnX is null");
+			var spawnY = data.GetInt("SpawnY") ?? throw new WorldParseException("SpawnY is null");
+			var spawnZ = data.GetInt("SpawnZ") ?? throw new WorldParseException("SpawnZ is null");
+			SpawnPoint = new BlockPosition(spawnX, spawnY, spawnZ);
+			/////
+			Thundering = data.GetBoolean("thundering") ?? throw new WorldParseException("thundering is null");
+			ThunderTime = data.GetInt("thunderTime") ?? throw new WorldParseException("thunderTime is null");
+			Time = data.GetLong("Time") ?? throw new WorldParseException("Time is null");
+			Version = data.GetInt("version") ?? throw new WorldParseException("version is null");
 		}
 	}
 }

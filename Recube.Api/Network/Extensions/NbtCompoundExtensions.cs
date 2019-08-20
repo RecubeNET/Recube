@@ -12,9 +12,9 @@ namespace Recube.Api.Network.Extensions
 			return nbt;
 		}
 
-		public static string GetString(this NbtCompound nbt, string tag)
+		public static string? GetString(this NbtCompound nbt, string tag)
 		{
-			return nbt.Get<NbtString>(tag).Value;
+			return nbt.Get<NbtString>(tag)?.Value;
 		}
 
 		public static NbtCompound AddByte(this NbtCompound nbt, string tag, byte value)
@@ -23,9 +23,9 @@ namespace Recube.Api.Network.Extensions
 			return nbt;
 		}
 
-		public static byte GetByte(this NbtCompound nbt, string tag)
+		public static byte? GetByte(this NbtCompound nbt, string tag)
 		{
-			return nbt.Get<NbtByte>(tag).Value;
+			return nbt.Get<NbtByte>(tag)?.Value;
 		}
 
 		public static NbtCompound AddDouble(this NbtCompound nbt, string tag, double value)
@@ -34,9 +34,9 @@ namespace Recube.Api.Network.Extensions
 			return nbt;
 		}
 
-		public static double GetDouble(this NbtCompound nbt, string tag)
+		public static double? GetDouble(this NbtCompound nbt, string tag)
 		{
-			return nbt.Get<NbtDouble>(tag).Value;
+			return nbt.Get<NbtDouble>(tag)?.Value;
 		}
 
 		public static NbtCompound AddLong(this NbtCompound nbt, string tag, long value)
@@ -45,9 +45,9 @@ namespace Recube.Api.Network.Extensions
 			return nbt;
 		}
 
-		public static long GetLong(this NbtCompound nbt, string tag)
+		public static long? GetLong(this NbtCompound nbt, string tag)
 		{
-			return nbt.Get<NbtLong>(tag).Value;
+			return nbt.Get<NbtLong>(tag)?.Value;
 		}
 
 		public static NbtCompound AddInt(this NbtCompound nbt, string tag, int value)
@@ -56,9 +56,9 @@ namespace Recube.Api.Network.Extensions
 			return nbt;
 		}
 
-		public static int GetInt(this NbtCompound nbt, string tag)
+		public static int? GetInt(this NbtCompound nbt, string tag)
 		{
-			return nbt.Get<NbtInt>(tag).Value;
+			return nbt.Get<NbtInt>(tag)?.Value;
 		}
 
 		public static NbtCompound AddNbtCompound(this NbtCompound nbt, NbtCompound value)
@@ -78,15 +78,9 @@ namespace Recube.Api.Network.Extensions
 			return nbt;
 		}
 
-		public static bool GetBoolean(this NbtCompound nbt, string tag)
+		public static bool? GetBoolean(this NbtCompound nbt, string tag)
 		{
-			// ReSharper disable once PossibleNullReferenceException
-			if (nbt.Get<NbtByte>(tag) != null && nbt.Get<NbtByte>(tag).Value == 1)
-			{
-				return true;
-			}
-
-			return false;
+			return nbt.Get<NbtByte>(tag) != null && nbt.Get<NbtByte>(tag)?.Value == 1;
 		}
 
 		public static NbtCompound AddNbtCompoundArray(this NbtCompound nbt, string tag, List<NbtCompound> value)
@@ -106,9 +100,9 @@ namespace Recube.Api.Network.Extensions
 			return nbt;
 		}
 
-		public static byte[] GetByteArray(this NbtCompound nbt, string tag)
+		public static byte[]? GetByteArray(this NbtCompound nbt, string tag)
 		{
-			return nbt.Get<NbtByteArray>(tag).Value;
+			return nbt.Get<NbtByteArray>(tag)?.Value;
 		}
 
 		public static NbtCompound AddIntArray(this NbtCompound nbt, string tag, int[] value)
@@ -117,9 +111,9 @@ namespace Recube.Api.Network.Extensions
 			return nbt;
 		}
 
-		public static int[] GetIntArray(this NbtCompound nbt, string tag)
+		public static int[]? GetIntArray(this NbtCompound nbt, string tag)
 		{
-			return nbt.Get<NbtIntArray>(tag).Value;
+			return nbt.Get<NbtIntArray>(tag)?.Value;
 		}
 	}
 }

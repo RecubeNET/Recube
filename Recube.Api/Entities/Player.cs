@@ -8,7 +8,7 @@ namespace Recube.Api.Entities
 	{
 		public readonly INetworkPlayer NetworkPlayer;
 
-		public Player(uint eid, Uuid uuid, INetworkPlayer networkPlayer, string username) : base(eid)
+		public Player(int eid, Uuid uuid, INetworkPlayer networkPlayer, string username) : base(eid)
 		{
 			Uuid = uuid;
 			NetworkPlayer = networkPlayer;
