@@ -44,7 +44,7 @@ namespace Recube.Core.Network.NetworkPlayer
 			{
 				await Channel.WriteAndFlushAsync(packet);
 			}
-			catch (ChannelClosedException ignored)
+			catch (ChannelClosedException)
 			{
 			}
 		}
@@ -56,7 +56,7 @@ namespace Recube.Core.Network.NetworkPlayer
 			{
 				await Channel.WriteAsync(packet);
 			}
-			catch (ChannelClosedException ignored)
+			catch (ChannelClosedException)
 			{
 			}
 		}
@@ -68,7 +68,7 @@ namespace Recube.Core.Network.NetworkPlayer
 			{
 				Channel.Flush();
 			}
-			catch (ChannelClosedException ignored)
+			catch (ChannelClosedException)
 			{
 			}
 		}
