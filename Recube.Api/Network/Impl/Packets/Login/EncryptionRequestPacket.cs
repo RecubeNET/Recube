@@ -10,13 +10,13 @@ namespace Recube.Api.Network.Impl.Packets.Login
 	{
 		public byte[] PublicKey;
 		public int PublicKeyLength;
-		public string ServerID = "";
+		public string ServerId = "";
 		public byte[] VerifyToken = {1, 0, 0, 1};
 		public int VerifyTokenLength = 4;
 
 		public void Write(IByteBuffer buffer)
 		{
-			buffer.WriteStringWithLength(ServerID);
+			buffer.WriteStringWithLength(ServerId);
 			buffer.WriteVarInt(PublicKeyLength);
 			buffer.WriteBytes(PublicKey);
 			buffer.WriteVarInt(VerifyTokenLength);

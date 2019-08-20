@@ -16,7 +16,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 		/// <summary>
 		///     Player ID
 		/// </summary>
-		public int EntityID;
+		public int EntityId;
 
 		//TODO: Metadata Its not even a string!
 		/// <summary>
@@ -32,7 +32,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 		/// <summary>
 		///     Player UUID
 		/// </summary>
-		public Uuid UUID;
+		public Uuid Uuid;
 
 		/// <summary>
 		///     PositionX
@@ -56,8 +56,8 @@ namespace Recube.Api.Network.Impl.Packets.Play
 
 		public void Write(IByteBuffer buffer)
 		{
-			buffer.WriteVarInt(EntityID);
-			buffer.WriteStringWithLength(UUID.ToString());
+			buffer.WriteVarInt(EntityId);
+			buffer.WriteStringWithLength(Uuid.ToString());
 			buffer.WriteDouble(X);
 			buffer.WriteDouble(Y);
 			buffer.WriteDouble(Z);
