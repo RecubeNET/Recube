@@ -1,11 +1,13 @@
 using System;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using Recube.Api.Entities;
 using Recube.Api.Network.Impl.Packets.Play;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 using Recube.Api.Network.Packets.Handler;
 using Recube.Api.Util;
+using Recube.Api.World;
 
 namespace Recube.Core.Network.Impl
 {
@@ -50,7 +52,6 @@ namespace Recube.Core.Network.Impl
 			});
 
 			//TODO: This needs to be fixed!
-			/*
 			for (var i = -12; i < 12; i++)
 			{
 				for (var j = -12; j < 12; j++)
@@ -63,7 +64,7 @@ namespace Recube.Core.Network.Impl
 						Chunk = chunk
 					});
 				}
-			}*/
+			}
 
 
 			Console.WriteLine("OKKK");
