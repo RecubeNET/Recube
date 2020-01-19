@@ -1,13 +1,11 @@
 using System;
 using System.Threading.Tasks;
-using DotNetty.Buffers;
 using Recube.Api.Entities;
 using Recube.Api.Network.Impl.Packets.Play;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 using Recube.Api.Network.Packets.Handler;
 using Recube.Api.Util;
-using Recube.Api.World;
 
 namespace Recube.Core.Network.Impl
 {
@@ -25,12 +23,14 @@ namespace Recube.Core.Network.Impl
 			NetworkPlayer.SendPacketAsync(new JoinGameOutPacket
 			{
 				EntityId = _player.EntityId,
+				ViewDistance = 2,
 				Gamemode = 1,
 				Dimension = 0,
-				Difficulty = 1,
 				MaxPlayers = 60,
 				LevelType = "flat",
-				ReducedDebugInfo = false
+				ReducedDebugInfo = false,
+				HashedSeed = 2483274872339L,
+				EnableRespawnScreen = true
 			});
 
 			NetworkPlayer.SendPacketAsync(new SpawnPositionOutPacket
@@ -49,6 +49,8 @@ namespace Recube.Core.Network.Impl
 				TeleportId = 1
 			});
 
+			//TODO: This needs to be fixed!
+			/*
 			for (var i = -12; i < 12; i++)
 			{
 				for (var j = -12; j < 12; j++)
@@ -61,7 +63,7 @@ namespace Recube.Core.Network.Impl
 						Chunk = chunk
 					});
 				}
-			}
+			}*/
 
 
 			Console.WriteLine("OKKK");

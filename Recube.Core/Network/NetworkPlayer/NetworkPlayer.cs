@@ -38,6 +38,7 @@ namespace Recube.Core.Network.NetworkPlayer
 
 		public async Task SendPacketAsync(IOutPacket packet)
 		{
+			NetworkBootstrap.Logger.Debug($"Sent packet {packet.GetType().FullName}");
 			if (!Channel.Active) return;
 
 			try

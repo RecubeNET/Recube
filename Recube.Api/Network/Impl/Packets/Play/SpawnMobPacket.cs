@@ -88,12 +88,6 @@ namespace Recube.Api.Network.Impl.Packets.Play
 		/// </summary>
 		public int HeadPitch;
 
-		//TODO: Metadata Its not even a string!
-		/// <summary>
-		///     MetaData of the Entity Not yet implemented
-		/// </summary>
-		public string Metadata;
-
 		/// <summary>
 		///     Entity Pitch
 		/// </summary>
@@ -158,8 +152,6 @@ namespace Recube.Api.Network.Impl.Packets.Play
 			buffer.WriteShort(VelocityX);
 			buffer.WriteShort(VelocityY);
 			buffer.WriteShort(VelocityZ);
-			//TODO Metadata!
-			buffer.WriteStringWithLength(Metadata);
 		}
 	}
 }

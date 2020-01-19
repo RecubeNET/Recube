@@ -34,8 +34,8 @@ namespace Recube.Core
 
 		public string Motd = @"{
 	""version"": {
-		""name"": ""1.13.2"",
-		""protocol"": 404
+		""name"": ""1.15.1"",
+		""protocol"": 575
 	},
 	""players"": {
 		""max"": 100,
