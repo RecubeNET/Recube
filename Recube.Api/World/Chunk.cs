@@ -58,15 +58,21 @@ namespace Recube.Api.World
 				}
 			}
 
-			for (var z = 0; z < SectionSize; z++)
+			/*for (var z = 0; z < SectionSize; z++)
 			{
 				for (var x = 0; x < SectionSize; x++)
 				{
 					columnBuffer.WriteInt(GetBiome(x, z)); // Use 127 for 'void' if your server doesn't support biomes
 				}
-			}
+			}*/
 
 			data.WriteVarInt(mask);
+			// Biome's
+			for (var i = 0; i < 1024; i++)
+			{
+				data.WriteInt(127);
+			}
+
 			data.WriteVarInt(columnBuffer.ReadableBytes);
 			data.WriteBytes(columnBuffer);
 
@@ -74,12 +80,9 @@ namespace Recube.Api.World
 			// If you need to implement it by sending block entities later with the update block entity packet,
 			// do it that way and send 0 as well.  (Note that 1.10.1 (not 1.10 or 1.10.2) will not accept that)
 
-			//TODO: Send BlockEntitties
-			/*data.WriteVarInt(chunk.BlockEntities.Length););
-			foreach (CompoundTag tag in chunk.BlockEntities)
-			{
-				WriteCompoundTag(data, tag);
-			}*/
+			//Number of Block Entitys
+			data.WriteVarInt(0);
+			// Block entities
 			data.WriteVarInt(0);
 		}
 

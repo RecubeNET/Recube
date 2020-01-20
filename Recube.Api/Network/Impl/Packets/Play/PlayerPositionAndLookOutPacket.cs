@@ -5,7 +5,7 @@ using Recube.Api.Network.Packets;
 
 namespace Recube.Api.Network.Impl.Packets.Play
 {
-	[Packet(0x32, NetworkPlayerState.Play)]
+	[Packet(0x36, NetworkPlayerState.Play)]
 	public class PlayerPositionAndLookOutPacket : IOutPacket
 	{
 		public byte Flags;

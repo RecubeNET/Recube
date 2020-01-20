@@ -33,6 +33,7 @@ namespace Recube.Core.Network.Pipeline
 				return;
 			}
 
+			NetworkBootstrap.Logger.Debug($"Received packet {packet.GetType().FullName}");
 			try
 			{
 				packet.Read(input);

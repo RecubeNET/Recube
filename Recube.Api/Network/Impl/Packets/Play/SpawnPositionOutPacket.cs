@@ -5,7 +5,7 @@ using Recube.Api.Util;
 
 namespace Recube.Api.Network.Impl.Packets.Play
 {
-	[Packet(0x49, NetworkPlayerState.Play)]
+	[Packet(0x4E, NetworkPlayerState.Play)]
 	public class SpawnPositionOutPacket : IOutPacket
 	{
 		public BlockPosition BlockPosition;

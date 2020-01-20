@@ -25,12 +25,14 @@ namespace Recube.Core.Network.Impl
 			NetworkPlayer.SendPacketAsync(new JoinGameOutPacket
 			{
 				EntityId = _player.EntityId,
+				ViewDistance = 2,
 				Gamemode = 1,
 				Dimension = 0,
-				Difficulty = 1,
 				MaxPlayers = 60,
 				LevelType = "flat",
-				ReducedDebugInfo = false
+				ReducedDebugInfo = false,
+				HashedSeed = 2483274872339L,
+				EnableRespawnScreen = true
 			});
 
 			NetworkPlayer.SendPacketAsync(new SpawnPositionOutPacket
@@ -49,6 +51,7 @@ namespace Recube.Core.Network.Impl
 				TeleportId = 1
 			});
 
+			//TODO: This needs to be fixed!
 			for (var i = -12; i < 12; i++)
 			{
 				for (var j = -12; j < 12; j++)

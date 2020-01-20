@@ -18,12 +18,6 @@ namespace Recube.Api.Network.Impl.Packets.Play
 		/// </summary>
 		public int EntityId;
 
-		//TODO: Metadata Its not even a string!
-		/// <summary>
-		///     MetaData of the Player Not yet implemented
-		/// </summary>
-		public string Metadata;
-
 		/// <summary>
 		///     Player Pitch
 		/// </summary>
@@ -63,8 +57,6 @@ namespace Recube.Api.Network.Impl.Packets.Play
 			buffer.WriteDouble(Z);
 			buffer.WriteInt(Yaw);
 			buffer.WriteInt(Pitch);
-			//TODO: Metadata implementation
-			buffer.WriteStringWithLength(Metadata);
 		}
 	}
 }
