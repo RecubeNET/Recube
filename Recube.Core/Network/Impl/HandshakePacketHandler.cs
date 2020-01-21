@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Recube.Api.Network.Impl.Packets.Handshake;
-using Recube.Api.Network.Impl.Packets.Status;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 using Recube.Api.Network.Packets.Handler;
@@ -45,15 +44,6 @@ namespace Recube.Core.Network.Impl
 					NetworkPlayer.DisconnectAsync(); // OBVIOUSLY SOMETHING WENT WRONG
 					break;
 			}
-		}
-
-		[PacketMethod]
-		public void OnPingInPacket(PingInPacket packet)
-		{
-			NetworkPlayer.SendPacketAsync(new PongOutPacket
-			{
-				Payload = packet.Payload
-			});
 		}
 	}
 }

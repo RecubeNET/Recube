@@ -34,5 +34,14 @@ namespace Recube.Core.Network.Impl
 				JsonResponse = Recube.Instance.Motd
 			});
 		}
+		
+		[PacketMethod]
+		public void OnPingInPacket(PingInPacket packet)
+		{
+			NetworkPlayer.SendPacketAsync(new PongOutPacket
+			{
+				Payload = packet.Payload
+			});
+		}
 	}
 }
