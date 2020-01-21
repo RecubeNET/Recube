@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using DotNetty.Buffers;
 
@@ -51,6 +52,22 @@ namespace Recube.Api.Network.Extensions
 			foreach (var value in data)
 			{
 				buffer.WriteLong((long) value);
+			}
+		}
+		
+		public static void WriteLongArray(this IByteBuffer buffer, IEnumerable<long> data)
+		{
+			foreach (var value in data)
+			{
+				buffer.WriteLong(value);
+			}
+		}
+		
+		public static void WriteIntArray(this IByteBuffer buffer, IEnumerable<int> data)
+		{
+			foreach (var value in data)
+			{
+				buffer.WriteInt(value);
 			}
 		}
 	}

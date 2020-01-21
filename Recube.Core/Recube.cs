@@ -34,7 +34,7 @@ namespace Recube.Core
 
 		public string Motd = @"{
 	""version"": {
-		""name"": ""1.15.1"",
+		""name"": ""1.15.2"",
 		""protocol"": 575
 	},
 	""players"": {
@@ -57,7 +57,7 @@ namespace Recube.Core
 
 			RegisterPackets();
 
-			var a = new BlockParser("blocks_1.14.4.json").Parse().GetAwaiter().GetResult();
+			var a = new BlockParser("blocks_1.15.1.json").Parse().GetAwaiter().GetResult();
 			foreach (var keyValuePair in a)
 			{
 				BlockStateRegistry.Register(keyValuePair.Key.Name, keyValuePair.Value);

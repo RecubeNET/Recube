@@ -8,7 +8,7 @@ namespace Recube.Api.Block
 
 		public readonly int Id;
 
-		// PROPERTYNAME, PROPERTYCONDITION
+		// PROPERTY NAME, PROPERTY CONDITION
 		public readonly Dictionary<string, object>? Properties;
 
 		public BlockState(int id, bool @default, Dictionary<string, object>? properties)
@@ -28,7 +28,7 @@ namespace Recube.Api.Block
 
 		public static BlockState GetStateFromGlobalPaletteId(uint id)
 		{
-			//TODO Return new BLockState
+			//TODO Return new BlockState
 			return new BlockState(0, true, new Dictionary<string, object>());
 		}
 

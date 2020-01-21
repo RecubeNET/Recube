@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using DotNetty.Buffers;
+using fNbt;
 using Recube.Api.Network.Extensions;
 using Recube.Api.Util;
 
@@ -44,46 +46,35 @@ namespace Recube.Api.World
 		{
 			data.WriteInt(X);
 			data.WriteInt(Z);
-			data.WriteBoolean(true); // FULL CHUNK
-			var mask = 0;
-			var columnBuffer = ByteBufferUtil.DefaultAllocator.Buffer();
-			//TODO: THis
+			data.WriteBytes(File.ReadAllBytes("chunkpacket.dat"));
+			/*data.WriteBoolean(false);
+			data.WriteVarInt((1 << 15));
 
-			for (var sectionY = 0; sectionY < ChunkSize / SectionSize; sectionY++)
+			data.WriteBytes(File.ReadAllBytes("testheightmap.dat"));
+
+			var chunkData = ByteBufferUtil.DefaultAllocator.Buffer();
+
+			chunkData.WriteShort(4096);
+			chunkData.WriteByte(14);
+
+			var dat = new long[(4096 * 14) / 64];
+			for (int i = 0; i < dat.Length; i++)
 			{
-				if (!IsSectionEmpty(sectionY))
-				{
-					mask |= 1 << sectionY; // Set that bit to true in the mask
-					WriteChunkSection(Sections[sectionY], columnBuffer);
-				}
+				dat[i] = 3328328232;
 			}
-
-			/*for (var z = 0; z < SectionSize; z++)
+			/*var biomes = new int[1024];
+			for (int i = 0; i < biomes.Length; i++)
 			{
-				for (var x = 0; x < SectionSize; x++)
-				{
-					columnBuffer.WriteInt(GetBiome(x, z)); // Use 127 for 'void' if your server doesn't support biomes
-				}
-			}*/
+				biomes[i] = 127;
+			}#1#
 
-			data.WriteVarInt(mask);
-			// Biome's
-			for (var i = 0; i < 1024; i++)
-			{
-				data.WriteInt(127);
-			}
-
-			data.WriteVarInt(columnBuffer.ReadableBytes);
-			data.WriteBytes(columnBuffer);
-
-			// If you don't support block entities yet, use 0
-			// If you need to implement it by sending block entities later with the update block entity packet,
-			// do it that way and send 0 as well.  (Note that 1.10.1 (not 1.10 or 1.10.2) will not accept that)
-
-			//Number of Block Entitys
-			data.WriteVarInt(0);
-			// Block entities
-			data.WriteVarInt(0);
+			chunkData.WriteVarInt(dat.Length);
+			chunkData.WriteLongArray(dat);
+			
+			/*data.WriteIntArray(biomes);#1#
+			data.WriteVarInt(chunkData.WritableBytes);
+			data.WriteBytes(chunkData);
+			data.WriteVarInt(0);*/
 		}
 
 		private int GetBiome(in int x, in int z)
@@ -101,112 +92,25 @@ namespace Recube.Api.World
 
 		private void WriteChunkSection(ChunkSection section, IByteBuffer buf)
 		{
-			var palette = section.Palette;
-			var bitsPerBlock = palette.GetBitsPerBlock();
-
-			buf.WriteByte(bitsPerBlock);
-			palette.Write(buf);
-
-			// See tips section for an explanation of this calculation
-			var dataLength = 16 * 16 * 16 * bitsPerBlock / 64;
-			var data = new ulong[dataLength];
-
-			// A bitmask that contains bitsPerBlock set bits
-			var individualValueMask = (uint) ((1 << bitsPerBlock) - 1);
-
-			for (var y = 0; y < SectionSize; y++)
-			{
-				for (var z = 0; z < SectionSize; z++)
-				{
-					for (var x = 0; x < SectionSize; x++)
-					{
-						var blockNumber = (y * SectionSize + z) * SectionSize + x;
-						var startLong = blockNumber * bitsPerBlock / 64;
-						var startOffset = blockNumber * bitsPerBlock % 64;
-						var endLong = ((blockNumber + 1) * bitsPerBlock - 1) / 64;
-						//TODO: BlockState
-						var block = section.GetBaseBlock(x, y, z);
-
-						ulong value =
-							palette.IdForState(RecubeApi.Recube.GetBlockStateRegistry().GetStateByBaseBlock(block));
-						value &= individualValueMask;
-
-						data[startLong] |= value << startOffset;
-
-						if (startLong != endLong)
-						{
-							data[endLong] = value >> (64 - startOffset);
-						}
-					}
-				}
-			}
-
-			buf.WriteVarInt(dataLength);
-			buf.WriteULongArray(data);
-
-			for (var y = 0; y < SectionSize; y++)
-			{
-				for (var z = 0; z < SectionSize; z++)
-				{
-					for (var x = 0; x < SectionSize; x += 2)
-					{
-						// Note: x += 2 above; we read 2 values along x each time
-						var lightValue =
-							(byte) (section.GetBlockLight(x, y, z) | (section.GetBlockLight(x + 1, y, z) << 4));
-						buf.WriteByte(lightValue);
-					}
-				}
-			}
-
-			//TODO: Check for current Dimention
-			// IE, current dimension is overworld / 0
-
-			/*
-				for (var y = 0; y < SectionSize; y++)
-				{
-					for (var z = 0; z < SectionSize; z++)
-					{
-						for (var x = 0; x < SectionSize; x += 2)
-						{
-							// Note: x += 2 above; we read 2 values along x each time
-							var skyLight =
-								(byte) (section.GetSkyLight(x, y, z) | (section.GetSkyLight(x + 1, y, z) << 4));
-							buf.WriteByte(skyLight);
-						}
-					}
-		}
-		*/
 		}
 
 		public byte GetBlock(in int x, in int y, in int z)
 		{
-			/*var index = x + 16*z + 16*16*y;
-			if (index >= 0 && index < Blocks.Length)
-			{
-				return (Blocks[index]);
-			}*/
 			return 0x0;
 		}
 
 		public byte GetMetadata(in int x, in int y, in int z)
 		{
-/*var index = x + 16*z + 16*16*y;
-if (index >= 0 && index < Metadata.Length)
-{
-	return (byte) (Metadata[index]);
-}*/
 			return 0x0;
 		}
 
 		public byte GetBlockLight(in int x, in int y, in int z)
 		{
-//return Blocklight[(x*2048) + (z*256) + y];
 			return byte.MaxValue;
 		}
 
 		public byte GetSkylight(in int x, in int y, in int z)
 		{
-//return Skylight[(x*2048) + (z*256) + y];
 			return byte.MaxValue;
 		}
 	}
