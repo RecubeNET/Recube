@@ -11,11 +11,14 @@ namespace Recube.Core.Network.Pipeline
 {
 	public class PacketDecoder : ByteToMessageDecoder
 	{
+		/// Be careful: Input is a stream, so the WriterIndex won't be 0 on for example packet nr. 2 
 		protected override void Decode(IChannelHandlerContext context, IByteBuffer input, List<object> output)
 		{
+			
 			if (!VarInt.ReadVarInt(input, out var nullablePacketId) || !nullablePacketId.HasValue)
 			{
 				NetworkBootstrap.Logger.Warn("Received packet with invalid packet id");
+				input.Clear(); // CLEAR INDEX SO THAT THE NEXT PACKETS DON'T GET MESSED UP. # Thanks to @turulix
 				return;
 			}
 
@@ -29,7 +32,8 @@ namespace Recube.Core.Network.Pipeline
 			if (!(packetRegistry.GetPacketById(packetId) is IInPacket packet))
 			{
 				NetworkBootstrap.Logger.Warn(
-					$"Received packet {packetId} which is not registered (in the current state:  {Enum.GetName(typeof(NetworkPlayerState), player.CurrentState)})");
+					$"Received packet 0x{packetId:X}[{packetId}] which is not registered (in the current state:  {Enum.GetName(typeof(NetworkPlayerState), player.CurrentState)})");
+				input.Clear(); // CLEAR INDEX SO THAT THE NEXT PACKETS DON'T GET MESSED UP. # Thanks to @turulix
 				return;
 			}
 
@@ -51,6 +55,7 @@ namespace Recube.Core.Network.Pipeline
 				NetworkBootstrap.Logger.Warn(
 					$"Incoming packet {packet.GetType().FullName} has more bytes than expected!");
 			}
+			
 
 			output.Add(packet);
 		}
