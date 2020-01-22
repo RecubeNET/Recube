@@ -1,8 +1,6 @@
 using System;
 using System.IO;
 using DotNetty.Buffers;
-using fNbt;
-using Recube.Api.Network.Extensions;
 using Recube.Api.Util;
 
 namespace Recube.Api.World

@@ -36,7 +36,7 @@ namespace Recube.Core.Network.Impl
 				JsonResponse = Recube.Instance.Motd
 			});
 		}
-		
+
 		[PacketMethod]
 		public void OnPingInPacket(PingInPacket packet)
 		{

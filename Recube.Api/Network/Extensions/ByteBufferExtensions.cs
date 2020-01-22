@@ -54,7 +54,7 @@ namespace Recube.Api.Network.Extensions
 				buffer.WriteLong((long) value);
 			}
 		}
-		
+
 		public static void WriteLongArray(this IByteBuffer buffer, IEnumerable<long> data)
 		{
 			foreach (var value in data)
@@ -62,7 +62,7 @@ namespace Recube.Api.Network.Extensions
 				buffer.WriteLong(value);
 			}
 		}
-		
+
 		public static void WriteIntArray(this IByteBuffer buffer, IEnumerable<int> data)
 		{
 			foreach (var value in data)

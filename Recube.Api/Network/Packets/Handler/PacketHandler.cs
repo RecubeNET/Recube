@@ -15,7 +15,7 @@ namespace Recube.Api.Network.Packets.Handler
 	/// </summary>
 	/// <example>
 	///     To listen for specific packets just add these methods to your class.
-	/// 	<b>Warning: Methods have to be public</b>
+	///     <b>Warning: Methods have to be public</b>
 	///     <code>
 	///  [PacketMethod]
 	///  public void OnYourPacket(YourPacket packet)

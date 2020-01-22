@@ -18,10 +18,10 @@ namespace Recube.Core.Network.Impl
 	public class PlayPacketHandler : PacketHandler
 	{
 		private static readonly Random _random = new Random();
+		private long? _keepAliveId;
+		private DateTime? _lastPong;
 		private Player _player;
 		private Timer? _timeoutTimer;
-		private DateTime? _lastPong;
-		private long? _keepAliveId;
 
 		public PlayPacketHandler(INetworkPlayer networkPlayer) : base(networkPlayer)
 		{

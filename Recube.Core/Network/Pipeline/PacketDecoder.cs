@@ -11,7 +11,7 @@ namespace Recube.Core.Network.Pipeline
 {
 	public class PacketDecoder : ByteToMessageDecoder
 	{
-		/// Be careful: Input is a stream, so the ReaderIndex/WriterIndex won't be 0 on for example packet nr. 2 
+		/// Be careful: Input is a stream, so the ReaderIndex/WriterIndex won't be 0 on for example packet nr. 2
 		protected override void Decode(IChannelHandlerContext context, IByteBuffer input, List<object> output)
 		{
 			try
@@ -27,7 +27,8 @@ namespace Recube.Core.Network.Pipeline
 				var player = Recube.Instance.NetworkPlayerRegistry.GetNetworkPlayerByChannel(context.Channel);
 				if (player == null) throw new InvalidOperationException("NetworkPlayer is null");
 
-				var packetRegistry = Recube.Instance.GetCorrectPacketRegistry(player.CurrentState, PacketDirection.Inbound);
+				var packetRegistry =
+					Recube.Instance.GetCorrectPacketRegistry(player.CurrentState, PacketDirection.Inbound);
 
 				if (!(packetRegistry.GetPacketById(packetId) is IInPacket packet))
 				{
@@ -54,7 +55,7 @@ namespace Recube.Core.Network.Pipeline
 					NetworkBootstrap.Logger.Warn(
 						$"Incoming packet {packet.GetType().FullName} has more bytes than expected!");
 				}
-			
+
 
 				output.Add(packet);
 			}
