@@ -6,7 +6,7 @@ using Recube.Api.Network.Packets;
 namespace Recube.Api.Network.Impl.Packets.Login
 {
 	[Packet(0x3, NetworkPlayerState.Login)]
-	public class SetCompressionPacket : IOutPacket
+	public class SetCompressionOutPacket : IOutPacket
 	{
 		public int Threshold;
 

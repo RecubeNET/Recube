@@ -7,7 +7,7 @@ using Recube.Api.Util;
 namespace Recube.Api.Network.Impl.Packets.Login
 {
 	[Packet(0x02, NetworkPlayerState.Login)]
-	public class LoginSuccessPacket : IOutPacket
+	public class LoginSuccessOutPacket : IOutPacket
 	{
 		public string Username;
 		public Uuid Uuid;

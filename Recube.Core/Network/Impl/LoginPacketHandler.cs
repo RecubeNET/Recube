@@ -31,14 +31,14 @@ namespace Recube.Core.Network.Impl
 		}
 
 		[PacketMethod]
-		public async void OnLoginStartPacket(LoginStartPacket packet)
+		public async void OnLoginStartPacket(LoginStartInPacket packet)
 		{
 			//TODO: Add Disconnect packet and event to disconnect
 			//TODO: Send Encryption Request
 			//TODO: Dont Use Random UUID need something more unique cause username changes
 			var uuid = Uuid.NameUuidFromBytes(Encoding.UTF8.GetBytes("OfflinePlayer:" + packet.Username));
 
-			await NetworkPlayer.SendPacketAsync(new LoginSuccessPacket
+			await NetworkPlayer.SendPacketAsync(new LoginSuccessOutPacket
 			{
 				Username = packet.Username,
 				Uuid = uuid
@@ -50,7 +50,7 @@ namespace Recube.Core.Network.Impl
 		}
 
 		[PacketMethod]
-		public void OnEncryptionResponsePacket(EncryptionResponsePacket packet)
+		public void OnEncryptionResponsePacket(EncryptionResponseInPacket packet)
 		{
 			//TODO Enable Encryption
 		}

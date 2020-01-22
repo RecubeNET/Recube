@@ -6,7 +6,7 @@ using Recube.Api.Network.Packets;
 namespace Recube.Api.Network.Impl.Packets.Login
 {
 	[Packet(0x01, NetworkPlayerState.Login)]
-	public class EncryptionRequestPacket : IOutPacket
+	public class EncryptionRequestOutPacket : IOutPacket
 	{
 		public byte[] PublicKey;
 		public int PublicKeyLength;

@@ -10,7 +10,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 	///     Used to spawn paintings
 	/// </summary>
 	[Packet(0x04, NetworkPlayerState.Play)]
-	public class SpawnPaintingPacket : IOutPacket
+	public class SpawnPaintingOutPacket : IOutPacket
 	{
 		/// <summary>
 		///     Directions the painting can face.

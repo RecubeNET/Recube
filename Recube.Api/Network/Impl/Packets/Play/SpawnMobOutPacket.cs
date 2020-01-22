@@ -12,7 +12,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 	///     Used to spawn Mobs
 	/// </summary>
 	[Packet(0x03, NetworkPlayerState.Play)]
-	public class SpawnMobPacket : IOutPacket
+	public class SpawnMobOutPacket : IOutPacket
 	{
 		/// <summary>
 		///     All Entity's you can spawn with this packet.
@@ -94,7 +94,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 		public int Pitch;
 
 		/// <summary>
-		///     Entity Type <see cref="SpawnMobPacket.SpawnType" />
+		///     Entity Type <see cref="SpawnMobOutPacket.SpawnType" />
 		/// </summary>
 		public SpawnType Type;
 

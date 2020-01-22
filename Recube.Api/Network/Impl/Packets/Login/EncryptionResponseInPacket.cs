@@ -6,7 +6,7 @@ using Recube.Api.Network.Packets;
 namespace Recube.Api.Network.Impl.Packets.Login
 {
 	[Packet(0x01, NetworkPlayerState.Login)]
-	public class EncryptionResponsePacket : IInPacket
+	public class EncryptionResponseInPacket : IInPacket
 	{
 		public byte[] SharedSecret;
 		public int SharedSecretLength;

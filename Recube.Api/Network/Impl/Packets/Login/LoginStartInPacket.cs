@@ -6,7 +6,7 @@ using Recube.Api.Network.Packets;
 namespace Recube.Api.Network.Impl.Packets.Login
 {
 	[Packet(0x0, NetworkPlayerState.Login)]
-	public class LoginStartPacket : IInPacket
+	public class LoginStartInPacket : IInPacket
 	{
 		public string Username;
 

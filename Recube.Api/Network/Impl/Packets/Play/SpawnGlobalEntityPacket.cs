@@ -9,7 +9,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 	///     Currently Only used to Spawn Thunderbolts.
 	/// </summary>
 	[Packet(0x02, NetworkPlayerState.Play)]
-	public class SpawnGlobalEntity : IOutPacket
+	public class SpawnGlobalOutEntity : IOutPacket
 	{
 		public enum SpawnType
 		{
@@ -22,7 +22,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 		public int EntityId;
 
 		/// <summary>
-		///     The Type of the Objcets <see cref="SpawnGlobalEntity.SpawnType" />
+		///     The Type of the Objcets <see cref="SpawnGlobalOutEntity.SpawnType" />
 		/// </summary>
 		public SpawnType Type;
 

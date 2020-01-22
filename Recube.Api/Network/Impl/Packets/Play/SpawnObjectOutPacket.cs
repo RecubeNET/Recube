@@ -13,7 +13,7 @@ namespace Recube.Api.Network.Impl.Packets.Play
 	///     <para> Not used to spawn XP, Mobs, Players, Paintings, Thunderbolts </para>
 	/// </summary>
 	[Packet(0x00, NetworkPlayerState.Play)]
-	public class SpawnObjectPacket : IOutPacket
+	public class SpawnObjectOutPacket : IOutPacket
 	{
 		/// <summary>
 		///     All Entity's spawned with this packet.
