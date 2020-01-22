@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading.Tasks;
 using Recube.Api.Network.Impl.Packets.Login;
@@ -9,6 +10,7 @@ using Recube.Core.Network.Packets.Handler;
 
 namespace Recube.Core.Network.Impl
 {
+	[SuppressMessage("ReSharper", "UnusedMember.Global")]
 	public class LoginPacketHandler : PacketHandler
 	{
 		public LoginPacketHandler(INetworkPlayer networkPlayer) : base(networkPlayer)

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Timers;
 using DotNetty.Buffers;
@@ -13,6 +14,7 @@ using Recube.Api.World;
 
 namespace Recube.Core.Network.Impl
 {
+	[SuppressMessage("ReSharper", "UnusedMember.Global")]
 	public class PlayPacketHandler : PacketHandler
 	{
 		private static readonly Random _random = new Random();
@@ -27,14 +29,22 @@ namespace Recube.Core.Network.Impl
 
 		public override void OnActive()
 		{
-			var now = DateTime.Now;
-			_lastPong = now;
+			_lastPong = DateTime.Now;
 			_timeoutTimer = new Timer(10000) {AutoReset = true};
 			_timeoutTimer.Elapsed += async (sender, args) =>
 			{
-				if (_lastPong == null || (now - _lastPong)?.TotalSeconds >= 30)
+				var now = DateTime.Now;
+				if (_lastPong == null)
 				{
 					await _player.NetworkPlayer.DisconnectAsync();
+					return;
+				}
+
+				var diff = now - _lastPong.Value;
+				if (diff.TotalSeconds >= 30)
+				{
+					await _player.NetworkPlayer.DisconnectAsync();
+					return;
 				}
 
 				_keepAliveId = _random.NextLong();
@@ -117,7 +127,7 @@ namespace Recube.Core.Network.Impl
 		}
 
 		[PacketMethod]
-		private void OnKeepAliveInOutPacket(KeepAliveInPacket packet)
+		public void OnKeepAliveInOutPacket(KeepAliveInPacket packet)
 		{
 			var neededId = _keepAliveId ?? 0;
 			if (neededId != packet.Id) return;

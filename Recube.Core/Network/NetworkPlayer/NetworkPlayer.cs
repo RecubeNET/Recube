@@ -11,7 +11,7 @@ namespace Recube.Core.Network.NetworkPlayer
 {
 	public class NetworkPlayer : INetworkPlayer
 	{
-		private SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
+		private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
 
 		public NetworkPlayer(IChannel channel)
 		{

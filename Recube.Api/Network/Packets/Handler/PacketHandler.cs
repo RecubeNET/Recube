@@ -14,7 +14,8 @@ namespace Recube.Api.Network.Packets.Handler
 	///     multiple states (for example login state & play state)
 	/// </summary>
 	/// <example>
-	///     To listen for specific packets just add these methods to your class
+	///     To listen for specific packets just add these methods to your class.
+	/// 	<b>Warning: Methods have to be public</b>
 	///     <code>
 	///  [PacketMethod]
 	///  public void OnYourPacket(YourPacket packet)

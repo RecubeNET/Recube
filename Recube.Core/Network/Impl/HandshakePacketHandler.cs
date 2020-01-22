@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Recube.Api.Network.Impl.Packets.Handshake;
 using Recube.Api.Network.NetworkPlayer;
@@ -7,6 +8,7 @@ using Recube.Core.Network.Packets.Handler;
 
 namespace Recube.Core.Network.Impl
 {
+	[SuppressMessage("ReSharper", "UnusedMember.Global")]
 	public class HandshakePacketHandler : PacketHandler
 	{
 		public HandshakePacketHandler(INetworkPlayer networkPlayer) : base(networkPlayer)

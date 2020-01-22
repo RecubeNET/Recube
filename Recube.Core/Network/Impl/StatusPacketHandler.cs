@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Recube.Api.Network.Impl.Packets.Status;
 using Recube.Api.Network.NetworkPlayer;
@@ -6,6 +7,7 @@ using Recube.Api.Network.Packets.Handler;
 
 namespace Recube.Core.Network.Impl
 {
+	[SuppressMessage("ReSharper", "UnusedMember.Global")]
 	public class StatusPacketHandler : PacketHandler
 	{
 		public StatusPacketHandler(INetworkPlayer networkPlayer) : base(networkPlayer)
