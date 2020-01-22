@@ -3,14 +3,20 @@ name: .NET Core CI
 on: [push]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build_test:
+    name: Build and Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
     
     steps:
     - uses: actions/checkout@v1
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.0.100-preview8-013656
-    - name: Build with dotnet
+        dotnet-version: 3.0.102
+    - name: Run build
       run: dotnet build --configuration Release
+    - name: Run tests
+      run: dotnet test --configuration Release
