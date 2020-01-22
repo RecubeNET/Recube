@@ -20,8 +20,9 @@ namespace Recube.Core.Network.Pipeline
 				return;
 			}
 
-			var buf = Unpooled.Buffer(length.Value);
-			input.ReadBytes(buf, length.Value);
+			var buf = input.Slice(input.ReaderIndex, length.Value);
+			buf.Retain();
+			input.SetReaderIndex(input.ReaderIndex + length.Value);
 			output.Add(buf);
 		}
 	}
