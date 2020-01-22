@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
@@ -10,6 +11,8 @@ namespace Recube.Core.Network.NetworkPlayer
 {
 	public class NetworkPlayer : INetworkPlayer
 	{
+		private SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
+
 		public NetworkPlayer(IChannel channel)
 		{
 			Channel = channel;
@@ -22,10 +25,18 @@ namespace Recube.Core.Network.NetworkPlayer
 
 		public async Task DisconnectAsync()
 		{
-			if (!Channel.Active) return;
+			await _lock.WaitAsync();
+			try
+			{
+				if (!Channel.Active) return;
 
-			PacketHandler.OnDisconnect();
-			await Channel.CloseAsync().ConfigureAwait(false);
+				PacketHandler.OnDisconnect();
+				await Channel.CloseAsync().ConfigureAwait(false);
+			}
+			finally
+			{
+				_lock.Release();
+			}
 		}
 
 		public void SetPacketHandler(PacketHandler packetHandler)
@@ -38,45 +49,37 @@ namespace Recube.Core.Network.NetworkPlayer
 
 		public async Task SendPacketAsync(IOutPacket packet)
 		{
-			NetworkBootstrap.Logger.Debug($"Sent packet {packet.GetType().FullName}");
-			if (!Channel.Active) return;
-
+			await _lock.WaitAsync();
 			try
 			{
-				await Channel.WriteAndFlushAsync(packet);
-			}
-			catch (ChannelClosedException)
-			{
-			}
-		}
+				NetworkBootstrap.Logger.Debug($"Sent packet {packet.GetType().FullName}");
+				if (!Channel.Active) return;
 
-		public async Task WriteAsync(IOutPacket packet)
-		{
-			if (!Channel.Active) return;
-			try
-			{
-				await Channel.WriteAsync(packet);
+				try
+				{
+					await Channel.WriteAndFlushAsync(packet);
+				}
+				catch (ChannelClosedException)
+				{
+				}
 			}
-			catch (ChannelClosedException)
+			finally
 			{
-			}
-		}
-
-		public void FlushChannel()
-		{
-			if (!Channel.Active) return;
-			try
-			{
-				Channel.Flush();
-			}
-			catch (ChannelClosedException)
-			{
+				_lock.Release();
 			}
 		}
 
 		public void SetState(NetworkPlayerState state)
 		{
-			CurrentState = state;
+			_lock.Wait();
+			try
+			{
+				CurrentState = state;
+			}
+			finally
+			{
+				_lock.Release();
+			}
 		}
 	}
 }

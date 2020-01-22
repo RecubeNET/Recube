@@ -12,9 +12,6 @@ namespace Recube.Api.Network.NetworkPlayer
 		NetworkPlayerState CurrentState { get; }
 
 		Task SendPacketAsync(IOutPacket packet);
-		Task WriteAsync(IOutPacket packet);
-
-		void FlushChannel();
 
 		Task DisconnectAsync();
 

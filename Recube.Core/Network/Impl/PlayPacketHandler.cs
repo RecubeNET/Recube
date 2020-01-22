@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using System.Timers;
 using DotNetty.Buffers;
+using DotNetty.Common.Utilities;
 using Recube.Api.Entities;
 using Recube.Api.Network.Impl.Packets.Play;
 using Recube.Api.Network.NetworkPlayer;
@@ -13,7 +15,11 @@ namespace Recube.Core.Network.Impl
 {
 	public class PlayPacketHandler : PacketHandler
 	{
+		private static readonly Random _random = new Random();
 		private Player _player;
+		private Timer? _timeoutTimer;
+		private DateTime? _lastPong;
+		private long? _keepAliveId;
 
 		public PlayPacketHandler(INetworkPlayer networkPlayer) : base(networkPlayer)
 		{
@@ -21,6 +27,21 @@ namespace Recube.Core.Network.Impl
 
 		public override void OnActive()
 		{
+			var now = DateTime.Now;
+			_lastPong = now;
+			_timeoutTimer = new Timer(10000) {AutoReset = true};
+			_timeoutTimer.Elapsed += async (sender, args) =>
+			{
+				if (_lastPong == null || (now - _lastPong)?.TotalSeconds >= 30)
+				{
+					await _player.NetworkPlayer.DisconnectAsync();
+				}
+
+				_keepAliveId = _random.NextLong();
+				await NetworkPlayer.SendPacketAsync(new KeepAliveOutPacket {Id = (long) _keepAliveId});
+			};
+			_timeoutTimer.Start();
+
 			((NetworkPlayer.NetworkPlayer) NetworkPlayer).SetState(NetworkPlayerState.Play);
 			NetworkPlayer.SendPacketAsync(new JoinGameOutPacket
 			{
@@ -66,13 +87,14 @@ namespace Recube.Core.Network.Impl
 				}
 			}
 
-
 			Console.WriteLine("OKKK");
 			//_player.NetworkPlayer.FlushChannel();
 		}
 
 		public override void OnDisconnect()
 		{
+			_timeoutTimer?.Stop();
+
 			if (_player == null) return;
 
 			Recube.Instance.PlayerRegistry.Deregister(_player);
@@ -92,6 +114,14 @@ namespace Recube.Core.Network.Impl
 			Recube.Instance.PlayerRegistry.Register(_player);
 			NetworkBootstrap.Logger.Info(
 				$"Player {_player.Username}[{_player.Uuid}] connected from {NetworkPlayer.Channel.RemoteAddress}");
+		}
+
+		[PacketMethod]
+		private void OnKeepAliveInOutPacket(KeepAliveInPacket packet)
+		{
+			var neededId = _keepAliveId ?? 0;
+			if (neededId != packet.Id) return;
+			_lastPong = DateTime.Now;
 		}
 	}
 }
