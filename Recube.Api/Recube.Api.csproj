@@ -13,7 +13,7 @@
         <PackageReference Include="DotNetty.Transport" Version="0.6.0" />
         <PackageReference Include="fNbt" Version="0.6.4" />
         <PackageReference Include="Nett" Version="0.13.0" />
-        <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-        <PackageReference Include="NLog" Version="4.6.6" />
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+        <PackageReference Include="NLog" Version="4.6.8" />
     </ItemGroup>
 </Project>

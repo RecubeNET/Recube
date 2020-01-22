@@ -17,8 +17,8 @@
         <PackageReference Include="DotNetty.Codecs" Version="0.6.0" />
         <PackageReference Include="DotNetty.Common" Version="0.6.0" />
         <PackageReference Include="DotNetty.Handlers" Version="0.6.0" />
-        <PackageReference Include="fNbt" Version="0.6.4"/>
-        <PackageReference Include="Newtonsoft.Json" Version="12.0.2"/>
+        <PackageReference Include="fNbt" Version="0.6.4" />
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     </ItemGroup>
 
     <ItemGroup>
@@ -26,7 +26,7 @@
         <Content Include="NLog.config">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <None Remove="blocks.json"/>
+        <None Remove="blocks.json" />
         <Content Include="blocks_1.14.4.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
