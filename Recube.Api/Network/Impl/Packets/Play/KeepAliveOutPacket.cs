@@ -4,7 +4,7 @@ using Recube.Api.Network.Packets;
 
 namespace Recube.Api.Network.Impl.Packets.Play
 {
-	[Packet(0x20, NetworkPlayerState.Play)]
+	[Packet(0x21, NetworkPlayerState.Play)]
 	public class KeepAliveOutPacket: IOutPacket
 	{
 		public long Id;
