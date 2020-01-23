@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using DotNetty.Buffers;
+using Recube.Api.Network.Extensions;
 using Recube.Api.Util;
 
 namespace Recube.Api.World
@@ -44,35 +45,43 @@ namespace Recube.Api.World
 		{
 			data.WriteInt(X);
 			data.WriteInt(Z);
-			data.WriteBytes(File.ReadAllBytes("chunkpacket.dat"));
-			/*data.WriteBoolean(false);
-			data.WriteVarInt((1 << 15));
+			//	data.WriteBytes(File.ReadAllBytes("chunkpacket.dat"));
+			data.WriteBoolean(false);
+			data.WriteVarInt(1 << 15);
+			data.WriteBytes(File.ReadAllBytes("heightmaptest22.dat"));
 
-			data.WriteBytes(File.ReadAllBytes("testheightmap.dat"));
-
-			var chunkData = ByteBufferUtil.DefaultAllocator.Buffer();
-
-			chunkData.WriteShort(4096);
-			chunkData.WriteByte(14);
-
-			var dat = new long[(4096 * 14) / 64];
-			for (int i = 0; i < dat.Length; i++)
+			// DATA
+			var secBuf = Unpooled.Buffer();
+			var secLongs = new long[16 * 16 * 16 * 14 / 64];
+			uint mask = (1 << 14) - 1;
+			for (int x = 0; x < 16; x++)
 			{
-				dat[i] = 3328328232;
+				for (int z = 0; z < 16; z++)
+				{
+					for (int y = 0; y < 16; y++)
+					{
+						var blockNum = (x * 16 + z) * 16 + y;
+						var startLong = blockNum * 14 / 64;
+						var startOffset = blockNum * 14 % 64;
+						var endLong = ((blockNum + 1) * 14 - 1) / 64;
+
+						var value = 1 & mask;
+						secLongs[startLong] |= value << startOffset;
+
+						if (startLong != endLong)
+						{
+							secLongs[endLong] = value >> (64 - startOffset);
+						}
+					}
+				}
 			}
-			/*var biomes = new int[1024];
-			for (int i = 0; i < biomes.Length; i++)
-			{
-				biomes[i] = 127;
-			}#1#
+			secBuf.WriteVarInt(secLongs.Length);
+			secBuf.WriteLongArray(secLongs);
+			//
+			data.WriteVarInt(secBuf.ReadableBytes);
+			data.WriteBytes(secBuf);
 
-			chunkData.WriteVarInt(dat.Length);
-			chunkData.WriteLongArray(dat);
-			
-			/*data.WriteIntArray(biomes);#1#
-			data.WriteVarInt(chunkData.WritableBytes);
-			data.WriteBytes(chunkData);
-			data.WriteVarInt(0);*/
+			data.WriteVarInt(0);
 		}
 
 		private int GetBiome(in int x, in int z)
