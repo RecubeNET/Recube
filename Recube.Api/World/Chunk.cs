@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using DotNetty.Buffers;
+using fNbt;
 using Recube.Api.Network.Extensions;
 using Recube.Api.Util;
 
@@ -46,10 +47,25 @@ namespace Recube.Api.World
 			data.WriteInt(X);
 			data.WriteInt(Z);
 			//	data.WriteBytes(File.ReadAllBytes("chunkpacket.dat"));
-			data.WriteBoolean(false);
-			data.WriteVarInt(1 << 15);
-			data.WriteBytes(File.ReadAllBytes("heightmaptest22.dat"));
+			data.WriteBoolean(true);
+			data.WriteVarInt(1 << 0);
+			var heightmap = new long[36];
+			for (var I = 0; I < heightmap.Length; I++)
+			{
+				heightmap[I] = 16;
+			}
 
+			var compound = new NbtCompound("hello world");
+			compound.Add(new NbtLongArray("MOTION_BLOCKING", heightmap));
+			data.WriteBytes(new NbtFile(compound).SaveToBuffer(NbtCompression.None));
+
+			var biomes = new int[1024];
+			for (var I = 0; I < biomes.Length; I++)
+			{
+				biomes[I] = 127;
+			}
+			data.WriteIntArray(biomes);
+			
 			// DATA
 			var secBuf = Unpooled.Buffer();
 			var secLongs = new long[16 * 16 * 16 * 14 / 64];
@@ -65,7 +81,7 @@ namespace Recube.Api.World
 						var startOffset = blockNum * 14 % 64;
 						var endLong = ((blockNum + 1) * 14 - 1) / 64;
 
-						var value = 1 & mask;
+						var value = 9 & mask;
 						secLongs[startLong] |= value << startOffset;
 
 						if (startLong != endLong)
@@ -75,9 +91,11 @@ namespace Recube.Api.World
 					}
 				}
 			}
+
+			secBuf.WriteShort(4096);
+			secBuf.WriteByte(14);
 			secBuf.WriteVarInt(secLongs.Length);
 			secBuf.WriteLongArray(secLongs);
-			//
 			data.WriteVarInt(secBuf.ReadableBytes);
 			data.WriteBytes(secBuf);
 

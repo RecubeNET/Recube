@@ -74,7 +74,7 @@ namespace Recube.Core.Network.Impl
 			NetworkPlayer.SendPacketAsync(new PlayerPositionAndLookOutPacket
 			{
 				X = 0,
-				Y = 20,
+				Y = 100,
 				Z = 0,
 				Yaw = 0,
 				Pitch = 0,
