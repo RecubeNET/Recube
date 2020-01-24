@@ -55,7 +55,7 @@ namespace Recube.Api.World
 				heightmap[I] = 16;
 			}
 
-			var compound = new NbtCompound("hello world");
+			var compound = new NbtCompound("");
 			compound.Add(new NbtLongArray("MOTION_BLOCKING", heightmap));
 			data.WriteBytes(new NbtFile(compound).SaveToBuffer(NbtCompression.None));
 
@@ -68,20 +68,20 @@ namespace Recube.Api.World
 			
 			// DATA
 			var secBuf = Unpooled.Buffer();
-			var secLongs = new long[16 * 16 * 16 * 14 / 64];
+			var secLongs = new long[14 * 64];
 			uint mask = (1 << 14) - 1;
-			for (int x = 0; x < 16; x++)
+			for (int y = 0; y < 16; y++)
 			{
 				for (int z = 0; z < 16; z++)
 				{
-					for (int y = 0; y < 16; y++)
+					for (int x = 0; x < 16; x++)
 					{
-						var blockNum = (x * 16 + z) * 16 + y;
+						var blockNum = (y * 16 + z) * 16 + x;
 						var startLong = blockNum * 14 / 64;
 						var startOffset = blockNum * 14 % 64;
 						var endLong = ((blockNum + 1) * 14 - 1) / 64;
 
-						var value = 9 & mask;
+						long value = 9 & mask;
 						secLongs[startLong] |= value << startOffset;
 
 						if (startLong != endLong)
@@ -96,6 +96,7 @@ namespace Recube.Api.World
 			secBuf.WriteByte(14);
 			secBuf.WriteVarInt(secLongs.Length);
 			secBuf.WriteLongArray(secLongs);
+			
 			data.WriteVarInt(secBuf.ReadableBytes);
 			data.WriteBytes(secBuf);
 
