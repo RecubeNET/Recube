@@ -6,6 +6,7 @@ using NLog;
 using Recube.Api;
 using Recube.Api.Block;
 using Recube.Api.Entities;
+using Recube.Api.Network.Impl.Packets.Play;
 using Recube.Core.Block;
 using Recube.Core.Entities;
 using Recube.Core.Network;
@@ -90,6 +91,19 @@ namespace Recube.Core
 
 			Task.Run(() => NetworkBootstrap.StartAsync(new IPEndPoint(IPAddress.Parse("0.0.0.0"), 25565)));
 
+			Console.CancelKeyPress += async (sender, e) =>
+			{
+				e.Cancel = true;
+				var disconnectPacket = new DisconnectOutPacket {Reason = "Recube closed"};
+				foreach (var player in PlayerRegistry.GetAll())
+				{
+					await player.NetworkPlayer.SendPacketAsync(disconnectPacket);
+					await player.NetworkPlayer.DisconnectAsync();
+				}
+				NetworkBootstrap.Stop();
+				Environment.Exit(0);
+			};
+			
 			while (true) Console.ReadLine(); // TEMPORARY SOLUTION
 		}
 

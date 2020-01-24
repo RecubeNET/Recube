@@ -29,8 +29,7 @@ namespace Recube.Core.Network.NetworkPlayer
 			try
 			{
 				if (!Channel.Active) return;
-
-				PacketHandler.OnDisconnect();
+				
 				await Channel.CloseAsync().ConfigureAwait(false);
 			}
 			finally
