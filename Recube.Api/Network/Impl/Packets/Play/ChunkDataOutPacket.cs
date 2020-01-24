@@ -8,11 +8,11 @@ namespace Recube.Api.Network.Impl.Packets.Play
 	[Packet(0x22, NetworkPlayerState.Play)]
 	public class ChunkDataPacketOutPacket : IOutPacket
 	{
-		public Chunk Chunk;
+		public IChunk Chunk;
 
 		public void Write(IByteBuffer buffer)
 		{
-			Chunk.WriteChunkDataPacket(buffer);
+			Chunk.Serialize(buffer);
 		}
 	}
 }
