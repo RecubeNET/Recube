@@ -110,7 +110,7 @@ namespace Recube.Core.World
                     if (typeToSet > _data.MaxSize())
                     {
                         var neededBits = VariableBlockArray.NeededBits(typeToSet);
-                        if (neededBits >= UseGlobalPaletteBits)
+                        if (neededBits > UseGlobalPaletteBits)
                         {
                             _data = _data.Resize(GlobalPaletteBitsPerBlock);
                             for (var i = 0; i < _data.Capacity; i++)
@@ -159,6 +159,11 @@ namespace Recube.Core.World
         {
             buf.WriteShort(_blockCount);
             buf.WriteByte(_data.BitsPerValue);
+            if (_palette != null)
+            {
+                buf.WriteVarInt(_palette.Count);
+                buf.WriteVarIntArray(_palette);
+            }
             buf.WriteVarInt(_data.ResultingLongs.Length);
             buf.WriteLongArray(_data.ResultingLongs);
         }

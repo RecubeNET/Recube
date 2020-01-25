@@ -70,5 +70,13 @@ namespace Recube.Api.Network.Extensions
 				buffer.WriteInt(value);
 			}
 		}
+
+		public static void WriteVarIntArray(this IByteBuffer buffer, IEnumerable<int> data)
+		{
+			foreach (var value in data)
+			{
+				buffer.WriteVarInt(value);
+			}
+		}
 	}
 }
