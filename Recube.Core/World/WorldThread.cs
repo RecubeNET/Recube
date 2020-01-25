@@ -16,7 +16,7 @@ namespace Recube.Core.World
     {
         private readonly ILogger _logger;
         private readonly List<World> _worlds = new List<World>();
-        private readonly BlockingCollection<WorldTask> _tasks = new BlockingCollection<WorldTask>();
+        private readonly ConcurrentQueue<WorldTask> _tasks = new ConcurrentQueue<WorldTask>();
         private readonly Thread _thread;
         private readonly Stopwatch _stopwatch = new Stopwatch();
         private ulong _timeCatchup = 0;
@@ -69,6 +69,7 @@ namespace Recube.Core.World
             {
                 _logger.Info($"Starting world thread with {_worlds.Count} worlds");
             }
+
             _thread.Start();
             _running = true;
         }
@@ -89,7 +90,7 @@ namespace Recube.Core.World
         public Task Execute(Action action)
         {
             var tcs = new TaskCompletionSource<object>();
-            _tasks.Add(new WorldTask(tcs, action));
+            _tasks.Enqueue(new WorldTask(tcs, action));
             return tcs.Task;
         }
 
@@ -116,7 +117,7 @@ namespace Recube.Core.World
                         }
                     }
 
-                    foreach (var worldTask in _tasks)
+                    while (_tasks.TryDequeue(out var worldTask))
                     {
                         try
                         {
@@ -129,8 +130,8 @@ namespace Recube.Core.World
                         }
                     }
                 }
-                
-                
+
+
                 // REMOVE WORLDS THAT RAISED AN EXCEPTION
                 if (worldsToRemove.Count != 0)
                 {
@@ -138,12 +139,13 @@ namespace Recube.Core.World
                     {
                         RemoveWorld(world);
                     }
+
                     worldsToRemove.Clear();
                 }
 
                 // CALCULATE HOW LONG WE NEED TO SLEEP
                 // IF WE NEEDED LONGER THAN 50 MILLISECONDS, WE WANT TO CATCHUP TO THE 20 TPS
-                
+
                 _stopwatch.Stop();
                 var overtime = _stopwatch.ElapsedMilliseconds - 50;
                 if (overtime > 0) _timeCatchup += (ulong) overtime;

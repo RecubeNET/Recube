@@ -11,6 +11,7 @@ using Recube.Api.Network.Packets;
 using Recube.Api.Network.Packets.Handler;
 using Recube.Api.Util;
 using Recube.Api.World;
+using Recube.Core.World;
 
 namespace Recube.Core.Network.Impl
 {
@@ -89,7 +90,7 @@ namespace Recube.Core.Network.Impl
 				{
 					var buffer = ByteBufferUtil.DefaultAllocator.Buffer();
 					var chunk = new Chunk(i, j);
-					chunk.WriteChunkDataPacket(buffer);
+					chunk.Serialize(buffer);
 					_player.NetworkPlayer.SendPacketAsync(new ChunkDataPacketOutPacket
 					{
 						Chunk = chunk

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using NLog;
 using Recube.Api;
 using Recube.Api.Block;
+using Recube.Api.Block.Impl;
 using Recube.Api.Entities;
 using Recube.Api.Network.Impl.Packets.Play;
 using Recube.Core.Block;
@@ -63,7 +64,7 @@ namespace Recube.Core
 			{
 				BlockStateRegistry.Register(keyValuePair.Key.Name, keyValuePair.Value);
 			}
-
+			
 			foreach (var keyValuePair in BlockStateRegistry.GetAll())
 			{
 				var c = new StringBuilder($"{keyValuePair.Key}: \n");
