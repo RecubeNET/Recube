@@ -84,9 +84,9 @@ namespace Recube.Core.World
             return n;
         }
 
-        public static int NeededBits(int number)
+        public static uint NeededBits(int number)
         {
-            var count = 0;
+            var count = 0u;
             do
             {
                 count++;
