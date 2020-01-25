@@ -233,7 +233,7 @@ namespace Recube.Core.World
         /// <exception cref="InvalidOperationException">When one of the coordinates is out of bounds</exception>
         public int Index(int x, int y, int z)
         {
-            if (x < 0 || y < 0 || z < 0 || x > ChunkWidth || z > ChunkWidth)
+            if (x < 0 || y < 0 || z < 0 || x > ChunkWidth || z > ChunkWidth || y > ChunkHeight)
                 throw new InvalidOperationException($"indexed type is out of bounds: x = {x} y = {y} z = {z}");
             return ((y & 0xF) << 8) | (z << 4) | x;
         }
