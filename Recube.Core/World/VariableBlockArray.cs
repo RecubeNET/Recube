@@ -5,36 +5,38 @@ namespace Recube.Core.World
     public class VariableBlockArray
     {
         public long[] ResultingLongs { get; }
-        private readonly int _bitsPerValue;
-        private readonly int _capacity;
-        private readonly long _mask;
+        public byte BitsPerValue { get; }
+        public int Capacity { get; }
+        public long Mask { get; }
 
-        public VariableBlockArray(uint bitsPerValue, uint capacity)
+        public long MaxSize() => Mask;
+        
+        public VariableBlockArray(byte bitsPerValue, uint capacity)
         {
             if (bitsPerValue == 0) throw new InvalidOperationException("bitsPerValue is 0");
             if (bitsPerValue > 64) throw new InvalidOperationException("bitsPerValue is greater than 64");
             if (capacity == 0) throw new InvalidOperationException("capacity is 0");
 
-            _bitsPerValue = (int) bitsPerValue;
-            _capacity = (int) capacity;
-            ResultingLongs = new long[(int) Math.Ceiling(_bitsPerValue * _capacity / 64d)];
-            _mask = (1 << _bitsPerValue) - 1;
+            BitsPerValue = bitsPerValue;
+            Capacity = (int) capacity;
+            ResultingLongs = new long[(int) Math.Ceiling(BitsPerValue * Capacity / 64d)];
+            Mask = (1 << BitsPerValue) - 1;
         }
 
         public void Set(int index, long value)
         {
             if (index < 0) throw new InvalidOperationException($"index {index} is less than 0");
-            if (index >= _capacity)
-                throw new IndexOutOfRangeException($"index {index} is greater than the capacity {_capacity}");
-            if (value > _mask) throw new OverflowException($"value {value} needs more bits than {_bitsPerValue}");
+            if (index >= Capacity)
+                throw new IndexOutOfRangeException($"index {index} is greater than the capacity {Capacity}");
+            if (value > Mask) throw new OverflowException($"value {value} needs more bits than {BitsPerValue}");
 
-            var startLong = index * _bitsPerValue / 64;
-            var startOffset = index * _bitsPerValue % 64;
+            var startLong = index * BitsPerValue / 64;
+            var startOffset = index * BitsPerValue % 64;
             var endLong =
-                ((index + 1) * _bitsPerValue - 1) /
+                ((index + 1) * BitsPerValue - 1) /
                 64; // CHECK NEXT BLOCK STARTING BIT BUT SUBTRACT 1 TO GET THE END LONG
 
-            value &= _mask; // OVERFLOW PROTECTION
+            value &= Mask; // OVERFLOW PROTECTION
 
             ResultingLongs[startLong] |= value << startOffset;
 
@@ -47,12 +49,12 @@ namespace Recube.Core.World
         public long Get(int index)
         {
             if (index < 0) throw new InvalidOperationException($"index {index} is less than 0");
-            if (index > _capacity) throw new InvalidOperationException($"index {index} is less than the capacity");
+            if (index > Capacity) throw new InvalidOperationException($"index {index} is less than the capacity");
 
 
-            var startLong = index * _bitsPerValue / 64;
-            var startOffset = index * _bitsPerValue % 64;
-            var endLong = ((index + 1) * _bitsPerValue - 1) / 64;
+            var startLong = index * BitsPerValue / 64;
+            var startOffset = index * BitsPerValue % 64;
+            var endLong = ((index + 1) * BitsPerValue - 1) / 64;
 
             var value = (ulong) ResultingLongs[startLong] >> startOffset;
             if (startLong != endLong)
@@ -60,22 +62,17 @@ namespace Recube.Core.World
                 value |= (ulong) ResultingLongs[endLong] << (64 - startOffset);
             }
 
-            return (long) value & _mask;
+            return (long) value & Mask;
         }
 
-        public long MaxSize()
+        public VariableBlockArray Resize(byte bitsPerValue)
         {
-            return _mask;
-        }
-
-        public VariableBlockArray Resize(uint bitsPerValue)
-        {
-            if (bitsPerValue == _bitsPerValue) return this;
-            if (bitsPerValue < _bitsPerValue)
+            if (bitsPerValue == BitsPerValue) return this;
+            if (bitsPerValue < BitsPerValue)
                 throw new InvalidOperationException(
-                    $"bitsPerValue {bitsPerValue} cannot be smaller than current _bitsPerValue {_bitsPerValue}");
-            
-            var n = new VariableBlockArray(bitsPerValue, (uint) _capacity);
+                    $"bitsPerValue {bitsPerValue} cannot be smaller than current BitsPerValue {BitsPerValue}");
+
+            var n = new VariableBlockArray(bitsPerValue, (uint) Capacity);
             for (var i = 0; i < ResultingLongs.Length; i++)
             {
                 n.Set(i, this.Get(i));
@@ -84,9 +81,9 @@ namespace Recube.Core.World
             return n;
         }
 
-        public static uint NeededBits(int number)
+        public static byte NeededBits(int number)
         {
-            var count = 0u;
+            byte count = 0;
             do
             {
                 count++;
