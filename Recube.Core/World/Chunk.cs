@@ -8,14 +8,15 @@ namespace Recube.Core.World
 {
     public class Chunk : IChunk
     {
-        private readonly int[] _biomes = new int[1024];
-
-        private readonly long[] _heightmap = new long[36];
-        private readonly ChunkSection[] _sections = new ChunkSection[16];
         public readonly int X;
         public readonly int Z;
 
+        private readonly ChunkSection[] _sections = new ChunkSection[16];
         private int _sectionMask;
+
+        private readonly long[] _heightmap = new long[36];
+        private readonly int[] _biomes = new int[1024];
+
 
         public Chunk(int x, int z)
         {
@@ -29,31 +30,6 @@ namespace Recube.Core.World
             for (var blockX = 0; blockX < 16; blockX++)
             for (var blockZ = 0; blockZ < 16; blockZ++)
                 SetBlock(blockX, 0, blockZ, 9);
-        }
-
-        public void Serialize(IByteBuffer data)
-        {
-            data.WriteInt(X);
-            data.WriteInt(Z);
-            data.WriteBoolean(true);
-            data.WriteVarInt(_sectionMask);
-
-            var compound = new NbtCompound("") {new NbtLongArray("MOTION_BLOCKING", _heightmap)};
-            data.WriteBytes(new NbtFile(compound).SaveToBuffer(NbtCompression.None));
-
-            data.WriteIntArray(_biomes);
-
-            var secBuf = Unpooled.Buffer();
-            for (var i = 0; i < _sections.Length; i++)
-            {
-                if ((_sectionMask & (1 << i)) == 0) continue;
-                _sections[i].Serialize(secBuf);
-            }
-
-            data.WriteVarInt(secBuf.ReadableBytes);
-            data.WriteBytes(secBuf);
-
-            data.WriteVarInt(0);
         }
 
         public void SetBlock(int x, int y, int z, int type)
@@ -80,6 +56,31 @@ namespace Recube.Core.World
 
             var section = _sections[sectionIndex];
             return section.GetType(x, y, z);
+        }
+
+        public void Serialize(IByteBuffer data)
+        {
+            data.WriteInt(X);
+            data.WriteInt(Z);
+            data.WriteBoolean(true);
+            data.WriteVarInt(_sectionMask);
+
+            var compound = new NbtCompound("") {new NbtLongArray("MOTION_BLOCKING", _heightmap)};
+            data.WriteBytes(new NbtFile(compound).SaveToBuffer(NbtCompression.None));
+
+            data.WriteIntArray(_biomes);
+
+            var secBuf = Unpooled.Buffer();
+            for (var i = 0; i < _sections.Length; i++)
+            {
+                if ((_sectionMask & (1 << i)) == 0) continue;
+                _sections[i].Serialize(secBuf);
+            }
+
+            data.WriteVarInt(secBuf.ReadableBytes);
+            data.WriteBytes(secBuf);
+
+            data.WriteVarInt(0);
         }
     }
 }

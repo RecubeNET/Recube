@@ -47,13 +47,6 @@ namespace Recube.Core.World
         /// </summary>
         private List<int>? _palette;
 
-        private ChunkSection(short blockCount, VariableBlockArray array, List<int>? palette)
-        {
-            BlockCount = blockCount;
-            Data = array;
-            _palette = palette;
-        }
-
         /// <summary>
         ///     Indicator how many non-air blocks exist in this section
         /// </summary>
@@ -63,6 +56,13 @@ namespace Recube.Core.World
         ///     This array holds every block in this section and manages the bit shifting stuff
         /// </summary>
         public VariableBlockArray Data { get; private set; }
+
+        private ChunkSection(short blockCount, VariableBlockArray array, List<int>? palette)
+        {
+            BlockCount = blockCount;
+            Data = array;
+            _palette = palette;
+        }
 
 
         /// <summary>
