@@ -40,7 +40,7 @@ namespace Recube.Core.World
                 ((index + 1) * BitsPerValue - 1) /
                 64; // CHECK NEXT BLOCK STARTING BIT BUT SUBTRACT 1 TO GET THE END LONG
 
-            ResultingLongs[startLong] &= (long) ~(Mask << startOffset);
+            ResultingLongs[startLong] &= (long) ~(Mask << startOffset); // UNSET PREVIOUS BITS
             ResultingLongs[startLong] |= value << startOffset;
 
             if (startLong != endLong)

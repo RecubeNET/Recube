@@ -34,11 +34,7 @@ namespace Recube.Core.Tests.World
             sec.SetType(0, 0, 0, 2);
             sec.SetType(0, 0, 0, 4);
 
-            for (var i = 0; i < 4096; i++)
-            {
-            }
-
-            sec.SetType(1, 1, 1, int.MaxValue);
+            for (var i = 0; i < 4096; i++) sec.SetType(0, 0, 0, i);
         }
     }
 }
