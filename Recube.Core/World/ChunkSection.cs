@@ -172,7 +172,7 @@ namespace Recube.Core.World
                     typeToSet = _palette.Count - 1;
 
                     // CHECK IF PALETTE WOULD NEED TO RESIZE
-                    if (typeToSet > _data.MaxSize())
+                    if ((ulong) typeToSet > _data.MaxSize())
                     {
                         var neededBits = VariableBlockArray.NeededBits(typeToSet);
 
