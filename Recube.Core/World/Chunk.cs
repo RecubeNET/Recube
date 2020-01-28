@@ -1,15 +1,17 @@
 ﻿using System;
-using System.IO;
 using DotNetty.Buffers;
 using fNbt;
 using Recube.Api.Network.Extensions;
-using Recube.Api.Util;
 using Recube.Api.World;
 
 namespace Recube.Core.World
 {
     public class Chunk : IChunk
     {
+        private readonly long[] _heightmap = new long[36];
+        private readonly int _sectionMask = 1;
+
+        private readonly ChunkSection[] _sections = new ChunkSection[16];
         public int X;
         public int Z;
 
@@ -17,63 +19,38 @@ namespace Recube.Core.World
         {
             X = x;
             Z = z;
+            for (var i = 0; i < _sections.Length; i++)
+            {
+                _sections[i] = ChunkSection.Build(new int [ChunkSection.DataArraySize]);
+                _sections[i].SetType(0, 0, 0, 9);
+                _sections[i].SetType(15, 0, 0, 9);
+                /* _sections[i].SetType(0, 0, 16, 9);
+                _sections[i].SetType(16, 0, 16, 9);*/
+            }
         }
 
         public void Serialize(IByteBuffer data)
         {
             data.WriteInt(X);
             data.WriteInt(Z);
-            //	data.WriteBytes(File.ReadAllBytes("chunkpacket.dat"));
             data.WriteBoolean(true);
-            data.WriteVarInt(1 << 0);
-            var heightmap = new long[36];
-            for (var I = 0; I < heightmap.Length; I++)
-            {
-                heightmap[I] = 16;
-            }
+            data.WriteVarInt(_sectionMask);
 
-            var compound = new NbtCompound("");
-            compound.Add(new NbtLongArray("MOTION_BLOCKING", heightmap));
+            var compound = new NbtCompound("") {new NbtLongArray("MOTION_BLOCKING", _heightmap)};
             data.WriteBytes(new NbtFile(compound).SaveToBuffer(NbtCompression.None));
 
             var biomes = new int[1024];
-            for (var I = 0; I < biomes.Length; I++)
-            {
-                biomes[I] = 127;
-            }
+            for (var I = 0; I < biomes.Length; I++) biomes[I] = 127;
 
             data.WriteIntArray(biomes);
 
-            // DATA
             var secBuf = Unpooled.Buffer();
-            var secLongs = new long[14 * 64];
-            uint mask = (1 << 14) - 1;
-            for (int y = 0; y < 16; y++)
+            for (var i = 0; i < _sections.Length; i++)
             {
-                for (int z = 0; z < 16; z++)
-                {
-                    for (int x = 0; x < 16; x++)
-                    {
-                        var blockNum = (y * 16 + z) * 16 + x;
-                        var startLong = blockNum * 14 / 64;
-                        var startOffset = blockNum * 14 % 64;
-                        var endLong = ((blockNum + 1) * 14 - 1) / 64;
-
-                        long value = 9 & mask;
-                        secLongs[startLong] |= value << startOffset;
-
-                        if (startLong != endLong)
-                        {
-                            secLongs[endLong] = value >> (64 - startOffset);
-                        }
-                    }
-                }
+                if ((_sectionMask & (1 << i)) == 0) continue;
+                Console.WriteLine($"{X} : {Z}");
+                _sections[i].Serialize(secBuf);
             }
-
-            secBuf.WriteShort(4096);
-            secBuf.WriteByte(14);
-            secBuf.WriteVarInt(secLongs.Length);
-            secBuf.WriteLongArray(secLongs);
 
             data.WriteVarInt(secBuf.ReadableBytes);
             data.WriteBytes(secBuf);

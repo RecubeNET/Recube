@@ -149,9 +149,9 @@ namespace Recube.Core.World
         /// <summary>
         ///     Sets a block type in this section
         /// </summary>
-        /// <param name="x">The x coordinate in this section (currently 0..16)</param>
-        /// <param name="y">The y coordinate in this section (currently 0..16)</param>
-        /// <param name="z">The z coordinate in this section (currently 0..16)</param>
+        /// <param name="x">The x coordinate in this section (currently 0..15)</param>
+        /// <param name="y">The y coordinate in this section (currently 0..15)</param>
+        /// <param name="z">The z coordinate in this section (currently 0..15)</param>
         /// <param name="type">The type</param>
         /// <exception cref="InvalidOperationException">If one of the coordinates is out of bounds</exception>
         /// <exception cref="OverflowException">If type would need more bits than GlobalPaletteBitsPerBlock</exception>
@@ -215,9 +215,9 @@ namespace Recube.Core.World
         /// <summary>
         ///     Gets the raw type from the position
         /// </summary>
-        /// <param name="x">The x coordinate in this section (currently 0..16)</param>
-        /// <param name="y">The y coordinate in this section (currently 0..16)</param>
-        /// <param name="z">The z coordinate in this section (currently 0..16)</param>
+        /// <param name="x">The x coordinate in this section (currently 0..15)</param>
+        /// <param name="y">The y coordinate in this section (currently 0..15)</param>
+        /// <param name="z">The z coordinate in this section (currently 0..15)</param>
         /// <returns>The type</returns>
         /// <exception cref="InvalidOperationException">If one of the coordinates is out of bounds</exception>
         public int GetType(int x, int y, int z)
@@ -231,16 +231,16 @@ namespace Recube.Core.World
         /// <summary>
         ///     Transforms the x, y & z values into one block index
         /// </summary>
-        /// <param name="x">The x coordinate in this section (currently 0..16)</param>
-        /// <param name="y">The y coordinate in this section (currently 0..16)</param>
-        /// <param name="z">The z coordinate in this section (currently 0..16)></param>
+        /// <param name="x">The x coordinate in this section (currently 0..15)</param>
+        /// <param name="y">The y coordinate in this section (currently 0..15)</param>
+        /// <param name="z">The z coordinate in this section (currently 0..15)></param>
         /// <returns>The type</returns>
         /// <exception cref="InvalidOperationException">When one of the coordinates is out of bounds</exception>
         public int Index(int x, int y, int z)
         {
-            if (x < 0 || y < 0 || z < 0 || x > ChunkSectionWidth || z > ChunkSectionWidth || y > ChunkSectionHeight)
+            if (x < 0 || y < 0 || z < 0 || x >= ChunkSectionWidth || z >= ChunkSectionWidth || y >= ChunkSectionHeight)
                 throw new InvalidOperationException($"indexed type is out of bounds: x = {x} y = {y} z = {z}");
-            return ((y & 0xF) << 8) | (z << 4) | x;
+            return (y << 8) | (z << 4) | x;
         }
 
         /// <summary>
