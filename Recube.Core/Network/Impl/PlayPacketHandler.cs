@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Timers;
 using DotNetty.Buffers;
@@ -14,7 +13,6 @@ using Recube.Core.World;
 
 namespace Recube.Core.Network.Impl
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class PlayPacketHandler : PacketHandler
     {
         private static readonly Random _random = new Random();

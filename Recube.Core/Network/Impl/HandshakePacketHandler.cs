@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Recube.Api.Network.Impl.Packets.Handshake;
 using Recube.Api.Network.NetworkPlayer;
@@ -8,44 +7,43 @@ using Recube.Core.Network.Packets.Handler;
 
 namespace Recube.Core.Network.Impl
 {
-	[SuppressMessage("ReSharper", "UnusedMember.Global")]
-	public class HandshakePacketHandler : PacketHandler
-	{
-		public HandshakePacketHandler(INetworkPlayer networkPlayer) : base(networkPlayer)
-		{
-		}
+    public class HandshakePacketHandler : PacketHandler
+    {
+        public HandshakePacketHandler(INetworkPlayer networkPlayer) : base(networkPlayer)
+        {
+        }
 
-		public override void OnActive()
-		{
-			((NetworkPlayer.NetworkPlayer) NetworkPlayer).SetState(NetworkPlayerState.Handshake);
-		}
+        public override void OnActive()
+        {
+            ((NetworkPlayer.NetworkPlayer) NetworkPlayer).SetState(NetworkPlayerState.Handshake);
+        }
 
-		public override void OnDisconnect()
-		{
-		}
+        public override void OnDisconnect()
+        {
+        }
 
-		public override Task Fallback(IInPacket packet)
-		{
-			return Task.CompletedTask;
-		}
+        public override Task Fallback(IInPacket packet)
+        {
+            return Task.CompletedTask;
+        }
 
-		[PacketMethod]
-		public void OnHandshakingInPacket(HandshakeInPacket packet)
-		{
-			switch (packet.NextState)
-			{
-				case NetworkPlayerState.Status:
-					NetworkPlayer.SetPacketHandler(
-						PacketHandlerFactory.CreatePacketHandler(Recube.Instance.StatusPacketHandler, NetworkPlayer));
-					break;
-				case NetworkPlayerState.Login:
-					NetworkPlayer.SetPacketHandler(
-						PacketHandlerFactory.CreatePacketHandler(Recube.Instance.LoginPacketHandler, NetworkPlayer));
-					break;
-				default:
-					NetworkPlayer.DisconnectAsync(); // OBVIOUSLY SOMETHING WENT WRONG
-					break;
-			}
-		}
-	}
+        [PacketMethod]
+        public void OnHandshakingInPacket(HandshakeInPacket packet)
+        {
+            switch (packet.NextState)
+            {
+                case NetworkPlayerState.Status:
+                    NetworkPlayer.SetPacketHandler(
+                        PacketHandlerFactory.CreatePacketHandler(Recube.Instance.StatusPacketHandler, NetworkPlayer));
+                    break;
+                case NetworkPlayerState.Login:
+                    NetworkPlayer.SetPacketHandler(
+                        PacketHandlerFactory.CreatePacketHandler(Recube.Instance.LoginPacketHandler, NetworkPlayer));
+                    break;
+                default:
+                    NetworkPlayer.DisconnectAsync(); // OBVIOUSLY SOMETHING WENT WRONG
+                    break;
+            }
+        }
+    }
 }

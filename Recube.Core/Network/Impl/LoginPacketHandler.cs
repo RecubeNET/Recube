@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading.Tasks;
 using Recube.Api.Network.Impl.Packets.Login;
@@ -10,51 +9,50 @@ using Recube.Core.Network.Packets.Handler;
 
 namespace Recube.Core.Network.Impl
 {
-	[SuppressMessage("ReSharper", "UnusedMember.Global")]
-	public class LoginPacketHandler : PacketHandler
-	{
-		public LoginPacketHandler(INetworkPlayer networkPlayer) : base(networkPlayer)
-		{
-		}
+    public class LoginPacketHandler : PacketHandler
+    {
+        public LoginPacketHandler(INetworkPlayer networkPlayer) : base(networkPlayer)
+        {
+        }
 
-		public override void OnActive()
-		{
-			((NetworkPlayer.NetworkPlayer) NetworkPlayer).SetState(NetworkPlayerState.Login);
-		}
+        public override void OnActive()
+        {
+            ((NetworkPlayer.NetworkPlayer) NetworkPlayer).SetState(NetworkPlayerState.Login);
+        }
 
-		public override void OnDisconnect()
-		{
-			// TODO: On Disconnect
-		}
+        public override void OnDisconnect()
+        {
+            // TODO: On Disconnect
+        }
 
-		public override Task Fallback(IInPacket packet)
-		{
-			return Task.CompletedTask;
-		}
+        public override Task Fallback(IInPacket packet)
+        {
+            return Task.CompletedTask;
+        }
 
-		[PacketMethod]
-		public async void OnLoginStartPacket(LoginStartInPacket packet)
-		{
-			//TODO: Add Disconnect packet and event to disconnect
-			//TODO: Send Encryption Request
-			//TODO: Dont Use Random UUID need something more unique cause username changes
-			var uuid = Uuid.NameUuidFromBytes(Encoding.UTF8.GetBytes("OfflinePlayer:" + packet.Username));
+        [PacketMethod]
+        public async void OnLoginStartPacket(LoginStartInPacket packet)
+        {
+            //TODO: Add Disconnect packet and event to disconnect
+            //TODO: Send Encryption Request
+            //TODO: Dont Use Random UUID need something more unique cause username changes
+            var uuid = Uuid.NameUuidFromBytes(Encoding.UTF8.GetBytes("OfflinePlayer:" + packet.Username));
 
-			await NetworkPlayer.SendPacketAsync(new LoginSuccessOutPacket
-			{
-				Username = packet.Username,
-				Uuid = uuid
-			});
+            await NetworkPlayer.SendPacketAsync(new LoginSuccessOutPacket
+            {
+                Username = packet.Username,
+                Uuid = uuid
+            });
 
-			var handler = PacketHandlerFactory.CreatePacketHandler(Recube.Instance.PlayPacketHandler, NetworkPlayer);
-			((PlayPacketHandler) handler).SetPlayer(uuid, packet.Username);
-			NetworkPlayer.SetPacketHandler(handler);
-		}
+            var handler = PacketHandlerFactory.CreatePacketHandler(Recube.Instance.PlayPacketHandler, NetworkPlayer);
+            ((PlayPacketHandler) handler).SetPlayer(uuid, packet.Username);
+            NetworkPlayer.SetPacketHandler(handler);
+        }
 
-		[PacketMethod]
-		public void OnEncryptionResponsePacket(EncryptionResponseInPacket packet)
-		{
-			//TODO Enable Encryption
-		}
-	}
+        [PacketMethod]
+        public void OnEncryptionResponsePacket(EncryptionResponseInPacket packet)
+        {
+            //TODO Enable Encryption
+        }
+    }
 }
