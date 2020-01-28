@@ -40,9 +40,14 @@ namespace Recube.Core.World
                 ((index + 1) * BitsPerValue - 1) /
                 64; // CHECK NEXT BLOCK STARTING BIT BUT SUBTRACT 1 TO GET THE END LONG
 
+            ResultingLongs[startLong] &= (long) ~(Mask << startOffset);
             ResultingLongs[startLong] |= value << startOffset;
 
-            if (startLong != endLong) ResultingLongs[endLong] = value >> (64 - startOffset);
+            if (startLong != endLong)
+            {
+                ResultingLongs[endLong] &= (long) ~(Mask >> (64 - startOffset));
+                ResultingLongs[endLong] = value >> (64 - startOffset);
+            }
         }
 
         public long Get(int index)

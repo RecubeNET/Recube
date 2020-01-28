@@ -8,18 +8,21 @@ namespace Recube.Core.Tests.World
         [Fact]
         public void GetTest()
         {
-            var vba = new Core.World.VariableBlockArray(14, 5);
+            var vba = new Core.World.VariableBlockArray(14, 6);
             vba.Set(0, 200);
             vba.Set(1, 5000);
             vba.Set(2, 1);
             vba.Set(3, 4238);
             vba.Set(4, 12000);
+            vba.Set(5, 1);
+            vba.Set(5, 2);
 
             Assert.Equal(200, vba.Get(0));
             Assert.Equal(5000, vba.Get(1));
             Assert.Equal(1, vba.Get(2));
             Assert.Equal(4238, vba.Get(3));
             Assert.Equal(12000, vba.Get(4));
+            Assert.Equal(2, vba.Get(5));
         }
 
         [Fact]
@@ -33,13 +36,14 @@ namespace Recube.Core.Tests.World
             vba.Set(3, 4238);
             vba.Set(4, 12000);
             vba.Set(5, 1200000);
+            vba.Set(5, 1200005);
 
             Assert.Equal(200, vba.Get(0));
             Assert.Equal(5000, vba.Get(1));
             Assert.Equal(1, vba.Get(2));
             Assert.Equal(4238, vba.Get(3));
             Assert.Equal(12000, vba.Get(4));
-            Assert.Equal(1200000, vba.Get(5));
+            Assert.Equal(1200005, vba.Get(5));
         }
 
         [Fact]
@@ -121,6 +125,7 @@ namespace Recube.Core.Tests.World
             var vba = new Core.World.VariableBlockArray(14, 5);
             var mask = (1 << 14) - 1;
 
+            vba.Set(0, 201);
             vba.Set(0, 200);
             vba.Set(1, 5000);
             vba.Set(2, 1);
