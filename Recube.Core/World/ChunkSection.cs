@@ -43,26 +43,27 @@ namespace Recube.Core.World
         public const int UseGlobalPaletteBits = 8;
 
         /// <summary>
-        ///     Indicator how many non-air blocks exist in this section
-        /// </summary>
-        private short _blockCount;
-
-        /// <summary>
         ///     This is a possible indirect palette. If it's null then the global palette is used instead.
         /// </summary>
         private List<int>? _palette;
 
         private ChunkSection(short blockCount, VariableBlockArray array, List<int>? palette)
         {
-            _blockCount = blockCount;
+            BlockCount = blockCount;
             Data = array;
             _palette = palette;
         }
 
         /// <summary>
+        ///     Indicator how many non-air blocks exist in this section
+        /// </summary>
+        public short BlockCount { get; private set; }
+
+        /// <summary>
         ///     This array holds every block in this section and manages the bit shifting stuff
         /// </summary>
         public VariableBlockArray Data { get; private set; }
+
 
         /// <summary>
         ///     Factory function to initialize a new chunk section
@@ -102,17 +103,17 @@ namespace Recube.Core.World
 
         /// <summary>
         ///     Recount how many non-air blocks exist in the this chunk section.
-        ///     Sets the value into the <see cref="_blockCount" /> variable
+        ///     Sets the value into the <see cref="BlockCount" /> variable
         /// </summary>
         public void Recount()
         {
-            _blockCount = 0;
+            BlockCount = 0;
             for (var i = 0; i < DataArraySize; i++)
             {
                 var type = (int) Data.Get(i); // CAST TO INT
                 if (_palette != null) type = _palette[type];
 
-                if (type != 0) _blockCount++;
+                if (type != 0) BlockCount++;
             }
         }
 
@@ -124,7 +125,7 @@ namespace Recube.Core.World
         public void Optimize()
         {
             var optimized = Build(GetAllTypes());
-            _blockCount = optimized._blockCount;
+            BlockCount = optimized.BlockCount;
             _palette = optimized._palette;
             Data = optimized.Data;
         }
@@ -162,8 +163,8 @@ namespace Recube.Core.World
                     $"type {type} would need more bits({VariableBlockArray.NeededBits(type)}) than the current limit {GlobalPaletteBitsPerBlock}");
 
             var oldType = GetType(x, y, z);
-            if (oldType != 0) _blockCount--; // CHECK IF NOT AIR
-            if (type != 0) _blockCount++;
+            if (oldType != 0) BlockCount--; // CHECK IF NOT AIR
+            if (type != 0) BlockCount++;
 
             var typeToSet = type;
 
@@ -236,7 +237,7 @@ namespace Recube.Core.World
         /// <param name="z">The z coordinate in this section (currently 0..15)></param>
         /// <returns>The type</returns>
         /// <exception cref="InvalidOperationException">When one of the coordinates is out of bounds</exception>
-        public int Index(int x, int y, int z)
+        public static int Index(int x, int y, int z)
         {
             if (x < 0 || y < 0 || z < 0 || x >= ChunkSectionWidth || z >= ChunkSectionWidth || y >= ChunkSectionHeight)
                 throw new InvalidOperationException($"indexed type is out of bounds: x = {x} y = {y} z = {z}");
@@ -249,7 +250,7 @@ namespace Recube.Core.World
         /// <param name="buf">The byte buffer</param>
         public void Serialize(IByteBuffer buf)
         {
-            buf.WriteShort(_blockCount);
+            buf.WriteShort(BlockCount);
             buf.WriteByte(Data.BitsPerValue);
             if (_palette != null)
             {
