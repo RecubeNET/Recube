@@ -4,6 +4,16 @@ namespace Recube.Core.World
 {
     public class VariableBlockArray
     {
+        public long[] ResultingLongs { get; }
+
+        public byte BitsPerValue { get; }
+
+        public int Capacity { get; }
+
+        public ulong Mask { get; }
+
+        public ulong MaxSize() => Mask;
+
         public VariableBlockArray(byte bitsPerValue, uint capacity)
         {
             if (bitsPerValue == 0) throw new InvalidOperationException("bitsPerValue is 0");
@@ -14,16 +24,6 @@ namespace Recube.Core.World
             Capacity = (int) capacity;
             ResultingLongs = new long[(int) Math.Ceiling(BitsPerValue * Capacity / 64d)];
             Mask = (BitsPerValue == 64 ? 0 : 1UL << BitsPerValue) - 1;
-        }
-
-        public long[] ResultingLongs { get; }
-        public byte BitsPerValue { get; }
-        public int Capacity { get; }
-        public ulong Mask { get; }
-
-        public ulong MaxSize()
-        {
-            return Mask;
         }
 
         public void Set(int index, long value)
