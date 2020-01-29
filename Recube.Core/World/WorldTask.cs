@@ -9,9 +9,9 @@ namespace Recube.Core.World
     public struct WorldTask
     {
         public readonly TaskCompletionSource<object> TaskCompletionSource;
-        public readonly Action Action;
+        public readonly Func<Task> Action;
 
-        public WorldTask(TaskCompletionSource<object> taskCompletionSource, Action action)
+        public WorldTask(TaskCompletionSource<object> taskCompletionSource, Func<Task> action)
         {
             TaskCompletionSource = taskCompletionSource;
             Action = action;

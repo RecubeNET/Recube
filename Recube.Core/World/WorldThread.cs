@@ -87,13 +87,12 @@ namespace Recube.Core.World
         /// </summary>
         /// <param name="action">The action</param>
         /// <returns>An awaitable task</returns>
-        public Task Execute(Action action)
+        public Task Execute(Func<Task> action)
         {
             var tcs = new TaskCompletionSource<object>();
             _tasks.Enqueue(new WorldTask(tcs, action));
             return tcs.Task;
         }
-
 
         private void ThreadRun()
         {
@@ -121,7 +120,7 @@ namespace Recube.Core.World
                     {
                         try
                         {
-                            worldTask.Action.Invoke();
+                            worldTask.Action.Invoke().Wait(); // AWAIT
                             worldTask.TaskCompletionSource.SetResult(null);
                         }
                         catch (Exception e)

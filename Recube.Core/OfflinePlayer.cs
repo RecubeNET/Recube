@@ -4,19 +4,19 @@ using Recube.Api.Util;
 
 namespace Recube.Core
 {
-	public class OfflinePlayer : IOfflinePlayer
-	{
-		public OfflinePlayer(Uuid uuid)
-		{
-			Uuid = uuid;
-		}
+    public class OfflinePlayer : IOfflinePlayer
+    {
+        public OfflinePlayer(Uuid uuid)
+        {
+            Uuid = uuid;
+        }
 
-		public Uuid Uuid { get; }
-		public bool Online => GetPlayer() != null;
+        public Uuid Uuid { get; }
+        public bool Online => GetPlayer() != null;
 
-		public Player? GetPlayer()
-		{
-			return Recube.Instance.PlayerRegistry.GetPlayerByUuid(Uuid);
-		}
-	}
+        public IPlayer? GetPlayer()
+        {
+            return Recube.Instance.PlayerRegistry.GetPlayerByUuid(Uuid);
+        }
+    }
 }

@@ -1,15 +1,14 @@
 using System;
 using System.Threading.Tasks;
 using System.Timers;
-using DotNetty.Buffers;
 using DotNetty.Common.Utilities;
-using Recube.Api.Entities;
+using Recube.Api.Event.Impl;
 using Recube.Api.Network.Impl.Packets.Play;
 using Recube.Api.Network.NetworkPlayer;
 using Recube.Api.Network.Packets;
 using Recube.Api.Network.Packets.Handler;
 using Recube.Api.Util;
-using Recube.Core.World;
+using Recube.Core.Entities;
 
 namespace Recube.Core.Network.Impl
 {
@@ -80,20 +79,15 @@ namespace Recube.Core.Network.Impl
                 TeleportId = 1
             });
 
-            //TODO: This needs to be fixed!
-            for (var i = 0; i < 1; i++)
-            for (var j = 0; j < 1; j++)
-            {
-                var buffer = ByteBufferUtil.DefaultAllocator.Buffer();
-                var chunk = new Chunk(i, j);
-                chunk.Serialize(buffer);
-                _player.NetworkPlayer.SendPacketAsync(new ChunkDataPacketOutPacket
-                {
-                    Chunk = chunk
-                });
-            }
+            _player.World = Recube.Instance.TestWorld;
 
-            Console.WriteLine("OKKK");
+            Recube.Instance.TestWorld.CurrentWorldThread.Execute(() => _player.NetworkPlayer.SendPacketAsync(
+                new ChunkDataPacketOutPacket
+                {
+                    Chunk = Recube.Instance.TestWorld.LoadedChunks[0]
+                }));
+
+
             //_player.NetworkPlayer.FlushChannel();
         }
 
@@ -105,7 +99,7 @@ namespace Recube.Core.Network.Impl
 
             Recube.Instance.PlayerRegistry.Deregister(_player);
             Recube.Instance.EntityRegistry.DeregisterEntity(_player.EntityId);
-            NetworkBootstrap.Logger.Info($"Player {_player.Username}[{_player.Uuid}] disconnected");
+            NetworkBootstrap.Logger.Info($"IPlayer {_player.Username}[{_player.Uuid}] disconnected");
         }
 
         public override Task Fallback(IInPacket packet)
@@ -119,7 +113,7 @@ namespace Recube.Core.Network.Impl
                 new Player(id, uuid, NetworkPlayer, username));
             Recube.Instance.PlayerRegistry.Register(_player);
             NetworkBootstrap.Logger.Info(
-                $"Player {_player.Username}[{_player.Uuid}] connected from {NetworkPlayer.Channel.RemoteAddress}");
+                $"IPlayer {_player.Username}[{_player.Uuid}] connected from {NetworkPlayer.Channel.RemoteAddress}");
         }
 
         [PacketMethod]
@@ -128,6 +122,42 @@ namespace Recube.Core.Network.Impl
             var neededId = _keepAliveId ?? 0;
             if (neededId != packet.Id) return;
             _lastPong = DateTime.Now;
+        }
+
+        // TODO IMPROVE AND FINISH
+        [PacketMethod]
+        public Task OnPlayerDiggingPacket(PlayerDiggingInPacket packet)
+        {
+            return _player.World.Run(() =>
+            {
+                var ev = new PlayerBlockBreakEvent(_player.World, _player);
+                Recube.Instance.ListenerRegistry.Fire(ev);
+                NetworkPlayer.Channel.EventLoop.Execute(() =>
+                {
+                    if (ev.Canceled)
+                    {
+                        NetworkPlayer.SendPacketAsync(new AcknowledgePlayerDiggingOutPacket
+                        {
+                            Location = packet.Location,
+                            BlockType = 7,
+                            Status = AcknowledgePlayerDiggingOutPacket.StatusEnum.StartedDigging, Successful = false
+                        });
+                    }
+                    else
+                    {
+                        NetworkPlayer.SendPacketAsync(new AcknowledgePlayerDiggingOutPacket
+                        {
+                            Location = packet.Location,
+                            BlockType = 7,
+                            Status = AcknowledgePlayerDiggingOutPacket.StatusEnum.StartedDigging,
+                            Successful = true,
+                        });
+                    }
+                });
+
+
+                return Task.CompletedTask;
+            });
         }
     }
 }

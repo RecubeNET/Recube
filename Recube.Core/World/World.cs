@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Recube.Api.World;
 
 namespace Recube.Core.World
 {
-    public class World : IDisposable
+    public class World : IWorld, IDisposable
     {
-        public string Name;
+        public string Name { get; private set; }
         public readonly List<Chunk> LoadedChunks;
         public WorldThread CurrentWorldThread { get; internal set; }
 
-        public World(string name, List<Chunk> loadedChunks, WorldThread currentWorldThread)
+        public World(string name, List<Chunk> loadedChunks)
         {
             Name = name;
             LoadedChunks = loadedChunks;
-            CurrentWorldThread = currentWorldThread;
         }
 
         public void SetType(int x, int y, int z, int type)
@@ -34,6 +35,9 @@ namespace Recube.Core.World
                        .Find(loadedChunk => loadedChunk.X == chunkX && loadedChunk.Z == chunkZ)
                        ?.GetType(x % 16, y, z % 16) ?? 0;
         }
+
+        public Task Run(Func<Task> action) => CurrentWorldThread.Execute(action);
+
 
         public Chunk? GetChunk(int chunkX, int chunkZ)
             => LoadedChunks.Find(loadedChunk => loadedChunk.X == chunkX && loadedChunk.Z == chunkZ);
