@@ -29,24 +29,24 @@ namespace Recube.Core.World
 
             for (var blockX = 0; blockX < 16; blockX++)
             for (var blockZ = 0; blockZ < 16; blockZ++)
-                SetBlock(blockX, 0, blockZ, 9);
+                SetType(blockX, 0, blockZ, 9);
         }
 
-        public void SetBlock(int x, int y, int z, int type)
+        public void SetType(int x, int y, int z, int type)
         {
             if (y > 256 || y < 0)
                 throw new InvalidOperationException($"y ({y}) is bigger than 256 or less than 0"); // CHECK 
 
             var sectionIndex = (int) Math.Floor(y / 16d);
             var section = _sections[sectionIndex];
-            section.SetType(x % 16, y % 16, z % 16, type);
+            section.SetType(x, y % 16, z, type);
 
             _sectionMask &= ~(1 << sectionIndex);
             if (section.BlockCount > 0)
                 _sectionMask |= 1 << sectionIndex;
         }
 
-        public int GetBlock(int x, int y, int z)
+        public int GetType(int x, int y, int z)
         {
             if (y > 256 || y < 0)
                 throw new InvalidOperationException($"y ({y}) is bigger than 256 or less than 0"); // CHECK 
