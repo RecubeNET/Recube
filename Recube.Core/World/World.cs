@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Recube.Api;
+using Recube.Api.Block;
 using Recube.Api.World;
 
 namespace Recube.Core.World
@@ -34,6 +36,21 @@ namespace Recube.Core.World
             return LoadedChunks
                        .Find(loadedChunk => loadedChunk.X == chunkX && loadedChunk.Z == chunkZ)
                        ?.GetType(x % 16, y, z % 16) ?? 0;
+        }
+
+        public void SetBlock(Location location, BaseBlock block)
+        {
+            throw new NotImplementedException();
+        }
+
+        public BaseBlock GetBlock(Location location)
+        {
+            throw new NotImplementedException();
+        }
+
+        public T? GetBlock<T>(Location location) where T : BaseBlock
+        {
+            throw new NotImplementedException();
         }
 
         public Task Run(Func<Task> action) => CurrentWorldThread.Execute(action);

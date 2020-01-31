@@ -1,8 +1,8 @@
 namespace Recube.Api.Block
 {
-	public interface IBlockStateRegistry
-	{
-		// TODO
-		BlockState GetStateByBaseBlock(BaseBlock block);
-	}
+    public interface IBlockStateRegistry
+    {
+        BlockState? GetStateByBaseBlock(BaseBlock block);
+        BlockState? GetBlockStateByNetworkId(int id);
+    }
 }
