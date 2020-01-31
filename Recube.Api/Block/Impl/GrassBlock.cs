@@ -1,20 +1,21 @@
 namespace Recube.Api.Block.Impl
 {
-	[Block("minecraft:grass_block", typeof(SnowyProperty))]
-	public class GrassBlock : BaseBlock
-	{
-		[PropertyState("snowy")]
-		public enum SnowyProperty
-		{
-			[PropertyCondition(false)] Default,
-			[PropertyCondition(true)] Snowy
-		}
+    [Block("minecraft:grass_block")]
+    public class GrassBlock : BaseBlock
+    {
+        public SnowyProperty Snowy { get; }
 
-		public GrassBlock(SnowyProperty snowy)
-		{
-			Snowy = snowy;
-		}
+        public GrassBlock(SnowyProperty snowy)
+        {
+            Snowy = snowy;
+        }
 
-		public SnowyProperty Snowy { get; }
-	}
+
+        [PropertyState("snowy")]
+        public enum SnowyProperty
+        {
+            [PropertyCondition(false)] Default,
+            [PropertyCondition(true)] Snowy
+        }
+    }
 }

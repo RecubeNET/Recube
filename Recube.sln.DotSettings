@@ -1,40 +1,46 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-						xmlns:s="clr-namespace:System;assembly=mscorlib"
-						xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/CodeStyle/CSharpFileLayoutPatterns/Pattern/@EntryValue">&lt;?xml version="1.0" encoding="utf-16"?&gt;
-&lt;Patterns xmlns="urn:schemas-jetbrains-com:member-reordering-patterns"&gt;
-    
-&lt;/Patterns&gt;</s:String>
-	<s:Boolean
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/@KeyIndexDefined">True</s:Boolean>
-	<s:Boolean
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=0EA347532A126C4197E6ABBD243E7DAE/@KeyIndexDefined">False</s:Boolean>
-	<s:String
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=0EA347532A126C4197E6ABBD243E7DAE/EntryName/@EntryValue"></s:String>
-	<s:Int64
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=0EA347532A126C4197E6ABBD243E7DAE/Position/@EntryValue">0</s:Int64>
-	<s:Boolean
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=4FD7BA24AA4B1844B7E913CB52C6263D/@KeyIndexDefined">True</s:Boolean>
-	<s:String
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=4FD7BA24AA4B1844B7E913CB52C6263D/EntryName/@EntryValue">OutPacket</s:String>
-	<s:Int64
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=4FD7BA24AA4B1844B7E913CB52C6263D/Position/@EntryValue">5</s:Int64>
-	<s:Boolean
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=8BB82F50E894B24290236BCD8F936C56/@KeyIndexDefined">True</s:Boolean>
-	<s:String
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=8BB82F50E894B24290236BCD8F936C56/EntryName/@EntryValue">InPacket</s:String>
-	<s:Int64
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=8BB82F50E894B24290236BCD8F936C56/Position/@EntryValue">4</s:Int64>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=A75A5C4E3662CD44968AC3786D3CC0AF/@KeyIndexDefined">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=A75A5C4E3662CD44968AC3786D3CC0AF/EntryName/@EntryValue">InOutPacket</s:String>
-	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=A75A5C4E3662CD44968AC3786D3CC0AF/Position/@EntryValue">6</s:Int64>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=A8D44C71E4E9DD439231A70233819EB5/@KeyIndexDefined">False</s:Boolean>
-	
-	
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=E1A1E4124DC012409461E2EF944E88A2/@KeyIndexDefined">False</s:Boolean>
-	
-	
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4FD7BA24AA4B1844B7E913CB52C6263D/@KeyIndexDefined">True</s:Boolean>
+                        xmlns:s="clr-namespace:System;assembly=mscorlib"
+                        xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/CodeStyle/CSharpFileLayoutPatterns/Pattern/@EntryValue">&lt;?xml version="1.0" encoding="utf-16"?&gt;&#xD;
+&lt;Patterns xmlns="urn:schemas-jetbrains-com:member-reordering-patterns" /&gt;</s:String>
+    <s:Boolean
+            x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ESettingsUpgrade_002EAlwaysTreatStructAsNotReorderableMigration/@EntryIndexedValue">True</s:Boolean>
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/@KeyIndexDefined">True</s:Boolean>
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=0EA347532A126C4197E6ABBD243E7DAE/@KeyIndexDefined">False</s:Boolean>
+    <s:String
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=0EA347532A126C4197E6ABBD243E7DAE/EntryName/@EntryValue"></s:String>
+    <s:Int64
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=0EA347532A126C4197E6ABBD243E7DAE/Position/@EntryValue">0</s:Int64>
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=4FD7BA24AA4B1844B7E913CB52C6263D/@KeyIndexDefined">True</s:Boolean>
+    <s:String
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=4FD7BA24AA4B1844B7E913CB52C6263D/EntryName/@EntryValue">OutPacket</s:String>
+    <s:Int64
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=4FD7BA24AA4B1844B7E913CB52C6263D/Position/@EntryValue">5</s:Int64>
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=8BB82F50E894B24290236BCD8F936C56/@KeyIndexDefined">True</s:Boolean>
+    <s:String
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=8BB82F50E894B24290236BCD8F936C56/EntryName/@EntryValue">InPacket</s:String>
+    <s:Int64
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=8BB82F50E894B24290236BCD8F936C56/Position/@EntryValue">4</s:Int64>
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=A75A5C4E3662CD44968AC3786D3CC0AF/@KeyIndexDefined">True</s:Boolean>
+    <s:String
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=A75A5C4E3662CD44968AC3786D3CC0AF/EntryName/@EntryValue">InOutPacket</s:String>
+    <s:Int64
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=A75A5C4E3662CD44968AC3786D3CC0AF/Position/@EntryValue">6</s:Int64>
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=A8D44C71E4E9DD439231A70233819EB5/@KeyIndexDefined">False</s:Boolean>
+
+
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/QuickList/=F0CA621CDF5AB24282D8CDC11C520997/Entry/=E1A1E4124DC012409461E2EF944E88A2/@KeyIndexDefined">False</s:Boolean>
+
+
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4FD7BA24AA4B1844B7E913CB52C6263D/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4FD7BA24AA4B1844B7E913CB52C6263D/Applicability/=File/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4FD7BA24AA4B1844B7E913CB52C6263D/CustomProperties/=Extension/@EntryIndexedValue">cs</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=4FD7BA24AA4B1844B7E913CB52C6263D/CustomProperties/=FileName/@EntryIndexedValue">PacketOutPacket</s:String>
@@ -164,27 +170,28 @@ namespace $NAMESPACE$
         }        
     }
 }</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A8D44C71E4E9DD439231A70233819EB5/@KeyIndexDefined">False</s:Boolean>
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=A8D44C71E4E9DD439231A70233819EB5/@KeyIndexDefined">False</s:Boolean>
 
 
-	<s:Boolean
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1A1E4124DC012409461E2EF944E88A2/@KeyIndexDefined">False</s:Boolean>
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E1A1E4124DC012409461E2EF944E88A2/@KeyIndexDefined">False</s:Boolean>
 
 
-	<s:Boolean
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=2CBD6971A7955044AD2624B84FB49E38/@KeyIndexDefined">False</s:Boolean>
-	<s:Boolean
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=40C163D436D8ED48A6D01A0AFEFC5556/@KeyIndexDefined">False</s:Boolean>
-	<s:Boolean
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=567DCF4B487C244A9F6BB46E4E9F3B84/@KeyIndexDefined">False</s:Boolean>
-	<s:Boolean
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=66C212EF89930C47BC56259A161274D5/@KeyIndexDefined">False</s:Boolean>
-	<s:Boolean
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=7951779A47EFFF4C833558F00FE3ECCB/@KeyIndexDefined">False</s:Boolean>
-	<s:Boolean
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=7F2A1BE8D0078241A9AE7802038BAD3C/@KeyIndexDefined">False</s:Boolean>
-	<s:Boolean
-			x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=C4795E57DDEC1C4F97BBC8C7173EBBCA/@KeyIndexDefined">False</s:Boolean>
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=Minecraft/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=Overworld/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=Recube/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=2CBD6971A7955044AD2624B84FB49E38/@KeyIndexDefined">False</s:Boolean>
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=40C163D436D8ED48A6D01A0AFEFC5556/@KeyIndexDefined">False</s:Boolean>
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=567DCF4B487C244A9F6BB46E4E9F3B84/@KeyIndexDefined">False</s:Boolean>
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=66C212EF89930C47BC56259A161274D5/@KeyIndexDefined">False</s:Boolean>
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=7951779A47EFFF4C833558F00FE3ECCB/@KeyIndexDefined">False</s:Boolean>
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=7F2A1BE8D0078241A9AE7802038BAD3C/@KeyIndexDefined">False</s:Boolean>
+    <s:Boolean
+            x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=C4795E57DDEC1C4F97BBC8C7173EBBCA/@KeyIndexDefined">False</s:Boolean>
+    <s:Boolean x:Key="/Default/UserDictionary/Words/=Minecraft/@EntryIndexedValue">True</s:Boolean>
+    <s:Boolean x:Key="/Default/UserDictionary/Words/=Overworld/@EntryIndexedValue">True</s:Boolean>
+    <s:Boolean x:Key="/Default/UserDictionary/Words/=Recube/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

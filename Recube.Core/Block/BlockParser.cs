@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -12,140 +11,115 @@ using Recube.Api.Block;
 
 namespace Recube.Core.Block
 {
-	public class BlockParser
-	{
-		private const string BlockNamespace = "Recube.Api.Block.Impl";
-		private readonly string _blocksJsonPath;
+    public class BlockParser
+    {
+        private const string BlockNamespace = "Recube.Api.Block.Impl";
 
-		public BlockParser(string blocksJsonPath)
-		{
-			_blocksJsonPath = blocksJsonPath;
-		}
+        private readonly string _blocksJsonPath;
 
-		internal async Task<Dictionary<ParsedBlock, List<BlockState>>> Parse()
-		{
-			if (!File.Exists(_blocksJsonPath)) throw new FileParseException("Could not find blocks.json");
+        public BlockParser(string blocksJsonPath)
+        {
+            _blocksJsonPath = blocksJsonPath;
+        }
 
-			// GET ALL CLASSES VIA REFLECTIONS
-			var blockClasses = Assembly.GetAssembly(typeof(IRecube)).GetTypes()
-				.Where(t => t.Namespace != null && t.Namespace.StartsWith(BlockNamespace))
-				.Where(t => t.GetCustomAttribute<NoParseAttribute>(false) == null)
-				.Where(t => typeof(BaseBlock).IsAssignableFrom(t))
-				.ToImmutableArray();
+        public async Task<Dictionary<string, List<BlockState>>> ParseFile()
+        {
+            var ret = new Dictionary<string, List<BlockState>>();
+            var file = await File.ReadAllTextAsync(_blocksJsonPath);
+            try
+            {
+                var mainJObject = JObject.Parse(file);
+                foreach (var block in mainJObject)
+                {
+                    var name = block.Key;
 
-			// PARSE BLOCK; GET IT'S NAME AND REQUIRED PROPERTIES
-			var parsedBlocks = blockClasses.Select(ParsedBlock.Parse).ToList();
+                    if (!(block.Value is JObject blockBody))
+                        throw new FileParseException($"Invalid blocks.json. Block {name} has no body");
+
+                    Dictionary<string, List<JToken>>? properties = null;
+                    if (blockBody["properties"] is JObject props)
+                    {
+                        properties = new Dictionary<string, List<JToken>>();
+                        foreach (var prop in props)
+                        {
+                            var propName = prop.Key;
+                            if (!(prop.Value is JArray propValue))
+                                throw new FileParseException(
+                                    $"Invalid blocks.json. Block's ({name}) property {propName} is missing a valid body");
+                            properties.Add(propName, propValue.ToList());
+                        }
+                    }
 
 
-			// PARSE FILE
-			var fileContent = await File.ReadAllTextAsync(_blocksJsonPath);
+                    var blockStates = new List<BlockState>();
 
-			var finishedBlocks = new Dictionary<ParsedBlock, List<BlockState>>();
-			try
-			{
-				var mainJObject = JObject.Parse(fileContent);
-				foreach (var parsedBlock in parsedBlocks)
-				{
-					var blockData = (JObject) mainJObject[parsedBlock.Name];
-					if (blockData == null)
-						throw new FileParseException(
-							$"Could not find block {parsedBlock.Name} in blocks.json! Maybe Recube is outdated?");
+                    if (!(blockBody["states"] is JArray states))
+                        throw new FileParseException($"Invalid blocks.json. Block {name} is missing states array");
 
-					var propertiesData = blockData["properties"] as JObject; // NULLABLE. 
-					var shouldHaveProperties = propertiesData != null;
+                    foreach (var state in states)
+                    {
+                        var id = (int?) state["id"];
+                        if (id == null)
+                            throw new FileParseException($"Invalid blocks.json. A block's ({name}) state has no id");
+                        var @default = ((bool?) state["default"]) ?? false;
 
-					// CHECK IF REQUIRED PROPERTIES MATCH WITH THESE IN blocks.json
-					if (shouldHaveProperties)
-					{
-						foreach (var parsedProperty in parsedBlock.NeededProperties)
-						{
-							var propertyData = (JArray) propertiesData[parsedProperty.PropertyName];
-							if (propertyData == null)
-								throw new FileParseException(
-									$"Could not find property {parsedProperty.PropertyName} in blocks.json (Required by {parsedBlock.Name})");
 
-							foreach (var condition in parsedProperty.Conditions)
-							{
-								foreach (var jToken in propertyData)
-								{
-									try
-									{
-										jToken.ToObject(condition.Key.GetType());
-									}
-									catch (FormatException)
-									{
-										throw new FileParseException(
-											$"Could not map {jToken.Type} to {condition.Key.GetType().Name} in property \"{parsedProperty.PropertyName}\" in block {parsedBlock.Name}");
-									}
-								}
-							}
-						}
-					}
+                        var blockStateProps = new Dictionary<string, string>();
+                        if (properties != null)
+                        {
+                            if (!(state["properties"] is JObject stateProps))
+                                throw new FileParseException(
+                                    $"Invalid blocks.json. The state {id.Value} of block {name} has no properties");
+                            foreach (var stateProp in stateProps)
+                            {
+                                blockStateProps.Add(stateProp.Key, stateProp.Value.ToObject<string>());
+                            }
+                        }
 
-					if (!shouldHaveProperties && parsedBlock.NeededProperties.Count > 0)
-						throw new FileParseException(
-							$"Block {parsedBlock.Name} requires properties, but no properties could be found");
+                        blockStates.Add(new BlockState(name, id.Value, @default,
+                            blockStateProps.Count == 0 ? null : blockStateProps));
+                    }
 
-					// PARSE STATES
-					var statesData = blockData["states"];
-					if (statesData == null)
-						throw new FileParseException(
-							$"Could not find states array for block {parsedBlock.Name} in blocks.json");
+                    ret.Add(name, blockStates);
+                }
+            }
+            catch (JsonReaderException e)
+            {
+                throw new FileParseException("Could not parse blocks.json", e);
+            }
 
-					var states = new List<BlockState>();
+            return ret;
+        }
 
-					foreach (var jToken in statesData)
-					{
-						var stateData = (JObject) jToken;
-						var idNullable = (int?) stateData["id"];
-						if (idNullable == null)
-							throw new FileParseException($"{parsedBlock.Name} is missing an id in at least one state");
-						var id = idNullable.Value;
-						var isDefault = stateData["default"] != null;
-						var properties = stateData["properties"] as JObject; // NULLABLE.
+        public List<ParsedBlock> ParseBlockClasses()
+        {
+            var blockClasses = Assembly.GetAssembly(typeof(IRecube)).GetTypes()
+                .Where(t => t.Namespace != null && t.Namespace.StartsWith(BlockNamespace))
+                .Where(t => t.GetCustomAttribute<NoParseAttribute>(false) == null)
+                .Where(t => typeof(BaseBlock).IsAssignableFrom(t))
+                .ToImmutableArray();
 
-						if (properties == null)
-						{
-							states.Add(new BlockState(id, isDefault, null));
-							continue;
-						}
+            var ret = new List<ParsedBlock>();
 
-						var props = new Dictionary<string, object>();
 
-						foreach (var kvp in properties)
-						{
-							var parsedProperty =
-								parsedBlock.NeededProperties.FirstOrDefault(p => p.PropertyName == kvp.Key);
+            foreach (var blockClass in blockClasses)
+            {
+                var name = blockClass.GetCustomAttribute<BlockAttribute>().Name;
 
-							var parsedFirstCondition = parsedProperty?.Conditions.First(kv => true).Key;
-							if (parsedFirstCondition == null)
-								throw new FileParseException(
-									$"Could not find property {kvp.Key} for block {parsedBlock.Name}");
+                var properties = new List<ParsedProperty>();
 
-							if (!props.TryAdd(kvp.Key, kvp.Value.ToObject(parsedFirstCondition.GetType())))
-								throw new FileParseException(
-									$"Property {kvp.Key} exists multiple times for block {parsedBlock.Name}");
-						}
+                foreach (var nestedType in blockClass.GetNestedTypes())
+                {
+                    var propAttr = nestedType.GetCustomAttribute<PropertyStateAttribute>();
+                    if (propAttr == null) continue;
+                    properties.Add(ParsedProperty.Parse(nestedType));
+                }
 
-						states.Add(new BlockState(id, isDefault, props));
-					}
 
-					finishedBlocks.Add(parsedBlock, states);
-				}
+                ret.Add(new ParsedBlock(name, blockClass, properties));
+            }
 
-				Recube.Instance.Logger.Info(
-					$"Successfully parsed {finishedBlocks.Count} blocks (and their state & network ids) via {_blocksJsonPath}");
-				if (mainJObject.Count > finishedBlocks.Count)
-				{
-					Recube.Instance.Logger.Warn($"{mainJObject.Count - finishedBlocks.Count} blocks were not parsed!");
-				}
-			}
-			catch (JsonReaderException e)
-			{
-				throw new FileParseException("Could not parse blocks.json", e);
-			}
-
-			return finishedBlocks;
-		}
-	}
+            return ret;
+        }
+    }
 }

@@ -12,6 +12,7 @@ namespace Recube.Core
         public static void OnDigging(PlayerBlockBreakEvent e)
         {
             Console.WriteLine($"CALLED IN THREAD {Thread.CurrentThread.Name}");
+            e.Canceled = true;
         }
     }
 }

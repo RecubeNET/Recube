@@ -10,8 +10,9 @@ namespace Recube.Core.Event
 {
     public class ListenerRegistry : IListenerRegistry
     {
-        // EVENT TYPE, LIST<LISTENER>
         private ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+
+        // EVENT TYPE, LIST<LISTENER>
         private Dictionary<Type, List<MethodInfo>> _listeners = new Dictionary<Type, List<MethodInfo>>();
         private ILogger _logger = LogManager.GetLogger("ListenerRegistry");
 

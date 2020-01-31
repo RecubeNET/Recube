@@ -2,55 +2,23 @@ using System.Collections.Generic;
 
 namespace Recube.Api.Block
 {
-	public class BlockState
-	{
-		public readonly bool Default;
+    public class BlockState
+    {
+        public bool Default { get; }
 
-		public readonly int Id;
+        public int NetworkId { get; }
 
-		// PROPERTY NAME, PROPERTY CONDITION
-		public readonly Dictionary<string, object>? Properties;
+        public string BaseName { get; }
 
-		public BlockState(int id, bool @default, Dictionary<string, object>? properties)
-		{
-			Id = id;
-			Properties = properties;
-			Default = @default;
-		}
+        // PROPERTY NAME, PROPERTY CONDITION
+        public Dictionary<string, string>? Properties { get; }
 
-		public static float TotalNumberOfStates { get; set; } = 14;
-
-		public static uint GetGlobalPaletteIdFromState(BlockState state)
-		{
-			//TODO: Implement
-			return 0;
-		}
-
-		public static BlockState GetStateFromGlobalPaletteId(uint id)
-		{
-			//TODO Return new BlockState
-			return new BlockState(0, true, new Dictionary<string, object>());
-		}
-
-		public bool? ReadPropertyAsBool(string name)
-		{
-			if (!Properties.ContainsKey(name)) return null;
-
-			return (bool?) Properties.GetValueOrDefault(name, null);
-		}
-
-		public int? ReadPropertyAsInt(string name)
-		{
-			if (!Properties.ContainsKey(name)) return null;
-
-			return (int?) Properties.GetValueOrDefault(name, null);
-		}
-
-		public string? ReadPropertyAsString(string name)
-		{
-			if (!Properties.ContainsKey(name)) return null;
-
-			return (string?) Properties.GetValueOrDefault(name, null);
-		}
-	}
+        public BlockState(string baseName, int networkId, bool @default, Dictionary<string, string>? properties)
+        {
+            BaseName = baseName;
+            NetworkId = networkId;
+            Properties = properties;
+            Default = @default;
+        }
+    }
 }
