@@ -16,7 +16,7 @@ namespace Recube.Core
 {
     public partial class Recube : IRecube
     {
-        public const int ProtocolVersion = 498;
+        public const int ProtocolVersion = 578;
         public static readonly ILogger RecubeLogger = LogManager.GetLogger("Recube");
         public readonly BlockStateRegistry BlockStateRegistry;
 
@@ -47,23 +47,21 @@ namespace Recube.Core
 
         public IBlockStateRegistry GetBlockStateRegistry() => BlockStateRegistry;
 
-        private static void Main() => new Recube(); // TODO ADD ARGS FOR PORT ETC.
-
-        public string Motd = @"{
-	""version"": {
+        public string Motd = $@"{{
+	""version"": {{
 		""name"": ""1.15.2"",
-		""protocol"": 575
-	},
-	""players"": {
+		""protocol"": {ProtocolVersion}
+	}},
+	""players"": {{
 		""max"": 100,
 		""online"": 0,
 		""sample"": [
 		]
-	},	
-	""description"": {
+	}},	
+	""description"": {{
 		""text"": ""Running on Recube""
-	},
+	}},
 	""favicon"": ""data:image/png;base64,<data>""
-}";
+}}";
     }
 }

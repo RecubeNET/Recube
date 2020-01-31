@@ -9,6 +9,8 @@ namespace Recube.Core
 {
     public partial class Recube
     {
+        private static void Main() => new Recube(); // TODO ADD ARGS FOR PORT ETC.
+
         public Recube()
         {
             Instance = this;
