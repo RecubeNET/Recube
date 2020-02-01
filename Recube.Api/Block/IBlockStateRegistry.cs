@@ -19,7 +19,7 @@ namespace Recube.Api.Block
         BlockState? GetBlockStateByNetworkId(int id);
 
         /// <summary>
-        /// Gets the BlockState from the name and the required states
+        /// Gets the BlockState from the name and the required properties which need to be met.
         /// </summary>
         /// <param name="name">The block name. For example "minecraft:grass_block"</param>
         /// <param name="properties">A dictionary with each property. For example {"snowy": "true"}</param>

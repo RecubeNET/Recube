@@ -24,7 +24,7 @@ namespace Recube.Core.Block
             var blockStates = _blockStates[parsedBlock.Name];
             if (blockStates == null || blockStates.Count == 0) return null;
 
-
+            // Find a block state which meets every condition
             foreach (var parsedBlockProperty in parsedBlock.Properties)
             {
                 var name = parsedBlockProperty.PropertyName;

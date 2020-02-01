@@ -31,7 +31,7 @@ namespace Recube.Core.Network.Impl
         }
 
         [PacketMethod]
-        public async void OnLoginStartPacket(LoginStartInPacket packet)
+        public async Task OnLoginStartPacket(LoginStartInPacket packet)
         {
             //TODO: Add Disconnect packet and event to disconnect
             //TODO: Send Encryption Request

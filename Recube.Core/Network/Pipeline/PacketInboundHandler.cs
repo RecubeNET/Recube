@@ -12,7 +12,16 @@ namespace Recube.Core.Network.Pipeline
 
         protected override void ChannelRead0(IChannelHandlerContext ctx, IPacket msg)
         {
-            _player.PacketHandler.FirePacket(msg as IInPacket).GetAwaiter().GetResult();
+            try
+            {
+                _player.PacketHandler.FirePacket(msg as IInPacket).GetAwaiter().GetResult();
+            }
+            catch (Exception exe)
+            {
+                NetworkBootstrap.Logger.Error(
+                    $"Caught exception in channel {_player.Channel} while firing packet method. Closing channel.\n{exe}");
+                Task.Run(() => _player.DisconnectAsync());
+            }
         }
 
         public override void ChannelRegistered(IChannelHandlerContext context)
