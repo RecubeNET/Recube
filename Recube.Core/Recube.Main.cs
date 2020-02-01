@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using Recube.Api.Block.Impl;
 using Recube.Api.Network.Impl.Packets.Play;
 using Recube.Core.Block;
 
@@ -21,18 +20,9 @@ namespace Recube.Core
 
             RegisterPackets();
 
-            var blockParser = new BlockParser("blocks_1.15.1.json");
-            var blockDic = blockParser.ParseFile().GetAwaiter().GetResult();
-            var parsedBlocks = blockParser.ParseBlockClasses();
+            var blockDic = BlockParser.ParseFile("blocks_1.15.1.json").GetAwaiter().GetResult();
+            var parsedBlocks = BlockParser.ParseBlockClasses("Recube.Api.Block.Impl");
             BlockStateRegistry = new BlockStateRegistry(blockDic, parsedBlocks);
-
-            Console.WriteLine(BlockStateRegistry.GetStateByBaseBlock(new GrassBlock(GrassBlock.SnowyProperty.Default))
-                .NetworkId);
-            Console.WriteLine(BlockStateRegistry.GetStateByBaseBlock(new GrassBlock(GrassBlock.SnowyProperty.Snowy))
-                .NetworkId);
-            Console.WriteLine(BlockStateRegistry.GetStateByBaseBlock(new AirBlock()).NetworkId);
-            Console.WriteLine(BlockStateRegistry.GetStateByBaseBlock(new CoalOreBlock()).NetworkId);
-
             Logger.Info($"Parsed {blockDic.Count} blocks");
 
             WorldThread.AddWorld(TestWorld);

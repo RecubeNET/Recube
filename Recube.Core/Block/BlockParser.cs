@@ -11,21 +11,12 @@ using Recube.Api.Block;
 
 namespace Recube.Core.Block
 {
-    public class BlockParser
+    public static class BlockParser
     {
-        private const string BlockNamespace = "Recube.Api.Block.Impl";
-
-        private readonly string _blocksJsonPath;
-
-        public BlockParser(string blocksJsonPath)
-        {
-            _blocksJsonPath = blocksJsonPath;
-        }
-
-        public async Task<Dictionary<string, List<BlockState>>> ParseFile()
+        public static async Task<Dictionary<string, List<BlockState>>> ParseFile(string blocksJsonPath)
         {
             var ret = new Dictionary<string, List<BlockState>>();
-            var file = await File.ReadAllTextAsync(_blocksJsonPath);
+            var file = await File.ReadAllTextAsync(blocksJsonPath);
             try
             {
                 var mainJObject = JObject.Parse(file);
@@ -91,10 +82,10 @@ namespace Recube.Core.Block
             return ret;
         }
 
-        public List<ParsedBlock> ParseBlockClasses()
+        public static List<ParsedBlock> ParseBlockClasses(string blockNamespace)
         {
             var blockClasses = Assembly.GetAssembly(typeof(IRecube)).GetTypes()
-                .Where(t => t.Namespace != null && t.Namespace.StartsWith(BlockNamespace))
+                .Where(t => t.Namespace != null && t.Namespace.StartsWith(blockNamespace))
                 .Where(t => t.GetCustomAttribute<NoParseAttribute>(false) == null)
                 .Where(t => typeof(BaseBlock).IsAssignableFrom(t))
                 .ToImmutableArray();
@@ -115,8 +106,12 @@ namespace Recube.Core.Block
                     properties.Add(ParsedProperty.Parse(nestedType));
                 }
 
+                var constructor = blockClass.GetConstructor(properties.Select(p => p.Type).ToArray());
+                if (constructor == null)
+                    throw new BlockParseException(
+                        $"Could not find constructor which is buildable with all properties for block {name}");
 
-                ret.Add(new ParsedBlock(name, blockClass, properties));
+                ret.Add(new ParsedBlock(name, blockClass, properties, constructor));
             }
 
             return ret;

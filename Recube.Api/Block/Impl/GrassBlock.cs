@@ -14,8 +14,8 @@ namespace Recube.Api.Block.Impl
         [PropertyState("snowy")]
         public enum SnowyProperty
         {
-            [PropertyCondition(false)] Default,
-            [PropertyCondition(true)] Snowy
+            [PropertyCondition("false")] Default,
+            [PropertyCondition("true")] Snowy
         }
     }
 }

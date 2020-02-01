@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Recube.Core.Block
 {
     public class ParsedBlock
     {
         public string Name { get; }
-        public Type BaseBlock { get; }
+        public Type BaseBlockType { get; }
         public List<ParsedProperty> Properties { get; }
 
-        public ParsedBlock(string name, Type baseBlock, List<ParsedProperty> properties)
+        public ConstructorInfo ConstructorInfo { get; }
+
+        public ParsedBlock(string name, Type baseBlockType, List<ParsedProperty> properties,
+            ConstructorInfo constructorInfo)
         {
             Name = name;
-            BaseBlock = baseBlock;
+            BaseBlockType = baseBlockType;
             Properties = properties;
+            ConstructorInfo = constructorInfo;
         }
     }
 }

@@ -38,19 +38,31 @@ namespace Recube.Core.World
                        ?.GetType(x % 16, y, z % 16) ?? 0;
         }
 
-        public void SetBlock(Location location, BaseBlock block)
+        public bool SetBlock(Location location, BaseBlock block)
         {
-            throw new NotImplementedException();
+            var state = block.AsBlockState();
+            if (state == null) return false;
+
+            SetType(location.X, location.Y, location.Z, state.NetworkId);
+            block.Name = state.BaseName;
+            block.World = this;
+            block.Location = location;
+
+            return true;
         }
 
-        public BaseBlock GetBlock(Location location)
+        public BaseBlock? GetBlock(Location location)
         {
-            throw new NotImplementedException();
+            var state = Recube.Instance.GetBlockStateRegistry()
+                .GetBlockStateByNetworkId(GetType(location.X, location.Y, location.Z));
+            return state == null ? null : Recube.Instance.GetBlockStateRegistry().GetBaseBlockFromState(state);
         }
 
         public T? GetBlock<T>(Location location) where T : BaseBlock
         {
-            throw new NotImplementedException();
+            var block = GetBlock(location);
+            if (block == null) return null;
+            return (T) (block is T ? block : null);
         }
 
         public Task Run(Func<Task> action) => CurrentWorldThread.Execute(action);
