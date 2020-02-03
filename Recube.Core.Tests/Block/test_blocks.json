@@ -1,0 +1,112 @@
+﻿{
+  "recube:testblock": {
+    "properties": {
+      "color": [
+        "green",
+        "blue",
+        "red"
+      ]
+    },
+    "states": [
+      {
+        "properties": {
+          "color": "green"
+        },
+        "id": 0
+      },
+      {
+        "properties": {
+          "color": "blue"
+        },
+        "id": 1
+      },
+      {
+        "properties": {
+          "color": "red"
+        },
+        "id": 2,
+        "default": true
+      }
+    ]
+  },
+  "recube:testblock2": {
+    "properties": {
+      "color": [
+        "green",
+        "blue",
+        "red"
+      ],
+      "shape": [
+        "triangle",
+        "cube",
+        "sphere"
+      ]
+    },
+    "states": [
+      {
+        "properties": {
+          "color": "green",
+          "shape": "triangle"
+        },
+        "id": 3,
+        "default": true
+      },
+      {
+        "properties": {
+          "color": "blue",
+          "shape": "triangle"
+        },
+        "id": 4
+      },
+      {
+        "properties": {
+          "color": "red",
+          "shape": "triangle"
+        },
+        "id": 5
+      },
+      {
+        "properties": {
+          "color": "green",
+          "shape": "cube"
+        },
+        "id": 6
+      },
+      {
+        "properties": {
+          "color": "blue",
+          "shape": "cube"
+        },
+        "id": 7
+      },
+      {
+        "properties": {
+          "color": "red",
+          "shape": "cube"
+        },
+        "id": 8
+      },
+      {
+        "properties": {
+          "color": "green",
+          "shape": "sphere"
+        },
+        "id": 9
+      },
+      {
+        "properties": {
+          "color": "blue",
+          "shape": "sphere"
+        },
+        "id": 10
+      },
+      {
+        "properties": {
+          "color": "red",
+          "shape": "sphere"
+        },
+        "id": 11
+      }
+    ]
+  }
+}

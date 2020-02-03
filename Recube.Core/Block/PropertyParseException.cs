@@ -2,18 +2,18 @@ using System;
 
 namespace Recube.Core.Block
 {
-	internal class PropertyParseException : Exception
-	{
-		public PropertyParseException()
-		{
-		}
+    public class PropertyParseException : Exception
+    {
+        public PropertyParseException()
+        {
+        }
 
-		public PropertyParseException(string message) : base(message)
-		{
-		}
+        public PropertyParseException(string message) : base(message)
+        {
+        }
 
-		public PropertyParseException(string message, Exception innerException) : base(message, innerException)
-		{
-		}
-	}
+        public PropertyParseException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+    }
 }

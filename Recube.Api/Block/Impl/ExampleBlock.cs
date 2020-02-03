@@ -13,6 +13,7 @@
         public ColorProperty Color { get; set; }
 
         // We have one property to fulfill so this constructor has only the parameter "ColorProperty"
+        // If we would have more properties, the order is important! See the bold comment of BaseBlock.cs
         public ExampleBlock(ColorProperty color)
         {
             Color = color;

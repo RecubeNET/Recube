@@ -43,8 +43,10 @@ namespace Recube.Core.Block
                 .FirstOrDefault();
         }
 
-        public BaseBlock? GetBaseBlockFromState(BlockState state)
+        public BaseBlock? GetBaseBlockFromState(BlockState? state)
         {
+            if (state == null) return null;
+
             var parsedBlock = _parsedBlocks.FirstOrDefault(b => b.Name == state.BaseName);
             if (parsedBlock == null) return null;
 
@@ -75,7 +77,9 @@ namespace Recube.Core.Block
                     property.Value,
                     StringComparison.OrdinalIgnoreCase)).ToList();
 
-            return blockStates.Count == 0 ? _blockStates[name].First(s => s.Default) : blockStates[0];
+            return blockStates.Count == 0 || blockStates.Count > 1
+                ? _blockStates[name].First(s => s.Default)
+                : blockStates[0];
         }
     }
 }

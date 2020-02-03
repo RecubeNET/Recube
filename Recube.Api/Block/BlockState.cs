@@ -25,7 +25,7 @@ namespace Recube.Api.Block
         public string BaseName { get; }
 
         /// <summary>
-        /// This represents all "conditions" to become this state
+        /// This represents all "conditions" that are required to become this state
         /// </summary>
         // PROPERTY NAME, PROPERTY CONDITION
         public Dictionary<string, string>? Properties { get; }

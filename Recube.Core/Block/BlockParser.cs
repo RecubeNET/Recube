@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Recube.Api;
 using Recube.Api.Block;
 
 namespace Recube.Core.Block
@@ -84,7 +83,7 @@ namespace Recube.Core.Block
 
         public static List<ParsedBlock> ParseBlockClasses(string blockNamespace)
         {
-            var blockClasses = Assembly.GetAssembly(typeof(IRecube)).GetTypes()
+            var blockClasses = Assembly.GetCallingAssembly().GetTypes()
                 .Where(t => t.Namespace != null && t.Namespace.StartsWith(blockNamespace))
                 .Where(t => t.GetCustomAttribute<NoParseAttribute>(false) == null)
                 .Where(t => typeof(BaseBlock).IsAssignableFrom(t))
@@ -108,6 +107,7 @@ namespace Recube.Core.Block
 
                 var constructor = blockClass.GetConstructor(properties.Select(p => p.Type).ToArray());
                 if (constructor == null)
+                    // When issuing this exception check the order of parameters as defined in the comment in BaseBlock.cs
                     throw new BlockParseException(
                         $"Could not find constructor which is buildable with all properties for block {name}");
 

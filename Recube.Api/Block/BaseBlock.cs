@@ -10,6 +10,8 @@ namespace Recube.Api.Block
     /// Each value of these enums need to have a <see cref="PropertyConditionAttribute"/> stating what condition needs to be met to become the value.
     /// Also, exactly one field must represent each of these enums in the derived class
     /// And lastly, there needs to be a constructor which only parameters are the fields of <see cref="PropertyStateAttribute"/> (properties).
+    /// <b>Important here: The constructor parameters have to be in the order of the nested types!
+    /// So if the first nested type is for example <i>ColorEnum</i> the first parameter of the constructor has to be of the type <i>ColorEnum</i></b>
     /// 
     /// For an example visit: <see cref="Recube.Api.Block.Impl.ExampleBlock"/>
     /// </summary>

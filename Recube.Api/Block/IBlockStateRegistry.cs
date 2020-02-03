@@ -23,7 +23,7 @@ namespace Recube.Api.Block
         /// </summary>
         /// <param name="name">The block name. For example "minecraft:grass_block"</param>
         /// <param name="properties">A dictionary with each property. For example {"snowy": "true"}</param>
-        /// <returns>The BlockState or null if the name could not be found (or it's default state)</returns>
+        /// <returns>The BlockState. If the name could not be found then null. In all other cases (properties do not match, specified properties are not unique) the default block state.</returns>
         public BlockState? FromRaw(string name, Dictionary<string, string> properties);
 
         /// <summary>
