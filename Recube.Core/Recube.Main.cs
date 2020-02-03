@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Recube.Api;
 using Recube.Api.Network.Impl.Packets.Play;
 using Recube.Core.Block;
 
@@ -13,6 +14,7 @@ namespace Recube.Core
         public Recube()
         {
             Instance = this;
+            RecubeApi.SetRecubeInstance(this);
 
             Logger.Info("Starting Recube...");
 
