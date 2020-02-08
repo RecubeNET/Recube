@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Recube.Api.Block;
 using Recube.Core.Block;
 using Recube.Core.Tests.Block.Impl.Correct;
 using Xunit;
@@ -114,10 +115,25 @@ namespace Recube.Core.Tests.Block
             Assert.Equal(11, _blockStateRegistry.GetStateByBaseBlock(new TestBlock2(TestBlock2.ColorEnum.Red, TestBlock2.ShapeEnum.Sphere)).NetworkId);
         }
         
-        // @formatter:on
         [Fact]
         public void GetBlockStateByNetworkIdTest()
         {
+            Assert.Equal(new BlockState("recube:testblock", 0, false, new Dictionary<string, string> {{"color", "green"}}),_blockStateRegistry.GetBlockStateByNetworkId(0));
+            Assert.Equal(new BlockState("recube:testblock", 1, false, new Dictionary<string, string> {{"color", "blue"}}),_blockStateRegistry.GetBlockStateByNetworkId(1));
+            Assert.Equal(new BlockState("recube:testblock", 2, true, new Dictionary<string, string> {{"color", "red"}}),_blockStateRegistry.GetBlockStateByNetworkId(2));
+           
+            
+            Assert.Equal(new BlockState("recube:testblock2", 3, true, new Dictionary<string, string> {{"color", "green"}, {"shape", "triangle"}}),_blockStateRegistry.GetBlockStateByNetworkId(3));
+            Assert.Equal(new BlockState("recube:testblock2", 4, false, new Dictionary<string, string> {{"color", "blue"}, {"shape", "triangle"}}),_blockStateRegistry.GetBlockStateByNetworkId(4));
+            Assert.Equal(new BlockState("recube:testblock2", 5, false, new Dictionary<string, string> {{"color", "red"}, {"shape", "triangle"}}),_blockStateRegistry.GetBlockStateByNetworkId(5));
+           
+            Assert.Equal(new BlockState("recube:testblock2", 6, false, new Dictionary<string, string> {{"color", "green"}, {"shape", "cube"}}),_blockStateRegistry.GetBlockStateByNetworkId(6));
+            Assert.Equal(new BlockState("recube:testblock2", 7, false, new Dictionary<string, string> {{"color", "blue"}, {"shape", "cube"}}),_blockStateRegistry.GetBlockStateByNetworkId(7));
+            Assert.Equal(new BlockState("recube:testblock2", 8, false, new Dictionary<string, string> {{"color", "red"}, {"shape", "cube"}}),_blockStateRegistry.GetBlockStateByNetworkId(8));
+            
+            Assert.Equal(new BlockState("recube:testblock2", 9, false, new Dictionary<string, string> {{"color", "green"}, {"shape", "sphere"}}),_blockStateRegistry.GetBlockStateByNetworkId(9));
+            Assert.Equal(new BlockState("recube:testblock2", 10, false, new Dictionary<string, string> {{"color", "blue"}, {"shape", "sphere"}}),_blockStateRegistry.GetBlockStateByNetworkId(10));
+            Assert.Equal(new BlockState("recube:testblock2", 11, false, new Dictionary<string, string> {{"color", "red"}, {"shape", "sphere"}}),_blockStateRegistry.GetBlockStateByNetworkId(11));
         }
     }
 }

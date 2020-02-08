@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Recube.Api.Block
 {
@@ -40,5 +42,25 @@ namespace Recube.Api.Block
 
         /// <inheritdoc cref="IBlockStateRegistry.GetBaseBlockFromState"/>
         public BaseBlock? AsBlock() => RecubeApi.Recube.GetBlockStateRegistry().GetBaseBlockFromState(this);
+
+
+        protected bool Equals(BlockState other)
+        {
+            return Default == other.Default && NetworkId == other.NetworkId && BaseName == other.BaseName &&
+                   (Properties.Count == other.Properties.Count && !Properties.Except(other.Properties).Any());
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((BlockState) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Default, NetworkId, BaseName, Properties);
+        }
     }
 }
