@@ -23,7 +23,7 @@ namespace Recube.Core.Block
             Type = type;
         }
 
-        public static ParsedProperty Parse(Type t)
+        public static ParsedProperty Parse(Type blockClass, Type t)
         {
             if (!t.IsEnum) throw new PropertyParseException($"Property {t.FullName} is not an Enum");
 
@@ -48,10 +48,9 @@ namespace Recube.Core.Block
                 conditions.Add((int) value, condition.Condition);
             }
 
-            var declaringType = t.DeclaringType;
-            if (declaringType == null) throw new PropertyParseException($"Property {t.FullName} has no declaring type");
+            if (blockClass == null) throw new PropertyParseException($"Property {t.FullName} has no declaring type");
 
-            var field = declaringType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+            var field = blockClass.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                 .Where(f => f.FieldType == t).ToList();
             if (field.Count > 1)
                 throw new PropertyParseException(

@@ -11,7 +11,8 @@ namespace Recube.Api.Block
     /// Also, exactly one field must represent each of these enums in the derived class
     /// And lastly, there needs to be a constructor which only parameters are the fields of <see cref="PropertyStateAttribute"/> (properties).
     /// <b>Important here: The constructor parameters have to be in the order of the nested types!
-    /// So if the first nested type is for example <i>ColorEnum</i> the first parameter of the constructor has to be of the type <i>ColorEnum</i></b>
+    /// So if the first nested type is for example <i>ColorEnum</i> the first parameter of the constructor has to be of the type <i>ColorEnum</i>.
+    /// The same applies when using inheritance: The parent's nested types has to come first, then the child's. So the parent's parent's nested types come before the parent's types and these come before the child nested types etc.</b>
     /// 
     /// For an example visit: <see cref="Recube.Api.Block.Impl.ExampleBlock"/>
     /// </summary>

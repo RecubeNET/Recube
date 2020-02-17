@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -48,9 +49,16 @@ namespace Recube.Core.Block
 
                     foreach (var state in states)
                     {
-                        var id = (int?) state["id"];
-                        if (id == null)
+                        int id;
+                        try
+                        {
+                            id = (int) state["id"];
+                        }
+                        catch (Exception)
+                        {
                             throw new FileParseException($"Invalid blocks.json. A block's ({name}) state has no id");
+                        }
+
                         var @default = ((bool?) state["default"]) ?? false;
 
 
@@ -59,14 +67,14 @@ namespace Recube.Core.Block
                         {
                             if (!(state["properties"] is JObject stateProps))
                                 throw new FileParseException(
-                                    $"Invalid blocks.json. The state {id.Value} of block {name} has no properties");
+                                    $"Invalid blocks.json. The state {id} of block {name} has no properties");
                             foreach (var stateProp in stateProps)
                             {
                                 blockStateProps.Add(stateProp.Key, stateProp.Value.ToObject<string>());
                             }
                         }
 
-                        blockStates.Add(new BlockState(name, id.Value, @default,
+                        blockStates.Add(new BlockState(name, id, @default,
                             blockStateProps.Count == 0 ? null : blockStateProps));
                     }
 
@@ -86,6 +94,7 @@ namespace Recube.Core.Block
             var blockClasses = Assembly.GetCallingAssembly().GetTypes()
                 .Where(t => t.Namespace != null && t.Namespace.StartsWith(blockNamespace))
                 .Where(t => t.GetCustomAttribute<NoParseAttribute>(false) == null)
+                .Where(t => t.GetCustomAttribute<BlockAttribute>() != null)
                 .Where(t => typeof(BaseBlock).IsAssignableFrom(t))
                 .ToImmutableArray();
 
@@ -98,18 +107,37 @@ namespace Recube.Core.Block
 
                 var properties = new List<ParsedProperty>();
 
-                foreach (var nestedType in blockClass.GetNestedTypes())
+                var parentsPlusBlockClass = new List<Type>();
+                var iteration = 0;
+                var baseType = blockClass;
+                do
                 {
-                    var propAttr = nestedType.GetCustomAttribute<PropertyStateAttribute>();
-                    if (propAttr == null) continue;
-                    properties.Add(ParsedProperty.Parse(nestedType));
+                    parentsPlusBlockClass.Add(baseType);
+                    baseType = baseType.BaseType;
+                    iteration++;
+                } while (baseType != null && iteration < 10 && baseType != typeof(BaseBlock));
+
+                if (iteration == 10)
+                    throw new BlockParseException(
+                        $"The parent which implements BlockBase is more than 10 inheritors away for block {name}");
+
+                parentsPlusBlockClass.Reverse();
+                foreach (var type in parentsPlusBlockClass)
+                {
+                    foreach (var nestedType in type.GetNestedTypes())
+                    {
+                        var propAttr = nestedType.GetCustomAttribute<PropertyStateAttribute>();
+                        if (propAttr == null) continue;
+                        properties.Add(ParsedProperty.Parse(blockClass, nestedType));
+                    }
                 }
+
 
                 var constructor = blockClass.GetConstructor(properties.Select(p => p.Type).ToArray());
                 if (constructor == null)
                     // When issuing this exception check the order of parameters as defined in the comment in BaseBlock.cs
                     throw new BlockParseException(
-                        $"Could not find constructor which is buildable with all properties for block {name}");
+                        $"Could not find constructor which is buildable with all properties for block {name}. Is the order correct?");
 
                 ret.Add(new ParsedBlock(name, blockClass, properties, constructor));
             }

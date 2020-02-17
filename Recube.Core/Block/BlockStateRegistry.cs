@@ -18,7 +18,7 @@ namespace Recube.Core.Block
 
         public BlockState? GetStateByBaseBlock(BaseBlock block)
         {
-            var parsedBlock = _parsedBlocks.First(b => b.BaseBlockType == block.GetType());
+            var parsedBlock = _parsedBlocks.FirstOrDefault(b => b.BaseBlockType == block.GetType());
             if (parsedBlock == null) return null;
 
             var blockStates = _blockStates[parsedBlock.Name];
@@ -54,8 +54,8 @@ namespace Recube.Core.Block
 
             foreach (var parsedProperty in parsedBlock.Properties)
             {
-                var property = state.Properties[parsedProperty.PropertyName];
-                if (property == null) return null;
+                if (!state.Properties.TryGetValue(parsedProperty.PropertyName, out var property))
+                    return null;
                 var (key, value) = parsedProperty.Conditions.FirstOrDefault(kvp =>
                     string.Equals(kvp.Value.ToString(), property, StringComparison.OrdinalIgnoreCase));
                 if (value == null) return null;
