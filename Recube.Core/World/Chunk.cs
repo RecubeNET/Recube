@@ -1,6 +1,8 @@
 ﻿using System;
 using DotNetty.Buffers;
 using fNbt;
+using Recube.Api;
+using Recube.Api.Block;
 using Recube.Api.Network.Extensions;
 using Recube.Api.World;
 
@@ -30,6 +32,31 @@ namespace Recube.Core.World
             for (var blockX = 0; blockX < 16; blockX++)
             for (var blockZ = 0; blockZ < 16; blockZ++)
                 SetType(blockX, 0, blockZ, 9);
+        }
+
+        public void SetBlock(Location location, BaseBlock block)
+        {
+            var state = Recube.Instance.GetBlockStateRegistry().GetStateByBaseBlock(block);
+            if (state == null)
+            {
+                Recube.RecubeLogger.Warn("Tried to place block with unknown BlockState");
+                return;
+            }
+
+            SetType(location.X, location.Y, location.Z, state.NetworkId);
+        }
+
+        public BaseBlock? GetBlock(Location location)
+        {
+            var type = GetType(location.X, location.Y, location.Z);
+            var state = Recube.Instance.GetBlockStateRegistry().GetBlockStateByNetworkId(type);
+            if (state == null)
+            {
+                Recube.RecubeLogger.Warn($"Tried to get block whose state is unknown. Network id: {type}");
+                return null;
+            }
+
+            return Recube.Instance.GetBlockStateRegistry().GetBaseBlockFromState(state);
         }
 
         public void SetType(int x, int y, int z, int type)

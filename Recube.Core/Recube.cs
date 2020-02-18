@@ -18,20 +18,19 @@ namespace Recube.Core
     {
         public const int ProtocolVersion = 578;
         public static readonly ILogger RecubeLogger = LogManager.GetLogger("Recube");
-        public readonly BlockStateRegistry BlockStateRegistry;
-
-        public readonly EntityRegistry EntityRegistry = new EntityRegistry();
-
-        public readonly Type HandshakePacketHandler = typeof(HandshakePacketHandler);
-        public readonly Type LoginPacketHandler = typeof(LoginPacketHandler);
 
         public readonly NetworkBootstrap NetworkBootstrap = new NetworkBootstrap();
+
+        public readonly Type HandshakePacketHandler = typeof(HandshakePacketHandler);
+        public readonly Type StatusPacketHandler = typeof(StatusPacketHandler);
+        public readonly Type LoginPacketHandler = typeof(LoginPacketHandler);
+        public readonly Type PlayPacketHandler = typeof(PlayPacketHandler);
+
         public readonly NetworkPlayerRegistry NetworkPlayerRegistry = new NetworkPlayerRegistry();
         public readonly PlayerRegistry PlayerRegistry = new PlayerRegistry();
-        public readonly Type PlayPacketHandler = typeof(PlayPacketHandler);
-        public readonly Type StatusPacketHandler = typeof(StatusPacketHandler);
-
         public readonly ListenerRegistry ListenerRegistry = new ListenerRegistry();
+        public readonly BlockStateRegistry BlockStateRegistry;
+        public readonly EntityRegistry EntityRegistry = new EntityRegistry();
 
         // TODO MAKE MULTIPLE WORLD THREADS POSSIBLE AND MULTIPLE WORLD FRIENDLY...
         public readonly WorldThread WorldThread = new WorldThread(0);
